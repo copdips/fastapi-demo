@@ -8,6 +8,8 @@ this project serves a simple demonstration of creating a REST API using FastAPI 
 The database uses PostgreSQL for regular operations and SQLite for testing with the following schema.
 Of course, with ORM, we can easily change the database type.
 
+### Schema
+
 ```mermaid
 erDiagram
     user ||--|{ team : belongs
@@ -38,3 +40,7 @@ erDiagram
         string tag_id FK "Foreign Key to tag"
     }
 ```
+
+### Alembic
+
+`alembic init -t async migrations`
