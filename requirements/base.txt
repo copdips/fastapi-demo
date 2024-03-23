@@ -1,4 +1,5 @@
 # production requirements need to be pinned, here's for my quick demo only
+alembic
 asyncpg
 devtools
 fastapi[all]

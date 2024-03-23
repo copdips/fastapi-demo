@@ -32,7 +32,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession  # noqa: E402
 
 if os.getenv("TESTING", "0").lower() in ("1", "true", "yes"):
     # debug("Using in-memory database.")
-    # sqlalchemy_database_url = "sqlite+aiosqlite:///testing.db"  # file-based database
+    # sqlalchemy_db_url = "sqlite+aiosqlite:///testing.db"  # file-based database
     sqlalchemy_db_url = "sqlite+aiosqlite://"  # in-memory database
     # https://sqlmodel.tiangolo.com/tutorial/fastapi/tests/#configure-the-in-memory-database
     engine = create_async_engine(

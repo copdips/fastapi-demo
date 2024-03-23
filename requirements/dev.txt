@@ -2,6 +2,7 @@ aiosqlite
 bandit
 black
 devtools
+erdantic
 ipython
 pre-commit
 pyright
@@ -10,4 +11,5 @@ pytest-asyncio
 pytest-cov
 pytest-env
 ruff
+sqlacodegen>=3.0.0rc5
 types-setuptools
