@@ -1,0 +1,8 @@
+mike
+mkdocs
+mkdocs-git-revision-date-localized-plugin
+mkdocs-glightbox
+mkdocs-material
+mkdocs-redirects
+mkdocs-video
+mkdocstrings-python

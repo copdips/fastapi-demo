@@ -1,0 +1,127 @@
+[tool.ruff]
+fix = true
+show-fixes = true
+lint.select = ["ALL"]
+lint.ignore = [
+    # https://beta.ruff.rs/docs/rules/
+    "D",    # pydocstyle
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "ANN",  # flake8-annotations
+    "PTH123", # pathlib-open - this would force pathlib usage anytime open or with open was used.
+    "FA102", # Missing `from __future__ import annotations`, but uses PEP 604 union.
+    "ERA001", # Found commented-out code
+    "TD", # flake8-todo
+    "FIX002", # Line contains TODO, consider resolving the issue
+]
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    # at least this three should be fine in tests:
+    "S101", # asserts allowed in tests...
+    # "ARG", # Unused function args -> fixtures nevertheless are functionally relevant...
+    # "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
+]
+"tools/**/*.py" = ["ALL"]
+"_local_test/**/*.py" = ["ALL"]
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-wrap-aliases = true
+[tool.ruff.lint.pylint]
+max-args = 8
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = ["pydantic.validator"]
+
+[tool.pyright]
+reportUnnecessaryTypeIgnoreComment = true
+venvPath = "."
+venv = ".venv"
+exclude = ["_local_test", "tools", ".venv"]
+# include = ["app"]
+
+[tool.bandit]
+exclude_dirs = [".venv", "_local_test"]
+skips = ["B101"]
+# tests = ["B201", "B301"]
+
+[tool.pylint.main]
+ignore-paths = ["."]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit"]
+# https://pytest-asyncio.readthedocs.io/en/latest/concepts.html#auto-mode
+asyncio_mode = "auto"
+addopts = """
+    -v -s
+    --junitxml=junit/test-results.xml
+    --cov app
+    --cov-report=html
+    --cov-report=xml
+    --cov-report=term-missing:skip-covered
+    --cov-fail-under=0
+    """
+# env is enabled by pytest-env
+env = [
+    "TESTING=yes",
+]
+
+[tool.mypy]
+plugins = [
+  "pydantic.mypy"
+]
+exclude = [
+    "^.venv/",
+    "^build/",
+    "^_local_test/",
+]
+follow_imports = "silent"
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_reexport = true
+
+# for strict mypy: (this is the tricky one :-))
+disallow_untyped_defs = false
+
+[tool.pydantic-mypy]
+# https://docs.pydantic.dev/2.6/integrations/mypy/
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+
+[project]
+name = "fastapi-demo"
+dynamic = ["version", "dependencies", "optional-dependencies"]
+authors = [
+    { name = "Xiang ZHU", email = "xiang.zhu@outlook.com" },
+]
+description = "fastapi-demo"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+classifiers = [
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+repository = "https://github.com/copdips/fastapi-demo"
+documentation = "https://github.com/copdips/fastapi-demo"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { file = ["VERSION"] }
+
+[tool.setuptools.dynamic.dependencies]
+file = ["requirements/base.txt"]
+
+[tool.setuptools.dynamic.optional-dependencies]
+dev = { file = ["requirements/dev.txt"] }
+docs = { file = ["requirements/docs.txt"] }
+
+[tool.coverage.run]
+relative_files = true

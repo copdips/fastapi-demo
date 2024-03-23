@@ -1,0 +1,8 @@
+# production requirements need to be pinned, here's for my quick demo only
+asyncpg
+devtools
+fastapi[all]
+pydantic-settings
+python-ulid
+SQLAlchemy
+sqlmodel
