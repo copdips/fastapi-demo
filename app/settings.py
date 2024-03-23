@@ -9,12 +9,10 @@ DEFAULT_ENV_FILE = ".env"
 DEFAULT_API_ENV = "local"
 DEFAULT_API_VERSION = "0.0.0"
 
-# class DBSettings(BaseModel):
-#     DB_NAME: str
-#     DB_PASSWORD: str
-#     DB_USERNAME: str
-#     DB_HOST: str
-#     DB_PORT: str
+
+def is_testing() -> bool:
+    return os.getenv("TESTING", "0").lower() in ("1", "true", "yes")
+
 
 env_color = {
     "local": "blue",
@@ -35,6 +33,7 @@ class DBSettings(BaseSettings):
     DB_USERNAME: str = Field(default=...)
     DB_HOST: str = Field(default=...)
     DB_PORT: str = Field(default=...)
+    DB_CONN_URL: str = Field(default=...)
 
 
 class Settings(BaseSettings):
@@ -60,6 +59,7 @@ class Settings(BaseSettings):
         "email": "xiang.zhu@outlook.com",
     }
     debug: bool = api_env == DEFAULT_API_ENV
+    testing: bool = is_testing()
 
 
 settings = Settings()

@@ -1,5 +1,3 @@
-import os
-
 from sqlalchemy import StaticPool
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
@@ -30,7 +28,7 @@ heroes = await session.exec(select(Hero)).all()
 # if use native sa's AsyncSession: from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel.ext.asyncio.session import AsyncSession  # noqa: E402
 
-if os.getenv("TESTING", "0").lower() in ("1", "true", "yes"):
+if settings.testing:
     # debug("Using in-memory database.")
     # sqlalchemy_db_url = "sqlite+aiosqlite:///testing.db"  # file-based database
     sqlalchemy_db_url = "sqlite+aiosqlite://"  # in-memory database
@@ -71,6 +69,7 @@ async def drop_db():
 
 
 async def init_db(async_session_factory: type[AsyncSession]):
-    await drop_db()
-    await create_db()
-    await create_init_data(async_session_factory)
+    if settings.testing:
+        await drop_db()
+        await create_db()
+        await create_init_data(async_session_factory)

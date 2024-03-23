@@ -43,4 +43,18 @@ erDiagram
 
 ### Alembic
 
-`alembic init -t async migrations`
+```bash
+alembic init -t async migrations
+# edit alembic.ini and env.py
+alembic revision --autogenerate -m "init"
+alembic upgrade head
+# to generate SQL file with run_migrations_offline()
+alembic upgrade head --sql > migrations.sql
+```
+
+### Recreate schema public
+
+```sql
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+```

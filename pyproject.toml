@@ -4,14 +4,14 @@ show-fixes = true
 lint.select = ["ALL"]
 lint.ignore = [
     # https://beta.ruff.rs/docs/rules/
-    "D",    # pydocstyle
-    "E501", # line too long, handled by black
-    "B008", # do not perform function calls in argument defaults
-    "ANN",  # flake8-annotations
+    "D",      # pydocstyle
+    "E501",   # line too long, handled by black
+    "B008",   # do not perform function calls in argument defaults
+    "ANN",    # flake8-annotations
     "PTH123", # pathlib-open - this would force pathlib usage anytime open or with open was used.
-    "FA102", # Missing `from __future__ import annotations`, but uses PEP 604 union.
+    "FA102",  # Missing `from __future__ import annotations`, but uses PEP 604 union.
     "ERA001", # Found commented-out code
-    "TD", # flake8-todo
+    "TD",     # flake8-todo
     "FIX002", # Line contains TODO, consider resolving the issue
 ]
 [tool.ruff.lint.per-file-ignores]
@@ -22,6 +22,7 @@ lint.ignore = [
     # "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
 ]
 "tools/**/*.py" = ["ALL"]
+"migrations/**/*.py" = ["ALL"]
 "_local_test/**/*.py" = ["ALL"]
 [tool.ruff.lint.isort]
 combine-as-imports = true
@@ -35,7 +36,7 @@ classmethod-decorators = ["pydantic.validator"]
 reportUnnecessaryTypeIgnoreComment = true
 venvPath = "."
 venv = ".venv"
-exclude = ["_local_test", "tools", ".venv"]
+exclude = ["_local_test", "tools", "migrations", ".venv"]
 # include = ["app"]
 
 [tool.bandit]
@@ -60,19 +61,11 @@ addopts = """
     --cov-fail-under=0
     """
 # env is enabled by pytest-env
-env = [
-    "TESTING=yes",
-]
+env = ["TESTING=yes"]
 
 [tool.mypy]
-plugins = [
-  "pydantic.mypy"
-]
-exclude = [
-    "^.venv/",
-    "^build/",
-    "^_local_test/",
-]
+plugins = ["pydantic.mypy"]
+exclude = ["^.venv/", "^build/", "^_local_test/"]
 follow_imports = "silent"
 warn_redundant_casts = true
 warn_unused_ignores = true
@@ -93,9 +86,7 @@ warn_required_dynamic_aliases = true
 [project]
 name = "fastapi-demo"
 dynamic = ["version", "dependencies", "optional-dependencies"]
-authors = [
-    { name = "Xiang ZHU", email = "xiang.zhu@outlook.com" },
-]
+authors = [{ name = "Xiang ZHU", email = "xiang.zhu@outlook.com" }]
 description = "fastapi-demo"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
