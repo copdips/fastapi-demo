@@ -15,10 +15,14 @@ def is_testing() -> bool:
 
 
 env_color = {
-    "local": "blue",
-    "dev": "green",
+    "local": "lightgrey",
+    "dev": "lightgreen",
+    "development": "lightgreen",
     "staging": "yellow",
+    "stg": "yellow",
+    "prd": "red",
     "prod": "red",
+    "production": "red",
 }
 
 
@@ -48,7 +52,7 @@ class Settings(BaseSettings):
     api_version: str = getattr(app, "__VERSION__", DEFAULT_API_VERSION)
     api_title: str = f"FastAPI demo ({api_env})"
     api_description: str = (
-        f'<span style="background-color: {env_color.get(api_env, DEFAULT_API_ENV)};">(env: {api_env}) '
+        f'<span style="background-color: {env_color.get(api_env, DEFAULT_API_ENV)};font-size:15pt">(env: {api_env}) '
         "A simple [FastAPI](https://fastapi.tiangolo.com/)"
         "+ [asyncpg](https://techspot.zzzeek.org/2015/02/15/asynchronous-python-and-databases/) demo"
         "</span>"
