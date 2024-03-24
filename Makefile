@@ -34,3 +34,6 @@ test-all: test test-integration
 
 run:
 	uvicorn ${API_FOLDER}.main:app --reload
+
+run-testing:
+	TESTING=true uvicorn ${API_FOLDER}.main:app --reload

@@ -1,11 +1,23 @@
 from datetime import UTC, datetime
 
 import sqlalchemy as sa
+from pydantic import ConfigDict
+from pydantic.alias_generators import to_camel
 from sqlmodel import Field, SQLModel
 from ulid import ULID
 
+from app.settings import settings
 
-class BaseSQLModel(SQLModel):
+
+class BaseModel(SQLModel):
+    if settings.use_camel_case:
+        model_config = ConfigDict(  # type: ignore[assignment]
+            alias_generator=to_camel,
+            populate_by_name=True,  # Pydantic v1: allow_population_by_field_name=True
+        )
+
+
+class BaseSQLModel(BaseModel):
     id: str | None = Field(default_factory=lambda: str(ULID()), primary_key=True)
     created_at: datetime = Field(
         sa_type=sa.DateTime(timezone=True),
@@ -27,16 +39,16 @@ class BaseSQLModel(SQLModel):
     )
 
 
-class UserBase(SQLModel):
+class UserBase(BaseModel):
     name: str = Field(unique=True, index=True)
     first_name: str
     last_name: str
 
 
-class TeamBase(SQLModel):
+class TeamBase(BaseModel):
     name: str = Field(unique=True, index=True)
     headquarters: str
 
 
-class TagBase(SQLModel):
+class TagBase(BaseModel):
     name: str = Field(unique=True, index=True)

@@ -1,7 +1,6 @@
 from pydantic import ConfigDict
-from sqlmodel import SQLModel
 
-from app.db.models.base_models import TeamBase
+from app.db.models.base_models import BaseModel, TeamBase
 
 
 class TeamCreate(TeamBase):
@@ -15,7 +14,7 @@ class TeamRead(TeamBase):
     # updated_at: datetime | None
 
 
-class TeamUpdate(SQLModel):
+class TeamUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
     name: str | None = None
     headquarters: str | None = None

@@ -15,7 +15,7 @@ class UserService:
         self.session = session
 
     async def create(self, user: UserCreate) -> User:
-        db_user = User.model_validate(user)
+        db_user = User.model_validate(user)  # Pydantic v1: User.from_orm(user)
         self.session.add(db_user)
         await self.session.commit()
         return db_user

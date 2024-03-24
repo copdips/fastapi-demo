@@ -1,7 +1,9 @@
-from sqlmodel import SQLModel
+from typing import Any
+
+from app.db.models.base_models import BaseModel
 
 
-class HealthRead(SQLModel):
+class HealthRead(BaseModel):
     status: str
     message: str
-    meta: dict
+    meta: dict[str, Any]

@@ -60,6 +60,7 @@ class Settings(BaseSettings):
     }
     debug: bool = api_env == DEFAULT_API_ENV
     testing: bool = is_testing()
+    use_camel_case: bool = False
 
 
 settings = Settings()

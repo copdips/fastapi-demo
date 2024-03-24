@@ -1,7 +1,6 @@
 from pydantic import ConfigDict
-from sqlmodel import SQLModel
 
-from app.db.models.base_models import UserBase
+from app.db.models.base_models import BaseModel, UserBase
 
 
 class UserCreate(UserBase):
@@ -20,7 +19,7 @@ class UserRead(UserBase):
     # updated_at: datetime | None
 
 
-class UserUpdate(SQLModel):
+class UserUpdate(BaseModel):
     # class without param (table=True) will be a simple Pydantic BaseModel
     """
     create UserUpdate in addition to User model to avoid updating id,

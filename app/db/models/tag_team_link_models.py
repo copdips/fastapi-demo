@@ -1,11 +1,11 @@
-from sqlmodel import SQLModel
+from app.db.models.base_models import BaseModel
 
 
-class TagTeamLinkUpdate(SQLModel):
+class TagTeamLinkUpdate(BaseModel):
     tag_id: str
     team_id: str
 
 
-class TagTeamLinkDelete(SQLModel):
+class TagTeamLinkDelete(BaseModel):
     tag_id: str
     team_id: str

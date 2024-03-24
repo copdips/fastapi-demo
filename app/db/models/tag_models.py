@@ -1,7 +1,6 @@
 from pydantic import ConfigDict
-from sqlmodel import SQLModel
 
-from app.db.models.base_models import TagBase
+from app.db.models.base_models import BaseModel, TagBase
 
 
 class TagCreate(TagBase):
@@ -17,7 +16,7 @@ class TagRead(TagBase):
     # updated_at: datetime | None
 
 
-class TagUpdate(SQLModel):
+class TagUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
     name: str | None = None
     teams_names: list[str] | None = None
