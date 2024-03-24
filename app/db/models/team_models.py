@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pydantic import ConfigDict
 from sqlmodel import SQLModel
 
@@ -13,8 +11,8 @@ class TeamCreate(TeamBase):
 
 class TeamRead(TeamBase):
     id: str
-    created_at: datetime
-    updated_at: datetime | None
+    # created_at: datetime
+    # updated_at: datetime | None
 
 
 class TeamUpdate(SQLModel):

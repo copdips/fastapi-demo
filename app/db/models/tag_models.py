@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pydantic import ConfigDict
 from sqlmodel import SQLModel
 
@@ -15,8 +13,8 @@ class TagCreate(TagBase):
 
 class TagRead(TagBase):
     id: str
-    created_at: datetime
-    updated_at: datetime | None
+    # created_at: datetime
+    # updated_at: datetime | None
 
 
 class TagUpdate(SQLModel):

@@ -1,5 +1,3 @@
-from datetime import UTC, datetime
-
 from fastapi import status
 from fastapi.testclient import TestClient
 
@@ -17,8 +15,6 @@ def test_create_user(client: TestClient):
     assert response.status_code == status.HTTP_201_CREATED
     json_response = response.json()
     assert json_response.items() > body.items()
-    assert json_response["created_at"] < datetime.now(UTC).isoformat()
-    assert json_response["updated_at"] is None
     assert json_response["id"] is not None
 
 
@@ -33,6 +29,4 @@ def test_get_all_users(client: TestClient):
     assert user["name"] is not None
     assert user["first_name"] is not None
     assert user["last_name"] is not None
-    assert user["created_at"] is not None
-    assert user["updated_at"] is None
     assert "team" in user

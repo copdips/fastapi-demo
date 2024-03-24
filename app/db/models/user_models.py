@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pydantic import ConfigDict
 from sqlmodel import SQLModel
 
@@ -17,9 +15,9 @@ class UserRead(UserBase):
     # if we set endpoint response type to User, there won't be team field in the response
     # thus, we must use UserReadWithTeam as response type.
     id: str
-    team_id: str | None
-    created_at: datetime
-    updated_at: datetime | None
+    # team_id: str | None
+    # created_at: datetime
+    # updated_at: datetime | None
 
 
 class UserUpdate(SQLModel):
