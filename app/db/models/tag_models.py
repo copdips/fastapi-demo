@@ -1,6 +1,6 @@
 from pydantic import ConfigDict
 
-from app.db.models.base_models import BaseModel, TagBase
+from app.db.models.base_models import BaseModel, BaseReadModel, TagBase
 
 
 class TagCreate(TagBase):
@@ -10,7 +10,7 @@ class TagCreate(TagBase):
     #     extra = "forbid"
 
 
-class TagRead(TagBase):
+class TagRead(TagBase, BaseReadModel):
     id: str
     # created_at: datetime
     # updated_at: datetime | None

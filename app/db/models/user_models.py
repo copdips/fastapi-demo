@@ -1,13 +1,13 @@
 from pydantic import ConfigDict
 
-from app.db.models.base_models import BaseModel, UserBase
+from app.db.models.base_models import BaseModel, BaseReadModel, UserBase
 
 
 class UserCreate(UserBase):
     model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
 
 
-class UserRead(UserBase):
+class UserRead(UserBase, BaseReadModel):
     # diff between UserRead and User is that User has team as Relationship
     # But db.models.user_composite_models.UserReadWithTeam(UserRead) has team as TeamRead
     # team in User is a relationship which is discarded in Pydantic model,
