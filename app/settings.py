@@ -63,7 +63,7 @@ class Settings(BaseSettings):
         "email": "xiang.zhu@outlook.com",
     }
     debug: bool = api_env == DEFAULT_API_ENV
-    testing: bool = is_testing()
+    testing: bool = is_testing()  # testing mode will use sqlite
     use_camel_case: bool = False
 
 
