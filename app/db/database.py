@@ -1,4 +1,3 @@
-from sqlalchemy import StaticPool
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 
@@ -37,12 +36,19 @@ if settings.testing:
         sqlalchemy_db_url,
         echo=settings.debug,
         connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
+        # sqlite pool class could be set automatically by SQLAlchemy
+        # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#threading-pooling-behavior
+        # ! SqlAlchemy uses StaticPool by default when using a Memory Database in Multiple Threads
+        # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#using-a-memory-database-in-multiple-threads
+        # poolclass=StaticPool,
     )
 else:
     # debug("Using PG database.")
     db_settings = settings.db_settings
     sqlalchemy_db_url = f"postgresql+asyncpg://{db_settings.DB_USERNAME}:{db_settings.DB_PASSWORD}@{db_settings.DB_HOST}:{db_settings.DB_PORT}/{db_settings.DB_NAME}"
+    # ! traditional QueuePool is not asyncio compatible
+    # AsyncAdaptedQueuePool is used instead, and set automatically when using create_async_engine
+    # https://docs.sqlalchemy.org/en/20/core/pooling.html#connection-pool-configuration
     engine = create_async_engine(sqlalchemy_db_url, echo=settings.debug)
 
 async_session_factory: type[AsyncSession] = async_sessionmaker(  # type: ignore[assignment]
