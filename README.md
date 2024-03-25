@@ -58,3 +58,7 @@ alembic upgrade head --sql > migrations.sql
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 ```
+
+## External Task
+
+Celery might not be the best tool: <https://github.com/tiangolo/full-stack-fastapi-template/pull/694>
