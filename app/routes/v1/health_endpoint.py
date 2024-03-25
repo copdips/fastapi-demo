@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.exc import OperationalError
 from sqlmodel import text
 
@@ -16,11 +16,12 @@ endpoint_name = "health"
     response_model=HealthRead,
 )
 async def get_health(
+    req: Request,
     response: Response,
     db_session=Depends(get_db_session),
 ):
     response.headers["Cache-Control"] = "no-cache"
-    meta = {"api_version": settings.api_version}
+    meta = {"api_version": req.app.state.settings.api_version}
     try:
         await db_session.execute(text("SELECT 1"))
         # from api.db.models import User
