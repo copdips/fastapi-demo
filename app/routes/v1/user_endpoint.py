@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Query, status
 
 from app.core.deps import get_user_service
@@ -25,10 +27,13 @@ async def get_user(
 async def get_users(
     *,
     user_service: UserService = Depends(get_user_service),
-    offset: int = 0,
-    limit: int = Query(default=100, le=100),
+    skip: int = 0,
+    # ! use new Annotated type hint to replace direct Query
+    # https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alternative-old-query-as-the-default-value
+    # limit: int = Query(default=100, le=100),
+    limit: Annotated[int, Query(le=100)] = 100,
 ):
-    return await user_service.get_many(offset, limit)
+    return await user_service.get_many(skip, limit)
 
 
 @router.post(

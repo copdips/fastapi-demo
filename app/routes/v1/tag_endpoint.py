@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Query, status
 
 from app.core.deps import get_tag_service
@@ -35,10 +37,13 @@ async def get_tag(
 async def get_tags(
     *,
     tag_service: TagService = Depends(get_tag_service),
-    offset: int = 0,
-    limit: int = Query(default=100, le=100),
+    skip: int = 0,
+    # ! use new Annotated type hint to replace direct Query
+    # https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alternative-old-query-as-the-default-value
+    # limit: int = Query(default=100, le=100),
+    limit: Annotated[int, Query(le=100)] = 100,
 ):
-    return await tag_service.get_many(offset, limit)
+    return await tag_service.get_many(skip, limit)
 
 
 @router.post(
