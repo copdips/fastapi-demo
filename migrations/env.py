@@ -5,10 +5,13 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
-from sqlmodel import SQLModel
 
 # ! Import your SQLModel models here
-from app.db.models.db_models import *
+# https://github.com/tiangolo/full-stack-fastapi-template/blob/master/backend/app/alembic/env.py#L21
+# below 2 lines are commented out as from app.db.models.base_models import SQLModel is better
+# from sqlmodel import SQLModel
+# from app.db.models.db_models import *
+from app.db.models.base_models import SQLModel
 
 # ! import settings to set sqlalchemy.url
 from app.settings import settings

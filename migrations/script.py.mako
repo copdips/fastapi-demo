@@ -9,7 +9,9 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-import sqlmodel
+# if `import sqlmodel` only, still work, but the generated migration python file cannot hightlight `sqlmodel.sql.sqltypes`
+# https://github.com/tiangolo/full-stack-fastapi-template/blob/master/backend/app/alembic/script.py.mako#L10
+import sqlmodel.sql.sqltypes
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.

@@ -9,6 +9,9 @@ from ulid import ULID
 
 from app.settings import settings
 
+# declare SQLModel here to be used in alembic migrations/env.py to avoid MyPy error
+__all__ = ["SQLModel"]
+
 
 class BaseModel(SQLModel):
     if settings.use_camel_case:
