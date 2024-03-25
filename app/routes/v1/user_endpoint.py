@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, Query, status
-from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.core.deps import get_db_session, get_user_service
+from app.core.deps import get_user_service
 from app.db.models.user_composite_models import UserReadComposite
 from app.db.models.user_models import UserCreate, UserRead, UserUpdate
 from app.services.user_service import UserService
@@ -40,10 +39,9 @@ async def get_users(
 )
 async def create_user(
     *,
-    session: AsyncSession = Depends(get_db_session),
+    user_service: UserService = Depends(get_user_service),
     user: UserCreate,
 ):
-    user_service = UserService(session)
     return await user_service.create(user)
 
 
