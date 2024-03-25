@@ -1,6 +1,6 @@
 from sqlmodel import Field, Relationship, SQLModel
 
-from app.db.models.base_models import BaseSQLModel, TagBase, TeamBase, UserBase
+from app.models.base_models import BaseSQLModel, TagBase, TeamBase, UserBase
 
 
 class TagTeamLink(SQLModel, table=True):

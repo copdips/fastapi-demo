@@ -6,8 +6,8 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
-from app.db.models.db_models import User
-from app.db.models.user_models import UserCreate, UserUpdate
+from app.models.db_models import User
+from app.models.user_models import UserCreate, UserUpdate
 
 
 class UserService:

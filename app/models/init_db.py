@@ -1,6 +1,6 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.db.models.db_models import Tag, Team, User
+from app.models.db_models import Tag, Team, User
 
 
 async def create_init_data(async_session_factory: type[AsyncSession]):

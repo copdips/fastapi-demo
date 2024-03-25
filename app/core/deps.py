@@ -1,7 +1,7 @@
 from fastapi import Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.db import async_session_factory
+from app.core.db import async_session_factory
 from app.services import TagService, TeamService, UserService
 
 

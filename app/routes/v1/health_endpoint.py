@@ -3,7 +3,7 @@ from sqlalchemy.exc import OperationalError
 from sqlmodel import text
 
 from app.core.deps import get_db_session
-from app.db.models.health_models import HealthRead
+from app.models.health_models import HealthRead
 from app.settings import settings
 
 router = APIRouter()

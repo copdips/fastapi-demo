@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 
 from app.core.deps import get_tag_service
-from app.db.models.tag_composite_models import (
+from app.models.tag_composite_models import (
     TagReadComposite,
 )
-from app.db.models.tag_models import TagCreate, TagRead, TagUpdate
+from app.models.tag_models import TagCreate, TagRead, TagUpdate
 from app.services.tag_service import TagService
 
 router = APIRouter()

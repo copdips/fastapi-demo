@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 
 from app.core.deps import get_user_service
-from app.db.models.user_composite_models import UserReadComposite
-from app.db.models.user_models import UserCreate, UserRead, UserUpdate
+from app.models.user_composite_models import UserReadComposite
+from app.models.user_models import UserCreate, UserRead, UserUpdate
 from app.services.user_service import UserService
 
 router = APIRouter()

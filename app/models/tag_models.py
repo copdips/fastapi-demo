@@ -1,6 +1,6 @@
 from pydantic import ConfigDict
 
-from app.db.models.base_models import BaseModel, BaseReadModel, TagBase
+from app.models.base_models import BaseModel, BaseReadModel, TagBase
 
 
 class TagCreate(TagBase):

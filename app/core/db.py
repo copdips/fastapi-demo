@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 
-from app.db.init_db import create_init_data
+from app.models.init_db import create_init_data
 from app.settings import settings
 
 """

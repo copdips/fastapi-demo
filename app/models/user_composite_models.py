@@ -1,5 +1,5 @@
-from app.db.models.team_models import TeamRead
-from app.db.models.user_models import UserRead
+from app.models.team_models import TeamRead
+from app.models.user_models import UserRead
 
 """
 Error when using lazy loading with [implicit IO](https://docs.sqlalchemy.org/en/14/orm/extensions/asyncio.html#preventing-implicit-io-when-using-asyncsession) in asyncio:

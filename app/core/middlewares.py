@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.db.database import async_session_factory, init_db
+from app.core.db import async_session_factory, init_db
 from app.settings import settings
 
 

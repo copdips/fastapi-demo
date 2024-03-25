@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 # below 2 lines are commented out as from app.db.models.base_models import SQLModel is better
 # from sqlmodel import SQLModel
 # from app.db.models.db_models import *
-from app.db.models.base_models import SQLModel
+from app.models.base_models import SQLModel
 
 # ! import settings to set sqlalchemy.url
 from app.settings import settings
