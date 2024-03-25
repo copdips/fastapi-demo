@@ -1,13 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Query, status
 
-from app.core.deps import get_tag_service
+from app.core.deps import TagServiceDep
 from app.models.tag_composite_models import (
     TagReadComposite,
 )
 from app.models.tag_models import TagCreate, TagRead, TagUpdate
-from app.services.tag_service import TagService
 
 router = APIRouter()
 endpoint_name = "tags"
@@ -23,7 +22,7 @@ async def get_tag(
     # which solves the problem of default value parameter is put before parameter with no default value.
     # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/#use-the-dependency
     *,
-    tag_service: TagService = Depends(get_tag_service),
+    tag_service: TagServiceDep,
     tag_id: str,
 ):
     return await tag_service.get(tag_id)
@@ -36,7 +35,7 @@ async def get_tag(
 )
 async def get_tags(
     *,
-    tag_service: TagService = Depends(get_tag_service),
+    tag_service: TagServiceDep,
     skip: int = 0,
     # ! use new Annotated type hint to replace direct Query
     # https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alternative-old-query-as-the-default-value
@@ -54,7 +53,7 @@ async def get_tags(
 )
 async def create_tag(
     *,
-    tag_service: TagService = Depends(get_tag_service),
+    tag_service: TagServiceDep,
     tag: TagCreate,
 ):
     return await tag_service.create(tag)
@@ -67,7 +66,7 @@ async def create_tag(
 )
 async def update_tag(
     *,
-    tag_service: TagService = Depends(get_tag_service),
+    tag_service: TagServiceDep,
     tag_id: str,
     tag_update: TagUpdate,
 ):
@@ -80,7 +79,7 @@ async def update_tag(
 )
 async def delete_tag(
     *,
-    tag_service: TagService = Depends(get_tag_service),
+    tag_service: TagServiceDep,
     tag_id: str,
 ):
     await tag_service.delete(tag_id)

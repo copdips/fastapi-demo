@@ -1,4 +1,5 @@
 from collections.abc import AsyncGenerator
+from typing import Annotated
 
 from fastapi import Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -28,3 +29,9 @@ async def get_team_service(
     session: AsyncSession = Depends(get_db_session),
 ) -> AsyncGenerator[TeamService, None]:
     yield TeamService(session)
+
+
+DBDep = Annotated[AsyncSession, Depends(get_db_session)]
+UserServiceDep = Annotated[UserService, Depends(get_user_service)]
+TagServiceDep = Annotated[TagService, Depends(get_tag_service)]
+TeamServiceDep = Annotated[TeamService, Depends(get_team_service)]

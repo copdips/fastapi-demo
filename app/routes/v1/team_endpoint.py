@@ -1,13 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Query, status
 
-from app.core.deps import get_team_service
+from app.core.deps import TeamServiceDep
 from app.models.team_composite_models import (
     TeamReadComposite,
 )
 from app.models.team_models import TeamCreate, TeamRead, TeamUpdate
-from app.services.team_service import TeamService
 
 router = APIRouter()
 endpoint_name = "teams"
@@ -23,7 +22,7 @@ async def get_team(
     # which solves the problem of default value parameter is put before parameter with no default value.
     # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/#use-the-dependency
     *,
-    team_service: TeamService = Depends(get_team_service),
+    team_service: TeamServiceDep,
     team_id: str,
 ):
     return await team_service.get(team_id)
@@ -36,7 +35,7 @@ async def get_team(
 )
 async def get_teams(
     *,
-    team_service: TeamService = Depends(get_team_service),
+    team_service: TeamServiceDep,
     skip: int = 0,
     # ! use new Annotated type hint to replace direct Query
     # https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alternative-old-query-as-the-default-value
@@ -54,7 +53,7 @@ async def get_teams(
 )
 async def create_team(
     *,
-    team_service: TeamService = Depends(get_team_service),
+    team_service: TeamServiceDep,
     team: TeamCreate,
 ):
     return await team_service.create(team)
@@ -67,7 +66,7 @@ async def create_team(
 )
 async def update_team(
     *,
-    team_service: TeamService = Depends(get_team_service),
+    team_service: TeamServiceDep,
     team_id: str,
     team_update: TeamUpdate,
 ):
@@ -80,7 +79,7 @@ async def update_team(
 )
 async def delete_team(
     *,
-    team_service: TeamService = Depends(get_team_service),
+    team_service: TeamServiceDep,
     team_id: str,
 ):
     await team_service.delete(team_id)

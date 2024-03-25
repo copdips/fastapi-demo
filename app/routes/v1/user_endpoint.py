@@ -1,11 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Query, status
 
-from app.core.deps import get_user_service
+from app.core.deps import UserServiceDep
 from app.models.user_composite_models import UserReadComposite
 from app.models.user_models import UserCreate, UserRead, UserUpdate
-from app.services.user_service import UserService
 
 router = APIRouter()
 endpoint_name = "users"
@@ -17,7 +16,7 @@ async def get_user(
     # which solves the problem of default value parameter is put before parameter with no default value.
     # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/#use-the-dependency
     *,
-    user_service: UserService = Depends(get_user_service),
+    user_service: UserServiceDep,
     user_id: str,
 ):
     return await user_service.get(user_id)
@@ -26,7 +25,7 @@ async def get_user(
 @router.get("/", summary="Get users", response_model=list[UserReadComposite])
 async def get_users(
     *,
-    user_service: UserService = Depends(get_user_service),
+    user_service: UserServiceDep,
     skip: int = 0,
     # ! use new Annotated type hint to replace direct Query
     # https://fastapi.tiangolo.com/tutorial/query-params-str-validations/#alternative-old-query-as-the-default-value
@@ -44,7 +43,7 @@ async def get_users(
 )
 async def create_user(
     *,
-    user_service: UserService = Depends(get_user_service),
+    user_service: UserServiceDep,
     user: UserCreate,
 ):
     return await user_service.create(user)
@@ -57,7 +56,7 @@ async def create_user(
 )
 async def update_user(
     *,
-    user_service: UserService = Depends(get_user_service),
+    user_service: UserServiceDep,
     user_id: str,
     user_update: UserUpdate,
 ):
@@ -67,7 +66,7 @@ async def update_user(
 @router.delete("/{user_id}", summary="Delete a user")
 async def delete_user(
     *,
-    user_service: UserService = Depends(get_user_service),
+    user_service: UserServiceDep,
     user_id: str,
 ):
     await user_service.delete(user_id)
