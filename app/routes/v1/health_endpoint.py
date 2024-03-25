@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.exc import OperationalError
-from sqlmodel import text
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.deps import get_db_session
 from app.models.health_models import HealthRead
-from app.settings import settings
 
 router = APIRouter()
 endpoint_name = "health"
@@ -18,14 +18,14 @@ endpoint_name = "health"
 async def get_health(
     req: Request,
     response: Response,
-    db_session=Depends(get_db_session),
+    # ! better to create a dedicated health_service instead of direct db_session
+    db_session: AsyncSession = Depends(get_db_session),
 ):
     response.headers["Cache-Control"] = "no-cache"
     meta = {"api_version": req.app.state.settings.api_version}
+
     try:
-        await db_session.execute(text("SELECT 1"))
-        # from api.db.models import User
-        # user = await db_session.get(User, 1)
+        res = await db_session.exec(select(1))
     except OperationalError as ex:
         response.status_code = 503
         return HealthRead(
@@ -33,7 +33,15 @@ async def get_health(
             message=str(ex),
             meta=meta,
         )
+
     else:
+        if res.all() != [1]:
+            response.status_code = 503
+            return HealthRead(
+                status="error",
+                message="Got unexpected result from the database",
+                meta=meta,
+            )
         return HealthRead(
             status="ok",
             message="Database is running",
