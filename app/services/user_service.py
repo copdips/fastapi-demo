@@ -8,11 +8,12 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.exceptions import NotFoundError
 from app.models.db_models import User
 from app.models.user_models import UserCreate, UserUpdate
+from app.services.base_service import BaseService
 
 
-class UserService:
+class UserService(BaseService):
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session, User)
 
     async def create(self, user: UserCreate) -> User:
         db_user = User.model_validate(user)  # Pydantic v1: User.from_orm(user)
@@ -66,11 +67,3 @@ class UserService:
         # so we need to refresh it, and also get update_at field updated.
         await self.session.refresh(user)
         return user
-
-    async def delete(self, user_id: str):
-        user = await self.session.get(User, user_id)
-        if not user:
-            err_msg = f"User with id {user_id} not found"
-            raise NotFoundError(err_msg)
-        await self.session.delete(user)
-        await self.session.commit()

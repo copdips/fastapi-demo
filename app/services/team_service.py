@@ -8,11 +8,12 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.exceptions import NotFoundError
 from app.models.db_models import Tag, Team, User
 from app.models.team_models import TeamCreate, TeamUpdate
+from app.services.base_service import BaseService
 
 
-class TeamService:
+class TeamService(BaseService):
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session, Team)
 
     async def create(self, team: TeamCreate) -> Team:
         db_team = Team.model_validate(team)
@@ -202,11 +203,3 @@ class TeamService:
         await self.session.commit()
         await self.session.refresh(team)
         return team
-
-    async def delete(self, team_id: str):
-        team = await self.session.get(Team, team_id)
-        if not team:
-            err_msg = f"Team with id {team_id} not found"
-            raise NotFoundError(err_msg)
-        await self.session.delete(team)
-        await self.session.commit()

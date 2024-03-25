@@ -9,11 +9,12 @@ from app.core.exceptions import NotFoundError
 from app.models.db_models import Tag
 from app.models.tag_models import TagCreate, TagUpdate
 from app.models.team_models import TeamRead
+from app.services.base_service import BaseService
 
 
-class TagService:
+class TagService(BaseService):
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session, Tag)
 
     async def create(self, tag: TagCreate) -> Tag:
         db_tag = Tag.model_validate(tag)
@@ -60,11 +61,3 @@ class TagService:
         await self.session.commit()
         await self.session.refresh(tag)
         return tag
-
-    async def delete(self, tag_id: str):
-        tag = await self.session.get(Tag, tag_id)
-        if not tag:
-            err_msg = f"Tag with id {tag_id} not found"
-            raise NotFoundError(err_msg)
-        await self.session.delete(tag)
-        await self.session.commit()
