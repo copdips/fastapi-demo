@@ -22,7 +22,10 @@ async def get_health(
     db_session: AsyncSession = Depends(get_db_session),
 ):
     response.headers["Cache-Control"] = "no-cache"
-    meta = {"api_version": req.app.state.settings.api_version}
+    meta = {
+        "api_version": req.app.state.settings.api_version,
+        "db_engine": db_session.bind.engine.name,
+    }
 
     try:
         res = await db_session.exec(select(1))
