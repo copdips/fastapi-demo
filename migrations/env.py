@@ -6,12 +6,32 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+"""
 # ! Import your SQLModel models here
 # https://github.com/tiangolo/full-stack-fastapi-template/blob/master/backend/app/alembic/env.py#L21
-# below 2 lines are commented out as from app.db.models.base_models import SQLModel is better
-# from sqlmodel import SQLModel
-# from app.db.models.db_models import *
-from app.models.base_models import SQLModel
+
+whether import all the db models explicitly like this:
+
+```python
+    from app.models.db_models import *
+    from sqlmodel import SQLModel
+    target_metadata = SQLModel.metadata
+```
+
+whether import the SQLModel use in the file where the db models are defined,
+which means not `from sqlmodel import SQLModel`, but `from app.models.db_models import SQLModel`:
+
+```python
+    from app.models.db_models import SQLModel
+    target_metadata = SQLModel.metadata
+```
+
+! SQLModel.metadata = MetaData(naming_convention=db_naming_convention) is defined in db_models.py
+alembic will get it, and do the necessary automatically
+or set the naming convention in env.py itself, see:
+https://alembic.sqlalchemy.org/en/latest/naming.html#integration-of-naming-conventions-into-operations-autogenerate
+"""
+from app.models.db_models import SQLModel
 
 # ! import settings to set sqlalchemy.url
 from app.settings import settings
@@ -19,6 +39,7 @@ from app.settings import settings
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+print(f"DB_HOST: {settings.db_settings.DB_HOST}/{settings.db_settings.DB_NAME}")
 config.set_main_option("sqlalchemy.url", settings.db_settings.DB_CONN_URL)
 
 # Interpret the config file for Python logging.

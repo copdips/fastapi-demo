@@ -46,10 +46,16 @@ erDiagram
 ```bash
 alembic init -t async migrations
 # edit alembic.ini and env.py
+
 alembic revision --autogenerate -m "init"
+
+# offline migration to generate SQL file with run_migrations_offline()
+py_file=$(ls -t migrations/versions/*.py | head -n1)
+sql_file="${py_file%.*}.sql"
+alembic upgrade head --sql > $sql_file
+
+# online migration
 alembic upgrade head
-# to generate SQL file with run_migrations_offline()
-alembic upgrade head --sql > migrations.sql
 ```
 
 ### Recreate schema public

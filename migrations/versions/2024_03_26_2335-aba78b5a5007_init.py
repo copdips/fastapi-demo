@@ -1,22 +1,26 @@
 """init
 
-Revision ID: 4d9c56c5ec2e
+Revision ID: aba78b5a5007
 Revises:
-Create Date: 2024-03-23 23:56:44.515225
+Create Date: 2024-03-26 23:35:28.887134
 
 """
 
-from collections.abc import Sequence
+from typing import Sequence, Union
 
-import sqlalchemy as sa
-import sqlmodel.sql.sqltypes
 from alembic import op
+import sqlalchemy as sa
+
+# if `import sqlmodel` only, still work, but the generated migration python file cannot hightlight `sqlmodel.sql.sqltypes`
+# https://github.com/tiangolo/full-stack-fastapi-template/blob/master/backend/app/alembic/script.py.mako#L10
+import sqlmodel.sql.sqltypes
+
 
 # revision identifiers, used by Alembic.
-revision: str = "4d9c56c5ec2e"
-down_revision: str | None = None
-branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = None
+revision: str = "aba78b5a5007"
+down_revision: Union[str, None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
@@ -27,7 +31,7 @@ def upgrade() -> None:
         sa.Column("id", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_tag")),
     )
     op.create_index(op.f("ix_tag_name"), "tag", ["name"], unique=True)
     op.create_table(
@@ -37,7 +41,7 @@ def upgrade() -> None:
         sa.Column("id", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_team")),
     )
     op.create_index(op.f("ix_team_name"), "team", ["name"], unique=True)
     op.create_table(
@@ -45,14 +49,12 @@ def upgrade() -> None:
         sa.Column("tag_id", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("team_id", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["tag_id"],
-            ["tag.id"],
+            ["tag_id"], ["tag.id"], name=op.f("fk_tag_team_link_tag_id_tag")
         ),
         sa.ForeignKeyConstraint(
-            ["team_id"],
-            ["team.id"],
+            ["team_id"], ["team.id"], name=op.f("fk_tag_team_link_team_id_team")
         ),
-        sa.PrimaryKeyConstraint("tag_id", "team_id"),
+        sa.PrimaryKeyConstraint("tag_id", "team_id", name=op.f("pk_tag_team_link")),
     )
     op.create_table(
         "user",
@@ -64,10 +66,9 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("team_id", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.ForeignKeyConstraint(
-            ["team_id"],
-            ["team.id"],
+            ["team_id"], ["team.id"], name=op.f("fk_user_team_id_team")
         ),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_user")),
     )
     op.create_index(op.f("ix_user_name"), "user", ["name"], unique=True)
     # ### end Alembic commands ###
