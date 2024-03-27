@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlmodel import Field, MetaData, Relationship, SQLModel
 
-from app.models.base_models import BaseSQLModel, TagBase, TeamBase, UserBase
+from app.models.base_models import BaseModel, BaseSQLModel, TagBase, TeamBase, UserBase
 
 # declare SQLModel here to be used in alembic migrations/env.py to avoid MyPy error
 __all__ = ["SQLModel"]
@@ -21,8 +21,7 @@ db_naming_convention = {
 SQLModel.metadata = MetaData(naming_convention=db_naming_convention)
 
 
-class TagTeamLink(SQLModel, table=True):
-    __tablename__ = "tag_team_link"  # pyright: ignore[reportAssignmentType]
+class TagTeamLink(BaseModel, table=True):
     # ! if need extra fields, for example, name, description, etc, add them here,
     # need to add Relationship:
     # https://sqlmodel.tiangolo.com/tutorial/many-to-many/link-with-extra-fields/

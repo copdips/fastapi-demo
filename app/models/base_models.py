@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 import sqlalchemy as sa
 from pydantic import ConfigDict, computed_field
-from pydantic.alias_generators import to_camel
+from pydantic.alias_generators import to_camel, to_snake
 from sqlmodel import Field, SQLModel
 from ulid import ULID
 
@@ -12,6 +12,11 @@ from app.settings import settings
 
 
 class BaseModel(SQLModel):
+    @sa.orm.declared_attr
+    @classmethod
+    def __tablename__(cls) -> str:
+        return to_snake(cls.__name__)
+
     if settings.use_camel_case:
         model_config = ConfigDict(  # type: ignore[assignment]
             alias_generator=to_camel,
