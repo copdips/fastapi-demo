@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from uuid import UUID
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
@@ -21,7 +22,7 @@ class TeamService(BaseService):
         await self.session.commit()
         return db_team
 
-    async def get(self, team_id: str) -> Team:
+    async def get(self, team_id: UUID) -> Team:
         # selectinload(Team.users) for eager loading
         # team = await self.session.get(Team, team_id, options=[selectinload(Team.users)])
         """
@@ -70,15 +71,10 @@ class TeamService(BaseService):
             WHERE team.id = $1::VARCHAR
         INFO sqlalchemy.engine.Engine [generated in 0.00066s] ('01HSGMF5S7ZG0QGTH49XNYBY1F',)
         """
-        team = await self.session.get(
-            Team,
+        return await self.get_by_id(
             team_id,
-            options=[selectinload(Team.tags), selectinload(Team.users)],
-        )
-        if not team:
-            err_msg = f"Team with id {team_id} not found"
-            raise NotFoundError(err_msg)
-        return team
+            [Team.tags, Team.users],
+        )  # pyright: ignore[reportReturnType]
 
     async def get_many(
         self,
@@ -153,8 +149,8 @@ class TeamService(BaseService):
         """
         query = (
             select(Team)
-            .options(selectinload(Team.tags))
-            .options(selectinload(Team.users))
+            .options(selectinload(Team.tags))  # pyright: ignore[reportArgumentType]
+            .options(selectinload(Team.users))  # pyright: ignore[reportArgumentType]
             .offset(offset)
             .limit(limit)
         )
@@ -164,21 +160,14 @@ class TeamService(BaseService):
         # ref: https://github.com/tiangolo/sqlmodel/issues/643#issuecomment-2010763043
         return (await self.session.exec(query)).all()
 
-    async def update(self, team_id: str, new_data: TeamUpdate) -> Team:
-        team = await self.session.get(
-            Team,
-            team_id,
-            options=[selectinload(Team.tags), selectinload(Team.users)],
-        )
-        if not team:
-            err_msg = f"Team with id {team_id} not found"
-            raise NotFoundError(err_msg)
+    async def update(self, team_id: UUID, new_data: TeamUpdate) -> Team:
+        team = await self.get_by_id(team_id, [Team.tags, Team.users])
         team_data_dump = new_data.model_dump(exclude_unset=True)
         if "users_names" in team_data_dump:
             if users_names := set(team_data_dump.pop("users_names")):
                 users = (
                     await self.session.exec(
-                        select(User).where(User.name.in_(users_names)),
+                        select(User).where(User.name.in_(users_names)),  # type: ignore[attr-defined]
                     )
                 ).all()
                 if len(users) != len(users_names):
@@ -190,7 +179,7 @@ class TeamService(BaseService):
         if "tags_names" in team_data_dump:
             if tags_names := set(team_data_dump.pop("tags_names")):
                 tags = (
-                    await self.session.exec(select(Tag).where(Tag.name.in_(tags_names)))
+                    await self.session.exec(select(Tag).where(Tag.name.in_(tags_names)))  # type: ignore[attr-defined]
                 ).all()
                 if len(tags) != len(tags_names):
                     msg = "Some tags not found."
@@ -202,4 +191,4 @@ class TeamService(BaseService):
         self.session.add(team)
         await self.session.commit()
         await self.session.refresh(team)
-        return team
+        return team  # pyright: ignore[reportReturnType]

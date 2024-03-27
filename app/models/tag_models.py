@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import ConfigDict
 
 from app.models.base_models import BaseModel, BaseReadModel, TagBase
@@ -11,7 +13,7 @@ class TagCreate(TagBase):
 
 
 class TagRead(TagBase, BaseReadModel):
-    id: str
+    id: UUID
     # created_at: datetime
     # updated_at: datetime | None
 

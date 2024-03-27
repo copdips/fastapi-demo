@@ -1,5 +1,6 @@
 import re
 from datetime import UTC, datetime
+from uuid import UUID, uuid4
 
 import sqlalchemy as sa
 from pydantic import ConfigDict, computed_field
@@ -19,7 +20,17 @@ class BaseModel(SQLModel):
 
 
 class BaseSQLModel(BaseModel):
-    id: str | None = Field(default_factory=lambda: str(ULID()), primary_key=True)
+    # ! if uid and id are computed at SQL level, we should add `| None` on the typing,
+    # and add `default=None` in the Field.
+    # Here both of uid and id columns are computed at python level, so no need to add `| None`
+    # ref: https://sqlmodel.tiangolo.com/tutorial/create-db-and-table/#primary-key-id
+    uid: str = Field(default_factory=lambda: str(ULID()), primary_key=True)
+    id: UUID = Field(
+        default_factory=uuid4,
+        index=True,
+        nullable=False,
+        unique=True,
+    )
     created_at: datetime = Field(
         sa_type=sa.DateTime(timezone=True),
         default_factory=lambda: datetime.now(UTC),

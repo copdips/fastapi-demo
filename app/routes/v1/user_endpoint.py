@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Query, status
 
@@ -17,7 +18,7 @@ async def get_user(
     # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/#use-the-dependency
     *,
     user_service: UserServiceDep,
-    user_id: str,
+    user_id: UUID,
 ):
     return await user_service.get(user_id)
 
@@ -57,7 +58,7 @@ async def create_user(
 async def update_user(
     *,
     user_service: UserServiceDep,
-    user_id: str,
+    user_id: UUID,
     user_update: UserUpdate,
 ):
     return await user_service.update(user_id, user_update)
@@ -67,6 +68,6 @@ async def update_user(
 async def delete_user(
     *,
     user_service: UserServiceDep,
-    user_id: str,
+    user_id: UUID,
 ):
     await user_service.delete(user_id)

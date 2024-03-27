@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from uuid import UUID
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
@@ -21,15 +22,12 @@ class UserService(BaseService):
         await self.session.commit()
         return db_user
 
-    async def get(self, user_id: str) -> User:
+    async def get(self, user_id: UUID) -> User:
         # selectinload(User.team) for eager loading
-        user = await self.session.get(User, user_id, options=[selectinload(User.team)])
-        # user is None or a type of user_model.User
-        # if user does not exist, user is None, no exception raised
-        if not user:
-            err_msg = f"User with id {user_id} not found"
-            raise NotFoundError(err_msg)
-        return user
+        return await self.get_by_id(
+            user_id,
+            [User.team],
+        )  # pyright: ignore[reportReturnType]
 
     async def get_many(
         self,
@@ -41,7 +39,10 @@ class UserService(BaseService):
         # query = select(User, Team).join(Team)  # inner join with both User and Team
         # query = select(User, Team).join(Team, isouter=True)  # left join
         query = (
-            select(User).options(selectinload(User.team)).offset(offset).limit(limit)
+            select(User)
+            .options(selectinload(User.team))  # pyright: ignore[reportArgumentType]
+            .offset(offset)
+            .limit(limit)
         )
         return (await self.session.exec(query)).all()
         # for user, team in res:
@@ -50,8 +51,8 @@ class UserService(BaseService):
         # debug("user:", user, "Team:", team)
         # breakpoint()
 
-    async def update(self, user_id: str, new_data: UserUpdate) -> User:
-        user = await self.session.get(User, user_id)
+    async def update(self, user_id: UUID, new_data: UserUpdate) -> User:
+        user = await self.get_by_id(user_id)
         if not user:
             err_msg = f"User with id {user_id} not found"
             raise NotFoundError(err_msg)
@@ -66,4 +67,4 @@ class UserService(BaseService):
         # right after session.commit(), user object is no more accessible,
         # so we need to refresh it, and also get update_at field updated.
         await self.session.refresh(user)
-        return user
+        return user  # pyright: ignore[reportReturnType]

@@ -1,20 +1,45 @@
-from sqlmodel import SQLModel, func, select
+from typing import Any
+from uuid import UUID
+
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import selectinload
+from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
+from app.models.base_models import BaseSQLModel
 
 
 class BaseService:
-    def __init__(self, session: AsyncSession, model: SQLModel):
+    def __init__(self, session: AsyncSession, model: BaseSQLModel):
         self.session = session
         self.model = model
         self.model_name = model.__name__
 
-    async def delete(self, model_id: str | int):
-        item = await self.session.get(self.model, model_id)  # type: ignore[arg-type, func-returns-value]
-        if not item:
+    async def get_by_id(
+        self,
+        model_id: UUID,  # ! this is the id column, not the uid PK column
+        selectin_attributes: list[Any] | None = None,
+    ) -> BaseSQLModel:
+        try:
+            query = select(  # pyright: ignore[reportCallIssue]
+                self.model,  # pyright: ignore[reportArgumentType]
+            )
+            if selectin_attributes:
+                for attr in selectin_attributes:
+                    query = query.options(
+                        selectinload(attr),
+                    )
+            query = query.where(self.model.id == model_id)
+            item = (await self.session.exec(query)).one()
+        except NoResultFound as ex:
             err_msg = f"{self.model_name} with id {model_id} not found"
-            raise NotFoundError(err_msg)
+            raise NotFoundError(err_msg) from ex
+        else:
+            return item
+
+    async def delete(self, model_id: UUID):
+        item = await self.get_by_id(model_id)
         await self.session.delete(item)
         await self.session.commit()
 

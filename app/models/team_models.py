@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import ConfigDict
 
 from app.models.base_models import BaseModel, BaseReadModel, TeamBase
@@ -9,7 +11,7 @@ class TeamCreate(TeamBase):
 
 
 class TeamRead(TeamBase, BaseReadModel):
-    id: str
+    id: UUID
     # created_at: datetime
     # updated_at: datetime | None
 

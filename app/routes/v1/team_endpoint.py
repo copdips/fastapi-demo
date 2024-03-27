@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Query, status
 
@@ -23,7 +24,7 @@ async def get_team(
     # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/#use-the-dependency
     *,
     team_service: TeamServiceDep,
-    team_id: str,
+    team_id: UUID,
 ):
     return await team_service.get(team_id)
 
@@ -67,7 +68,7 @@ async def create_team(
 async def update_team(
     *,
     team_service: TeamServiceDep,
-    team_id: str,
+    team_id: UUID,
     team_update: TeamUpdate,
 ):
     return await team_service.update(team_id, team_update)
@@ -80,6 +81,6 @@ async def update_team(
 async def delete_team(
     *,
     team_service: TeamServiceDep,
-    team_id: str,
+    team_id: UUID,
 ):
     await team_service.delete(team_id)

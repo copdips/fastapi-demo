@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlmodel import Field, MetaData, Relationship, SQLModel
 
 from app.models.base_models import BaseSQLModel, TagBase, TeamBase, UserBase
@@ -20,16 +22,16 @@ SQLModel.metadata = MetaData(naming_convention=db_naming_convention)
 
 
 class TagTeamLink(SQLModel, table=True):
-    __tablename__ = "tag_team_link"
+    __tablename__ = "tag_team_link"  # pyright: ignore[reportAssignmentType]
     # ! if need extra fields, for example, name, description, etc, add them here,
     # need to add Relationship:
     # https://sqlmodel.tiangolo.com/tutorial/many-to-many/link-with-extra-fields/
-    tag_id: str | None = Field(
+    tag_id: UUID | None = Field(
         default=None,
         foreign_key="tag.id",
         primary_key=True,
     )
-    team_id: str | None = Field(
+    team_id: UUID | None = Field(
         default=None,
         foreign_key="team.id",
         primary_key=True,
@@ -80,7 +82,7 @@ class User(BaseSQLModel, UserBase, table=True):
     # __tablename__ = "user"  # Optional, default to snake case of class name
     # one-to-many relationship [many side]: https://sqlmodel.tiangolo.com/tutorial/fastapi/teams/#update-hero-models
     # declare team because in Team model, team defined as back_populates for users
-    team_id: str | None = Field(
+    team_id: UUID | None = Field(
         default=None,
         foreign_key="team.id",
         # sa_column_kwargs={
@@ -93,7 +95,7 @@ class User(BaseSQLModel, UserBase, table=True):
     #         String,
     #         # ! if need cascade delete at raw sql level from psql for e.g. out of ORM,
     #         # ! need to declare it at FK level from one-to-many, many side.
-    #         ForeignKey("team.id", ondelete="CASCADE"),
+    #         ForeignKey("team.uid", ondelete="CASCADE"),
     #     )
     # )
     team: Team | None = Relationship(back_populates="users")
