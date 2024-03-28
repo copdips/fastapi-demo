@@ -1,21 +1,41 @@
 from datetime import UTC, datetime
+from typing import Any, Self
 from uuid import UUID
 
-from pydantic import ConfigDict, computed_field
-from sqlmodel import Field, SQLModel
+from pydantic import ConfigDict, computed_field, model_validator
+from sqlmodel import JSON, Column, Field, SQLModel
 
-from app.models.base_models import BaseModel, TaskStatus
+from app.models.base_models import BaseModel, BaseReadModel, TaskStatus
+
+
+class EmailNotification(SQLModel):
+    on_done: list[str]
+    on_failed: list[str]
+    on_all: list[str]
+
+    @model_validator(mode="before")
+    def format_emails(self) -> Self:
+        def _format_emails(v) -> list[str]:
+            return list({email.lower() for email in v})
+
+        self["on_done"] = _format_emails(self.get("on_done") or [])
+        self["on_failed"] = _format_emails(self.get("on_failed") or [])
+        self["on_all"] = _format_emails(self.get("on_all") or [])
+        return self
 
 
 class TaskBase(BaseModel):
     name: str
+    type: str
     status: TaskStatus = Field(default=TaskStatus.in_progress)
     description: str | None = None
-    trigger: str | None = None
-    error: str | None = None
+    created_by: str | None = None
+    message: str | None = None
+    email_notification: EmailNotification | None = Field(sa_column=Column(JSON))
+    context: dict[str, Any] | None = Field(default=None, sa_column=Column(JSON))
 
 
-class TaskRead(TaskBase):
+class TaskRead(TaskBase, BaseReadModel):
     id: UUID
     created_at: datetime
     ended_at: datetime | None = None
@@ -32,7 +52,7 @@ class TaskUpdate(SQLModel):
     model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
     status: TaskStatus | None = None
     description: str | None = None
-    error: str | None = None
+    message: str | None = None
 
     @computed_field
     @property
