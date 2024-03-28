@@ -1,8 +1,13 @@
 from uuid import UUID
 
 from pydantic import ConfigDict
+from sqlmodel import Field
 
-from app.models.base_models import BaseModel, BaseReadModel, TagBase
+from app.models.base_models import BaseModel, BaseReadModel
+
+
+class TagBase(BaseModel):
+    name: str = Field(unique=True, index=True)
 
 
 class TagCreate(TagBase):

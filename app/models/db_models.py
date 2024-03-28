@@ -1,8 +1,14 @@
+from datetime import datetime, timedelta
 from uuid import UUID
 
+import sqlalchemy as sa
 from sqlmodel import Field, MetaData, Relationship, SQLModel
 
-from app.models.base_models import BaseModel, BaseSQLModel, TagBase, TeamBase, UserBase
+from app.models.base_models import BaseModel, BaseSQLModel
+from app.models.tag_models import TagBase
+from app.models.task_model import TaskBase
+from app.models.team_models import TeamBase
+from app.models.user_models import UserBase
 
 # declare SQLModel here to be used in alembic migrations/env.py to avoid MyPy error
 __all__ = ["SQLModel"]
@@ -110,3 +116,8 @@ class Tag(BaseSQLModel, TagBase, table=True):
     # But the editor and other tools can see that the string is actually a type annotation inside,
     # and provide all the autocompletion, type checks, etc
     teams: list["Team"] = Relationship(back_populates="tags", link_model=TagTeamLink)
+
+
+class Task(BaseSQLModel, TaskBase, table=True):
+    ended_at: datetime | None = Field(default=None, sa_type=sa.DateTime(timezone=True))
+    task_duration: timedelta | None = None

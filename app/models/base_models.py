@@ -1,5 +1,6 @@
 import re
 from datetime import UTC, datetime
+from enum import Enum
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
@@ -9,6 +10,13 @@ from sqlmodel import Field, SQLModel
 from ulid import ULID
 
 from app.settings import settings
+
+
+class TaskStatus(Enum):
+    in_progress = "in_progress"
+    pending = "pending"
+    done = "done"
+    failed = "failed"
 
 
 class BaseModel(SQLModel):
@@ -54,21 +62,6 @@ class BaseSQLModel(BaseModel):
             # "onupdate": datetime.now,
         },
     )
-
-
-class UserBase(BaseModel):
-    name: str = Field(unique=True, index=True)
-    first_name: str
-    last_name: str
-
-
-class TeamBase(BaseModel):
-    name: str = Field(unique=True, index=True)
-    headquarters: str
-
-
-class TagBase(BaseModel):
-    name: str = Field(unique=True, index=True)
 
 
 class HateoasLink(BaseModel):

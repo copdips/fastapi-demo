@@ -1,8 +1,14 @@
 from uuid import UUID
 
 from pydantic import ConfigDict
+from sqlmodel import Field
 
-from app.models.base_models import BaseModel, BaseReadModel, TeamBase
+from app.models.base_models import BaseModel, BaseReadModel
+
+
+class TeamBase(BaseModel):
+    name: str = Field(unique=True, index=True)
+    headquarters: str
 
 
 class TeamCreate(TeamBase):

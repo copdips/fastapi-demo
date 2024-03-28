@@ -1,8 +1,15 @@
 from uuid import UUID
 
 from pydantic import ConfigDict
+from sqlmodel import Field
 
-from app.models.base_models import BaseModel, BaseReadModel, UserBase
+from app.models.base_models import BaseModel, BaseReadModel
+
+
+class UserBase(BaseModel):
+    name: str = Field(unique=True, index=True)
+    first_name: str
+    last_name: str
 
 
 class UserCreate(UserBase):
