@@ -33,7 +33,10 @@ class BaseModel(SQLModel):
 
 
 class BaseSQLModel(BaseModel):
-    # model_config = ConfigDict(validate_assignment=True)
+    # ! validate_assignment=True to validate during SALModel(table=True) instance creation
+    # https://github.com/tiangolo/sqlmodel/issues/52#issuecomment-1998440311
+    model_config = ConfigDict(validate_assignment=True)
+
     # ! if uid and id are computed at SQL level, we should add `| None` on the typing,
     # and add `default=None` in the Field.
     # Here both of uid and id columns are computed at python level, so no need to add `| None`
