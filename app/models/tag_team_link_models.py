@@ -1,13 +1,11 @@
-from uuid import UUID
-
 from app.models.base_models import BaseModel
 
 
 class TagTeamLinkUpdate(BaseModel):
-    tag_id: UUID
-    team_id: UUID
+    tag_id: str
+    team_id: str
 
 
 class TagTeamLinkDelete(BaseModel):
-    tag_id: UUID
-    team_id: UUID
+    tag_id: str
+    team_id: str

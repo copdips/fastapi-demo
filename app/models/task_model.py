@@ -1,6 +1,5 @@
 from datetime import UTC, datetime
 from typing import Any, Self
-from uuid import UUID
 
 from pydantic import ConfigDict, computed_field, model_validator
 from sqlmodel import JSON, Column, Field, SQLModel
@@ -36,7 +35,7 @@ class TaskBase(BaseModel):
 
 
 class TaskRead(TaskBase, BaseReadModel):
-    id: UUID
+    id: str
     created_at: datetime
     ended_at: datetime | None = None
 

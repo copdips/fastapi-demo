@@ -1,5 +1,4 @@
 from collections.abc import Sequence
-from uuid import UUID
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
@@ -22,7 +21,7 @@ class TeamService(BaseService):
         await self.session.commit()
         return db_team
 
-    async def get(self, team_id: UUID) -> Team:
+    async def get(self, team_id: str) -> Team:
         # selectinload(Team.users) for eager loading
         # team = await self.session.get(Team, team_id, options=[selectinload(Team.users)])
         """
@@ -160,7 +159,7 @@ class TeamService(BaseService):
         # ref: https://github.com/tiangolo/sqlmodel/issues/643#issuecomment-2010763043
         return (await self.session.exec(query)).all()
 
-    async def update(self, team_id: UUID, new_data: TeamUpdate) -> Team:
+    async def update(self, team_id: str, new_data: TeamUpdate) -> Team:
         team = await self.get_by_id(team_id, [Team.tags, Team.users])
         team_data_dump = new_data.model_dump(exclude_unset=True)
         if "users_names" in team_data_dump:

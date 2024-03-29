@@ -1,5 +1,4 @@
 from typing import Annotated
-from uuid import UUID
 
 from fastapi import APIRouter, Query, status
 
@@ -24,7 +23,7 @@ async def get_tag(
     # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/session-with-dependency/#use-the-dependency
     *,
     tag_service: TagServiceDep,
-    tag_id: UUID,
+    tag_id: str,
 ):
     return await tag_service.get(tag_id)
 
@@ -68,7 +67,7 @@ async def create_tag(
 async def update_tag(
     *,
     tag_service: TagServiceDep,
-    tag_id: UUID,
+    tag_id: str,
     tag_update: TagUpdate,
 ):
     return await tag_service.update(tag_id, tag_update)
@@ -81,6 +80,6 @@ async def update_tag(
 async def delete_tag(
     *,
     tag_service: TagServiceDep,
-    tag_id: UUID,
+    tag_id: str,
 ):
     await tag_service.delete(tag_id)

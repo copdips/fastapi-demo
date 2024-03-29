@@ -1,5 +1,4 @@
 from typing import Any
-from uuid import UUID
 
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
@@ -18,7 +17,7 @@ class BaseService:
 
     async def get_by_id(
         self,
-        model_id: UUID,  # ! this is the id column, not the uid PK column
+        model_id: str,  # ! this is the id column, not the uid PK column
         selectin_attributes: list[Any] | None = None,
     ) -> BaseSQLModel:
         try:
@@ -38,7 +37,7 @@ class BaseService:
         else:
             return item
 
-    async def delete(self, model_id: UUID):
+    async def delete(self, model_id: str):
         item = await self.get_by_id(model_id)
         await self.session.delete(item)
         await self.session.commit()

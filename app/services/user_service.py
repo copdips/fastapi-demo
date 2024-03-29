@@ -1,5 +1,4 @@
 from collections.abc import Sequence
-from uuid import UUID
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
@@ -22,7 +21,7 @@ class UserService(BaseService):
         await self.session.commit()
         return db_user
 
-    async def get(self, user_id: UUID) -> User:
+    async def get(self, user_id: str) -> User:
         # selectinload(User.team) for eager loading
         return await self.get_by_id(
             user_id,
@@ -51,7 +50,7 @@ class UserService(BaseService):
         # debug("user:", user, "Team:", team)
         # breakpoint()
 
-    async def update(self, user_id: UUID, new_data: UserUpdate) -> User:
+    async def update(self, user_id: str, new_data: UserUpdate) -> User:
         user = await self.get_by_id(user_id)
         if not user:
             err_msg = f"User with id {user_id} not found"

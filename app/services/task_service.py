@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.base_models import TaskStatus
@@ -12,7 +10,7 @@ class TaskService(BaseService):
     def __init__(self, session: AsyncSession):
         super().__init__(session, Task)
 
-    async def update(self, task_id: UUID, new_data: TaskUpdate) -> Task:
+    async def update(self, task_id: str, new_data: TaskUpdate) -> Task:
         task = await self.get_by_id(task_id)
         task_data_dump = new_data.model_dump(exclude_unset=True)
         task.sqlmodel_update(task_data_dump)
@@ -21,10 +19,10 @@ class TaskService(BaseService):
         await self.session.refresh(task)
         return task  # pyright: ignore[reportReturnType]
 
-    async def set_status_to_done(self, task_id: UUID, message: str = "") -> Task:
+    async def set_status_to_done(self, task_id: str, message: str = "") -> Task:
         task_update = TaskUpdate(status=TaskStatus.done, message=message)
         return await self.update(task_id, task_update)
 
-    async def set_status_to_failed(self, task_id: UUID, message: str) -> Task:
+    async def set_status_to_failed(self, task_id: str, message: str) -> Task:
         task_update = TaskUpdate(status=TaskStatus.failed, message=message)
         return await self.update(task_id, task_update)

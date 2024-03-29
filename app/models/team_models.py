@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from pydantic import ConfigDict
 from sqlmodel import Field
 
@@ -17,7 +15,7 @@ class TeamCreate(TeamBase):
 
 
 class TeamRead(TeamBase, BaseReadModel):
-    id: UUID
+    id: str
     # created_at: datetime
     # updated_at: datetime | None
 

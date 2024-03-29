@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from pydantic import ConfigDict
 from sqlmodel import Field
 
@@ -18,7 +16,7 @@ class TagCreate(TagBase):
 
 
 class TagRead(TagBase, BaseReadModel):
-    id: UUID
+    id: str
     # created_at: datetime
     # updated_at: datetime | None
 

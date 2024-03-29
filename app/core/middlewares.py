@@ -14,4 +14,5 @@ async def lifespan(_app: FastAPI):
     _app.state.settings = settings
     if settings.testing:
         await init_db(async_session_factory)
+    await init_db(async_session_factory)
     yield

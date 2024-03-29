@@ -1,8 +1,8 @@
 import re
 from datetime import UTC, datetime
 from enum import Enum
-from uuid import UUID, uuid4
 
+import shortuuid
 import sqlalchemy as sa
 from pydantic import ConfigDict, computed_field
 from pydantic.alias_generators import to_camel, to_snake
@@ -38,8 +38,8 @@ class BaseSQLModel(BaseModel):
     # Here both of uid and id columns are computed at python level, so no need to add `| None`
     # ref: https://sqlmodel.tiangolo.com/tutorial/create-db-and-table/#primary-key-id
     uid: str = Field(default_factory=lambda: str(ULID()), primary_key=True)
-    id: UUID = Field(
-        default_factory=uuid4,
+    id: str = Field(
+        default_factory=shortuuid.uuid,
         index=True,
         nullable=False,
         unique=True,

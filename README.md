@@ -56,6 +56,9 @@ alembic upgrade head --sql > $sql_file
 
 # online migration
 alembic upgrade head
+
+# online migration to a specific revision
+alembic upgrade <revision>
 ```
 
 ### Recreate schema public

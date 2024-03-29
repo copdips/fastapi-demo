@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from pydantic import ConfigDict
 from sqlmodel import Field
 
@@ -22,7 +20,7 @@ class UserRead(UserBase, BaseReadModel):
     # team in User is a relationship which is discarded in Pydantic model,
     # if we set endpoint response type to User, there won't be team field in the response
     # thus, we must use UserReadWithTeam as response type.
-    id: UUID
+    id: str
     # team_id: str | None
     # created_at: datetime
     # updated_at: datetime | None

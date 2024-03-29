@@ -1,5 +1,4 @@
 from collections.abc import Sequence
-from uuid import UUID
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
@@ -22,7 +21,7 @@ class TagService(BaseService):
         await self.session.commit()
         return db_tag
 
-    async def get(self, tag_id: UUID) -> Tag:
+    async def get(self, tag_id: str) -> Tag:
         return await self.get_by_id(
             tag_id,
             [Tag.teams],
@@ -41,7 +40,7 @@ class TagService(BaseService):
         )
         return (await self.session.exec(query)).all()
 
-    async def update(self, tag_id: UUID, new_data: TagUpdate) -> Tag:
+    async def update(self, tag_id: str, new_data: TagUpdate) -> Tag:
         tag = await self.get_by_id(tag_id, [Tag.teams])
         tag_data_dump = new_data.model_dump(exclude_unset=True)
         if "teams_names" in tag_data_dump:

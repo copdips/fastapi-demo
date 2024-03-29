@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from uuid import UUID
 
 import sqlalchemy as sa
 from pydantic import field_validator
@@ -32,12 +31,12 @@ class TagTeamLink(BaseModel, table=True):
     # ! if need extra fields, for example, name, description, etc, add them here,
     # need to add Relationship:
     # https://sqlmodel.tiangolo.com/tutorial/many-to-many/link-with-extra-fields/
-    tag_id: UUID | None = Field(
+    tag_id: str | None = Field(
         default=None,
         foreign_key="tag.id",
         primary_key=True,
     )
-    team_id: UUID | None = Field(
+    team_id: str | None = Field(
         default=None,
         foreign_key="team.id",
         primary_key=True,
@@ -88,7 +87,7 @@ class User(BaseSQLModel, UserBase, table=True):
     # __tablename__ = "user"  # Optional, default to snake case of class name
     # one-to-many relationship [many side]: https://sqlmodel.tiangolo.com/tutorial/fastapi/teams/#update-hero-models
     # declare team because in Team model, team defined as back_populates for users
-    team_id: UUID | None = Field(
+    team_id: str | None = Field(
         default=None,
         foreign_key="team.id",
         # sa_column_kwargs={
