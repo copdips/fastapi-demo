@@ -12,33 +12,69 @@ Of course, with ORM, we can easily change the database type.
 
 ```mermaid
 erDiagram
-    user ||--|{ team : belongs
-    team ||--|| tag : "many-to-many"
-    team {
-        string id PK "Primary Key"
+    TEAM ||--|{ USER : "belongs"
+    TEAM ||--|| TAG : "many-to-many"
+    TEAM {
+        string uid PK "Primary Key"
+        string id "Unique Team ID"
         datetime created_at "creation date"
         datetime updated_at "last update date"
         string name UK "team name"
+        string headquarters "Headquarters Location"
     }
-    user {
-        string id PK "Primary Key"
+    USER {
+        string uid PK "Primary Key"
+        string id "Unique User ID"
         datetime created_at "creation date"
         datetime updated_at "last update date"
         string name UK "user name"
         string first_name "user first name"
         string last_name "user last name"
-        str team_id FK "Foreign Key to team"
+        string email "user email"
+        string team_id FK "Foreign Key to team"
     }
-    tag {
-        string id PK "Primary Key"
+    TAG {
+        string uid PK "Primary Key"
+        string id "Unique Tag ID"
         datetime created_at "creation date"
         datetime updated_at "last update date"
         string name UK "tag name"
     }
-    tag_team_link {
+    TAG_TEAM_LINK {
         string team_id FK "Foreign Key to team"
         string tag_id FK "Foreign Key to tag"
     }
+    TASK {
+        string uid PK "Primary Key"
+        string id "Unique Task ID"
+        datetime created_at "creation date"
+        datetime updated_at "last update date"
+        string name "Task Name"
+        string type "Task Type"
+        enum status "Task Status"
+        string description "Task Description"
+        string created_by "Creator"
+        string message "Task Message"
+        json email_notification "Email Notification Settings"
+        json context "Task Context"
+        datetime ended_at "End Date"
+        interval task_duration "Task Duration"
+    }
+    EMAIL {
+        string uid PK "Primary Key"
+        string id "Unique Email ID"
+        datetime created_at "creation date"
+        datetime updated_at "last update date"
+        string type "Email Type"
+        string subject "Email Subject"
+        string body "Email Body"
+        string sender "Sender Address"
+        string to "Recipient Address"
+        string cc "CC Recipient Address"
+        string bcc "BCC Recipient Address"
+        string tracking_id "Tracking ID"
+    }
+
 ```
 
 ### Alembic
