@@ -26,7 +26,7 @@ class UserService(BaseService):
         return await self.get_by_id(
             user_id,
             [User.team],
-        )  # pyright: ignore[reportReturnType]
+        )
 
     async def get_many(
         self,
@@ -66,4 +66,4 @@ class UserService(BaseService):
         # right after session.commit(), user object is no more accessible,
         # so we need to refresh it, and also get update_at field updated.
         await self.session.refresh(user)
-        return user  # pyright: ignore[reportReturnType]
+        return user

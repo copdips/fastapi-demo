@@ -10,7 +10,7 @@ from app.models.base_models import BaseSQLModel
 
 
 class BaseService:
-    def __init__(self, session: AsyncSession, model: BaseSQLModel):
+    def __init__(self, session: AsyncSession, model: type[BaseSQLModel]):
         self.session = session
         self.model = model
         self.model_name = model.__name__
@@ -19,7 +19,7 @@ class BaseService:
         self,
         model_id: str,  # ! this is the id column, not the uid PK column
         selectin_attributes: list[Any] | None = None,
-    ) -> BaseSQLModel:
+    ) -> type[BaseSQLModel]:
         try:
             query = select(  # pyright: ignore[reportCallIssue]
                 self.model,  # pyright: ignore[reportArgumentType]
