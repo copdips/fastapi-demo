@@ -3,8 +3,10 @@ alembic
 asyncpg
 devtools
 fastapi[all]
+gunicorn
 pydantic-settings
 python-ulid
 shortuuid
 SQLAlchemy
 sqlmodel
+uvicorn[standard]

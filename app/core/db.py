@@ -75,6 +75,8 @@ async def drop_db():
 
 
 async def init_db(async_session_factory: type[AsyncSession]):
+    # ! when using multi worker with gunicorn or uvicorn, DB setup should be remove to outside of FastAPI
+    # https://fastapi.tiangolo.com/deployment/docker/#multiple-containers
     await drop_db()
     await create_db()
     await create_init_data(async_session_factory)

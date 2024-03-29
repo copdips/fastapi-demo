@@ -37,3 +37,11 @@ run:
 
 run-with-external-db:
 	uvicorn ${API_FOLDER}.main:app --reload
+
+run-with-multi-core:
+	# ! gunicorn might not be necessary for single core environments
+	# (for e.g. K8S pod with 1 core with HPA Horizontol Pod Autoscaling)
+	# https://fastapi.tiangolo.com/deployment/docker/#one-process-per-container
+	# if multi core used, then workers = 2 * num_cpus + 1 as best practices
+	# https://fastapi.tiangolo.com/deployment/server-workers/#gunicorn-with-uvicorn-workers
+	gunicorn ${API_FOLDER}.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker
