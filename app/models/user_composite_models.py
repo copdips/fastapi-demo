@@ -1,5 +1,5 @@
-from app.models.team_models import TeamRead
-from app.models.user_models import UserRead
+from app.models.team_models import TeamBase, TeamRead
+from app.models.user_models import UserBase, UserRead
 
 """
 Error when using lazy loading with [implicit IO](https://docs.sqlalchemy.org/en/14/orm/extensions/asyncio.html#preventing-implicit-io-when-using-asyncsession) in asyncio:
@@ -24,3 +24,8 @@ class UserReadComposite(UserRead):
     # When team is loaded, there's no users attribute in the team object. That's OK.
     # https://sqlmodel.tiangolo.com/tutorial/code-structure/?h=cir#circular-imports
     team: TeamRead | None = None
+
+
+class UserReadCompositeOutOfAPI(UserBase):
+    # model without BaseReadModel, so without HATEOAS links
+    team: TeamBase | None = None

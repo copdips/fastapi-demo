@@ -1,3 +1,4 @@
+import logging
 import os
 
 from pydantic import Field
@@ -51,6 +52,7 @@ class Settings(BaseSettings):
     api_env: str = os.getenv("API_ENV", DEFAULT_API_ENV)
     api_version: str = getattr(app, "__VERSION__", DEFAULT_API_VERSION)
     api_title: str = f"FastAPI demo ({api_env})"
+    api_title_slug: str = api_title.lower().replace(" ", "-")
     api_description: str = (
         f'<span style="background-color: {env_color.get(api_env, DEFAULT_API_ENV)};font-size:15pt">(env: {api_env}) '
         "A simple [FastAPI](https://fastapi.tiangolo.com/)"
@@ -65,6 +67,7 @@ class Settings(BaseSettings):
     debug: bool = api_env == DEFAULT_API_ENV
     testing: bool = is_testing()  # testing mode will use sqlite
     use_camel_case: bool = False
+    logging_level: int = logging.DEBUG if debug else logging.INFO
 
 
 settings = Settings()

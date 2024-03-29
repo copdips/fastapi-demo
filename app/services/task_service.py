@@ -1,3 +1,5 @@
+import logging
+
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.models.base_models import TaskStatus
@@ -7,8 +9,8 @@ from app.services.base_service import BaseService
 
 
 class TaskService(BaseService):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session, Task)
+    def __init__(self, session: AsyncSession, logger: logging.Logger):
+        super().__init__(session, Task, logger)
 
     async def update(self, task_id: str, new_data: TaskUpdate) -> Task:
         task = await self.get_by_id(task_id)

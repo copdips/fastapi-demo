@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 from sqlalchemy.exc import NoResultFound
@@ -10,10 +11,16 @@ from app.models.base_models import BaseSQLModel
 
 
 class BaseService:
-    def __init__(self, session: AsyncSession, model: type[BaseSQLModel]):
+    def __init__(
+        self,
+        session: AsyncSession,
+        model: type[BaseSQLModel],
+        logger: logging.Logger,
+    ):
         self.session = session
         self.model = model
         self.model_name = model.__name__
+        self.logger = logger
 
     async def get_by_id(
         self,

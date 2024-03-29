@@ -1,8 +1,8 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, BackgroundTasks, Query, status
 
-from app.core.deps import UserServiceDep
+from app.core.deps import EmailServiceDep, UserServiceDep
 from app.models.user_composite_models import UserReadComposite
 from app.models.user_models import UserCreate, UserRead, UserUpdate
 
@@ -59,8 +59,18 @@ async def update_user(
     user_service: UserServiceDep,
     user_id: str,
     user_update: UserUpdate,
+    email_service: EmailServiceDep,
+    background_tasks: BackgroundTasks,
 ):
-    return await user_service.update(user_id, user_update)
+    user_before_update = await user_service.get(user_id)
+    user = await user_service.update(user_id, user_update)
+    background_tasks.add_task(
+        email_service.send_for_user_update,
+        user,
+        user_update,
+        user_before_update,
+    )
+    return user
 
 
 @router.delete("/{user_id}", summary="Delete a user")

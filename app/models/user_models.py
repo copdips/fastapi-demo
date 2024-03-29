@@ -1,5 +1,6 @@
-from pydantic import ConfigDict
-from sqlmodel import Field
+from email_validator import validate_email
+from pydantic import ConfigDict, EmailStr, field_validator
+from sqlmodel import AutoString, Field
 
 from app.models.base_models import BaseModel, BaseReadModel
 
@@ -8,6 +9,15 @@ class UserBase(BaseModel):
     name: str = Field(unique=True, index=True)
     first_name: str
     last_name: str
+    # EmailStr with sa_type=AutoString: https://github.com/tiangolo/sqlmodel/discussions/730#discussioncomment-7952622
+    # or use: email: EmailStr = Field(sa_column=Column(String, index=True, unique=True))
+    email: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
+
+    @field_validator("email")
+    @classmethod
+    def verify_email(cls, v: str) -> EmailStr:
+        _ = validate_email(v, check_deliverability=False)
+        return v.lower()
 
 
 class UserCreate(UserBase):
@@ -39,4 +49,5 @@ class UserUpdate(BaseModel):
     name: str | None = None
     first_name: str | None = None
     last_name: str | None = None
-    team_id: str | None = None
+    email: str | None = None
+    team_name: str | None = None

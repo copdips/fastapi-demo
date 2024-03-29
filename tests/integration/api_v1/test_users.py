@@ -7,7 +7,12 @@ base_url = f"/{API_ROUTE_VERSION}/users"
 
 
 def test_create_user(client: TestClient):
-    body = {"name": "a1", "first_name": "b1", "last_name": "c1"}
+    body = {
+        "name": "a1",
+        "first_name": "b1",
+        "last_name": "c1",
+        "email": "test@test.com",
+    }
     response = client.post(
         base_url,
         json=body,

@@ -2,6 +2,7 @@
 alembic
 asyncpg
 devtools
+email-validator
 fastapi[all]
 gunicorn
 pydantic-settings

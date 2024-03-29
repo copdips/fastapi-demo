@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Sequence
 
 from fastapi import Query
@@ -12,8 +13,8 @@ from app.services.base_service import BaseService
 
 
 class TeamService(BaseService):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session, Team)
+    def __init__(self, session: AsyncSession, logger: logging.Logger):
+        super().__init__(session, Team, logger)
 
     async def create(self, team: TeamCreate) -> Team:
         db_team = Team.model_validate(team)

@@ -5,6 +5,7 @@ from pydantic import field_validator
 from sqlmodel import Field, MetaData, Relationship, SQLModel
 
 from app.models.base_models import BaseModel, BaseSQLModel
+from app.models.email_models import EmailBase
 from app.models.tag_models import TagBase
 from app.models.task_model import TaskBase
 from app.models.team_models import TeamBase
@@ -129,3 +130,6 @@ class Task(BaseSQLModel, TaskBase, table=True):
         # ref: https://github.com/tiangolo/sqlmodel/issues/63#issuecomment-1008320560
         # ref: https://github.com/sqlalchemy/sqlalchemy/blob/a124a593c86325389a92903d2b61f40c34f6d6e2/lib/sqlalchemy/sql/sqltypes.py#L2680
         return v.model_dump()
+
+
+class Email(BaseSQLModel, EmailBase, table=True): ...

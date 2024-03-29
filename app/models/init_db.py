@@ -29,27 +29,28 @@ async def create_init_data(async_session_factory: type[AsyncSession]):
             name="Deadpond",
             first_name="Dive",
             last_name="Wilson",
-            # team_id=team_z_force.id,
+            email="Deadpond@local.com",
             team=team_z_force,
         )
         user_a = User(
             name="a",
             first_name="b",
             last_name="c",
-            # team_id=team_z_force.id,
+            email="a@local.com",
             team=team_z_force,
         )
         user_rusty_man = User(
             name="Rusty-Man",
             first_name="Tommy",
             last_name="Sharp",
-            # team_id=team_preventers.id,
+            email="Rusty-Man@local.com",
             team=team_preventers,
         )
         user_spider_boy = User(
             name="Spider-Boy",
             first_name="Pedro",
             last_name="Parqueador",
+            email="Spider-Boy@local.com",
         )
         session.add(user_deadpond)
         session.add(user_a)

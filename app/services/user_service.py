@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Sequence
 
 from fastapi import Query
@@ -6,14 +7,14 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
-from app.models.db_models import User
+from app.models.db_models import Team, User
 from app.models.user_models import UserCreate, UserUpdate
 from app.services.base_service import BaseService
 
 
 class UserService(BaseService):
-    def __init__(self, session: AsyncSession):
-        super().__init__(session, User)
+    def __init__(self, session: AsyncSession, logger: logging.Logger):
+        super().__init__(session, User, logger)
 
     async def create(self, user: UserCreate) -> User:
         db_user = User.model_validate(user)  # Pydantic v1: User.from_orm(user)
@@ -60,6 +61,13 @@ class UserService(BaseService):
         # it won't consider it as unset.
         # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/update/#remove-fields
         user_data_dump = new_data.model_dump(exclude_unset=True)
+        if team_name := user_data_dump.pop("team_name", None):
+            team = (
+                await self.session.exec(
+                    select(Team).where(Team.name == team_name),  # type: ignore[attr-defined]
+                )
+            ).one()
+            user.team_id = team.id
         user.sqlmodel_update(user_data_dump)
         self.session.add(user)
         await self.session.commit()
