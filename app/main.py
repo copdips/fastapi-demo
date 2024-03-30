@@ -1,3 +1,4 @@
+import sentry_sdk
 from fastapi import FastAPI
 
 from app.core.exceptions import register_exception_handlers
@@ -8,6 +9,17 @@ from app.settings import settings
 
 
 def create_app() -> FastAPI:
+    sentry_sdk.init(
+        # https://github.com/getsentry/sentry-python/blob/master/sentry_sdk/integrations/fastapi.py
+        dsn="https://5cb8253e43f645566f0d1ae3cbbffb40@o4506997041135616.ingest.us.sentry.io/4506997043298304",
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )
     app = FastAPI(
         title=settings.api_title,
         version=settings.api_version,
@@ -25,3 +37,8 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+
+@app.get("/sentry-debug")
+async def trigger_error():
+    _ = 1 / 0
