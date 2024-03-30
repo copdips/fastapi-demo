@@ -62,7 +62,7 @@ async def create_team(
 @router.patch(
     "/{team_id}",
     summary="Update a team",
-    response_model=TeamRead,
+    response_model=TeamReadComposite,
 )
 async def update_team(
     *,

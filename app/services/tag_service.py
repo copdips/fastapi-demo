@@ -65,4 +65,5 @@ class TagService(BaseService):
         self.session.add(tag)
         await self.session.commit()
         await self.session.refresh(tag)
+        tag.teams = await tag.awt_teams
         return tag  # pyright: ignore[reportReturnType]

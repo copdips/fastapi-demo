@@ -1,7 +1,9 @@
+from collections.abc import Awaitable
 from datetime import UTC, datetime, timedelta
 
 import shortuuid
 import sqlalchemy as sa
+from async_sqlmodel import AsyncSQLModel, AwaitableField
 from pydantic import ConfigDict, field_validator
 from sqlmodel import Field, MetaData, Relationship, SQLModel
 from ulid import ULID
@@ -9,7 +11,7 @@ from ulid import ULID
 from app.models.base_models import BaseModel
 from app.models.email_models import EmailBase
 from app.models.tag_models import TagBase
-from app.models.task_model import TaskBase
+from app.models.task_model import EmailNotification, TaskBase
 from app.models.team_models import TeamBase
 from app.models.user_models import UserBase
 
@@ -30,10 +32,15 @@ db_naming_convention = {
 SQLModel.metadata = MetaData(naming_convention=db_naming_convention)
 
 
-class BaseSQLModel(BaseModel):
+class BaseSQLModel(
+    BaseModel,
+    AsyncSQLModel,
+):
     # ! validate_assignment=True to validate during SALModel(table=True) instance creation
     # https://github.com/tiangolo/sqlmodel/issues/52#issuecomment-1998440311
-    model_config = ConfigDict(validate_assignment=True)
+    model_config = ConfigDict(
+        validate_assignment=True,
+    )  # pyright: ignore[reportAssignmentType]
 
     # ! if uid and id are computed at SQL level, we should add `| None` on the typing,
     # and add `default=None` in the Field.
@@ -96,6 +103,7 @@ class Team(BaseSQLModel, TeamBase, table=True):
             "cascade": "all,delete,delete-orphan",
         },
     )
+    awt_users: Awaitable[list["User"]] = AwaitableField(field="users")
     """
     in sa_relationship_kwargs, we can specify also:
     sa_relationship_kwargs={
@@ -120,6 +128,7 @@ class Team(BaseSQLModel, TeamBase, table=True):
         back_populates="teams",
         link_model=TagTeamLink,
     )
+    awt_tags: Awaitable[list["Tag"]] = AwaitableField(field="tags")
 
 
 class User(BaseSQLModel, UserBase, table=True):
@@ -147,6 +156,7 @@ class User(BaseSQLModel, UserBase, table=True):
     # ref: https://sqlmodel.tiangolo.com/tutorial/code-structure/#hero-model-file
     # from typing import Optional
     # team: Optional["Team"] | None = Relationship(back_populates="users")
+    awt_team: Awaitable[Team] = AwaitableField(field="team")
 
 
 class Tag(BaseSQLModel, TagBase, table=True):
@@ -155,6 +165,7 @@ class Tag(BaseSQLModel, TagBase, table=True):
     # But the editor and other tools can see that the string is actually a type annotation inside,
     # and provide all the autocompletion, type checks, etc
     teams: list["Team"] = Relationship(back_populates="tags", link_model=TagTeamLink)
+    awt_teams: Awaitable[list["Team"]] = AwaitableField(field="teams")
 
 
 class Task(BaseSQLModel, TaskBase, table=True):
@@ -163,7 +174,7 @@ class Task(BaseSQLModel, TaskBase, table=True):
 
     @field_validator("email_notification")
     @classmethod
-    def email_notification_to_dict(cls, v):
+    def email_notification_to_dict(cls, v: EmailNotification):
         # ! without this dump, nested model like email_notification cannot be save into DB by sqlalchemey
         # ref: https://github.com/tiangolo/sqlmodel/issues/63#issuecomment-1008320560
         # ref: https://github.com/sqlalchemy/sqlalchemy/blob/a124a593c86325389a92903d2b61f40c34f6d6e2/lib/sqlalchemy/sql/sqltypes.py#L2680

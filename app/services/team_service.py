@@ -191,4 +191,8 @@ class TeamService(BaseService):
         self.session.add(team)
         await self.session.commit()
         await self.session.refresh(team)
+        awt_tags = await team.awt_tags
+        self.logger.info(f"team.awt_tags {awt_tags}")  # noqa: G004
+        awt_users = await team.awt_users
+        self.logger.info(f"team.awt_users {awt_users}")  # noqa: G004
         return team  # pyright: ignore[reportReturnType]

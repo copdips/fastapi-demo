@@ -52,7 +52,7 @@ async def create_user(
 @router.patch(
     "/{user_id}",
     summary="Update a user",
-    response_model=UserRead,
+    response_model=UserReadComposite,
 )
 async def update_user(
     *,

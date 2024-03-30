@@ -74,4 +74,5 @@ class UserService(BaseService):
         # right after session.commit(), user object is no more accessible,
         # so we need to refresh it, and also get update_at field updated.
         await self.session.refresh(user)
+        user.team = await user.awt_team
         return user

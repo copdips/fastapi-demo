@@ -62,7 +62,7 @@ async def create_tag(
 @router.patch(
     "/{tag_id}",
     summary="Update a tag",
-    response_model=TagRead,
+    response_model=TagReadComposite,
 )
 async def update_tag(
     *,
