@@ -1,11 +1,17 @@
 import sentry_sdk
 from fastapi import FastAPI
+from fastapi.routing import APIRoute
 
 from app.core.exceptions import register_exception_handlers
 from app.core.middlewares import lifespan
 from app.core.router import register_routers
 from app.routes import v1
 from app.settings import settings
+
+
+def custom_generate_unique_id(route: APIRoute) -> str:
+    # output: health-get_health@v1
+    return f"{route.tags[0]}-{route.name}@{route.path.split('/')[1]}"
 
 
 def create_app() -> FastAPI:
@@ -28,6 +34,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
         # `useUnsafeMarkdown` to add style to description
         swagger_ui_parameters={"useUnsafeMarkdown": True},
+        generate_unique_id_function=custom_generate_unique_id,
     )
 
     # app.include_router(v1.router, prefix=v1.VERSION_PREFIX)
@@ -37,8 +44,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
-
-@app.get("/sentry-debug")
-async def trigger_error():
-    _ = 1 / 0
