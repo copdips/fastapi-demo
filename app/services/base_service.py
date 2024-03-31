@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
@@ -9,12 +9,16 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.exceptions import NotFoundError
 from app.models.db_models import BaseSQLModel
 
+# Create a TypeVar that can be any subclass of BaseSQLModel
+T = TypeVar("T", bound=BaseSQLModel)
 
-class BaseService:
+
+class BaseService(Generic[T]):
     def __init__(
         self,
         session: AsyncSession,
-        model: type[BaseSQLModel],
+        # Specify that model is of type T, as model will be injected by sub class dynamically
+        model: type[T],
         logger: logging.Logger,
     ):
         self.session = session
@@ -26,10 +30,12 @@ class BaseService:
         self,
         model_id: str,  # ! this is the id column, not the uid PK column
         selectin_attributes: list[Any] | None = None,
-    ) -> type[BaseSQLModel]:
+    ) -> (
+        T
+    ):  # Indicate that the return type is an instance of T, later we create sub class of BaseService with User as T: class UserService(BaseService[User])
         try:
-            query = select(  # pyright: ignore[reportCallIssue]
-                self.model,  # pyright: ignore[reportArgumentType]
+            query = select(
+                self.model,
             )
             if selectin_attributes:
                 for attr in selectin_attributes:
@@ -54,5 +60,5 @@ class BaseService:
             # returns only rows count where the value in specified column_name is not None
             query = select(func.count(getattr(self.model, column_name)))
         # when column_name is not given, returns all rows count in the table
-        query = select(func.count()).select_from(self.model)  # type: ignore[arg-type]
+        query = select(func.count()).select_from(self.model)
         return (await self.session.exec(query)).one()

@@ -8,7 +8,7 @@ from app.models.task_model import TaskUpdate
 from app.services.base_service import BaseService
 
 
-class TaskService(BaseService):
+class TaskService(BaseService[Task]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Task, logger)
 
@@ -19,7 +19,7 @@ class TaskService(BaseService):
         self.session.add(task)
         await self.session.commit()
         await self.session.refresh(task)
-        return task  # pyright: ignore[reportReturnType]
+        return task
 
     async def set_status_to_done(self, task_id: str, message: str = "") -> Task:
         task_update = TaskUpdate(status=TaskStatus.done, message=message)

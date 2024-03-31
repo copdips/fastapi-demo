@@ -12,7 +12,7 @@ from app.models.user_models import UserCreate, UserUpdate
 from app.services.base_service import BaseService
 
 
-class UserService(BaseService):
+class UserService(BaseService[User]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, User, logger)
 
@@ -52,7 +52,7 @@ class UserService(BaseService):
         # breakpoint()
 
     async def update(self, user_id: str, new_data: UserUpdate) -> User:
-        user = await self.get_by_id(user_id)
+        user: User = await self.get_by_id(user_id)
         if not user:
             err_msg = f"User with id {user_id} not found"
             raise NotFoundError(err_msg)
@@ -64,7 +64,7 @@ class UserService(BaseService):
         if team_name := user_data_dump.pop("team_name", None):
             team = (
                 await self.session.exec(
-                    select(Team).where(Team.name == team_name),  # type: ignore[attr-defined]
+                    select(Team).where(Team.name == team_name),
                 )
             ).one()
             user.team_id = team.id

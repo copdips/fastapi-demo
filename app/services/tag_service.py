@@ -3,7 +3,7 @@ from collections.abc import Sequence
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
-from sqlmodel import select
+from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
@@ -12,7 +12,7 @@ from app.models.tag_models import TagCreate, TagUpdate
 from app.services.base_service import BaseService
 
 
-class TagService(BaseService):
+class TagService(BaseService[Tag]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Tag, logger)
 
@@ -26,7 +26,7 @@ class TagService(BaseService):
         return await self.get_by_id(
             tag_id,
             [Tag.teams],
-        )  # pyright: ignore[reportReturnType]
+        )
 
     async def get_many(
         self,
@@ -45,11 +45,16 @@ class TagService(BaseService):
         tag = await self.get_by_id(tag_id, [Tag.teams])
         tag_data_dump = new_data.model_dump(exclude_unset=True)
         if "teams_names" in tag_data_dump:
+            # set tag.teams to empty list to use tag.teams.extend() later as teams got from .all() is a Sequence type.
+            # MyPy complains on `tag.teams = teams` but not `tag.teams.extend(teams)`
+            # to use extend(), must pre-set tag.teams to empty list.
+            tag.teams = []
+            teams: Sequence[Team] = []
             if teams_names := set(tag_data_dump.pop("teams_names")):
                 teams = (
                     await self.session.exec(
                         select(Team).where(
-                            Team.name.in_(  # pyright: ignore[reportAttributeAccessIssue]
+                            col(Team.name).in_(
                                 teams_names,
                             ),
                         ),
@@ -58,12 +63,10 @@ class TagService(BaseService):
                 if len(teams) != len(teams_names):
                     msg = "Some teams not found."
                     raise NotFoundError(msg)
-            else:
-                teams = []
-            tag.teams = teams
+            tag.teams.extend(teams)
         tag.sqlmodel_update(tag_data_dump)
         self.session.add(tag)
         await self.session.commit()
         await self.session.refresh(tag)
         tag.teams = await tag.awt_teams
-        return tag  # pyright: ignore[reportReturnType]
+        return tag

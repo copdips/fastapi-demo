@@ -13,7 +13,7 @@ from app.models.user_models import UserUpdate
 from app.services.base_service import BaseService
 
 
-class EmailService(BaseService):
+class EmailService(BaseService[Email]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Email, logger)
 
@@ -33,7 +33,7 @@ class EmailService(BaseService):
         return email
 
     async def send(self, email_id: str) -> Email:
-        email: type[Email] = await self.get_by_id(email_id)
+        email: Email = await self.get_by_id(email_id)
         # ! send email logic here, asyncio.sleep to simulate sending email
         await asyncio.sleep(2)
         email_update = EmailUpdate(sent_at=datetime.now(UTC))

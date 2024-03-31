@@ -3,7 +3,7 @@ from collections.abc import Sequence
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
-from sqlmodel import select
+from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
@@ -12,7 +12,7 @@ from app.models.team_models import TeamCreate, TeamUpdate
 from app.services.base_service import BaseService
 
 
-class TeamService(BaseService):
+class TeamService(BaseService[Team]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Team, logger)
 
@@ -74,7 +74,7 @@ class TeamService(BaseService):
         return await self.get_by_id(
             team_id,
             [Team.tags, Team.users],
-        )  # pyright: ignore[reportReturnType]
+        )
 
     async def get_many(
         self,
@@ -164,35 +164,37 @@ class TeamService(BaseService):
         team = await self.get_by_id(team_id, [Team.tags, Team.users])
         team_data_dump = new_data.model_dump(exclude_unset=True)
         if "users_names" in team_data_dump:
+            team.users = []
+            users: Sequence[User] = []
             if users_names := set(team_data_dump.pop("users_names")):
                 users = (
                     await self.session.exec(
-                        select(User).where(User.name.in_(users_names)),  # type: ignore[attr-defined]
+                        select(User).where(col(User.name).in_(users_names)),
                     )
                 ).all()
                 if len(users) != len(users_names):
                     msg = "Some users not found."
                     raise NotFoundError(msg)
-            else:
-                users = []
-            team.users = users
+            team.users.extend(users)
         if "tags_names" in team_data_dump:
+            team.tags = []
+            tags: Sequence[Tag] = []
             if tags_names := set(team_data_dump.pop("tags_names")):
                 tags = (
-                    await self.session.exec(select(Tag).where(Tag.name.in_(tags_names)))  # type: ignore[attr-defined]
+                    await self.session.exec(
+                        select(Tag).where(col(Tag.name).in_(tags_names)),
+                    )
                 ).all()
                 if len(tags) != len(tags_names):
                     msg = "Some tags not found."
                     raise NotFoundError(msg)
-            else:
-                tags = []
-            team.tags = tags
+            team.tags.extend(tags)
         team.sqlmodel_update(team_data_dump)
         self.session.add(team)
         await self.session.commit()
         await self.session.refresh(team)
-        awt_tags = await team.awt_tags
-        self.logger.info(f"team.awt_tags {awt_tags}")  # noqa: G004
-        awt_users = await team.awt_users
-        self.logger.info(f"team.awt_users {awt_users}")  # noqa: G004
-        return team  # pyright: ignore[reportReturnType]
+        # to get updated related tags and user, we don't need below awt_tags, awt_users, as team has already the updated data, even session.refresh is not needed.
+        # but if you need to display updated_at in the API result, then session.refresh() is needed.
+        team.tags = await team.awt_tags
+        # team.users = await team.awt_users
+        return team
