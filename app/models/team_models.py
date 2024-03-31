@@ -1,7 +1,6 @@
-from pydantic import ConfigDict
 from sqlmodel import Field
 
-from app.models.base_models import BaseModel, BaseReadModel
+from app.models.base_models import BaseModel, BaseReadModel, ForbidExtraMixin
 
 
 class TeamBase(BaseModel):
@@ -9,9 +8,7 @@ class TeamBase(BaseModel):
     headquarters: str
 
 
-class TeamCreate(TeamBase):
-    # https://docs.pydantic.dev/2.6/errors/validation_errors/#extra_forbidden
-    model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
+class TeamCreate(TeamBase, ForbidExtraMixin): ...
 
 
 class TeamRead(TeamBase, BaseReadModel):
@@ -20,8 +17,7 @@ class TeamRead(TeamBase, BaseReadModel):
     # updated_at: datetime | None
 
 
-class TeamUpdate(BaseModel):
-    model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
+class TeamUpdate(BaseModel, ForbidExtraMixin):
     name: str | None = None
     headquarters: str | None = None
     # instead of UPDATING users and tags, better to use add/remove users/tags

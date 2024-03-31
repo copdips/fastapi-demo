@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from email_validator import validate_email
-from pydantic import ConfigDict, field_validator
+from pydantic import field_validator
 
-from app.models.base_models import BaseModel, BaseReadModel
+from app.models.base_models import BaseModel, BaseReadModel, ForbidExtraMixin
 
 
 class EmailBase(BaseModel):
@@ -17,9 +17,7 @@ class EmailBase(BaseModel):
     tracking_id: str | None = None
 
 
-class EmailCreate(EmailBase):
-    model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
-
+class EmailCreate(EmailBase, ForbidExtraMixin):
     @field_validator("sender")
     @classmethod
     def validate_sender(cls, v: str) -> str:
@@ -40,8 +38,7 @@ class EmailRead(EmailBase, BaseReadModel):
     sent_at: datetime | None
 
 
-class EmailUpdate(BaseModel):
-    model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
+class EmailUpdate(BaseModel, ForbidExtraMixin):
     type: str | None = None
     subject: str | None = None
     body: str | None = None

@@ -29,6 +29,13 @@ class BaseModel(SQLModel):
         )
 
 
+class ForbidExtraMixin:
+    # ! when using ForbidExtraMixin with BaseModel for example,
+    # model_config gets the cumulative effect, not replace, but override for the same config.
+    # https://docs.pydantic.dev/2.6/errors/validation_errors/#extra_forbidden
+    model_config = ConfigDict(extra="forbid")
+
+
 class HateoasLink(BaseModel):
     href: str
     title: str

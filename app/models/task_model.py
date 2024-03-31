@@ -1,10 +1,15 @@
 from datetime import UTC, datetime
 from typing import Any, Self
 
-from pydantic import ConfigDict, computed_field, model_validator
+from pydantic import computed_field, model_validator
 from sqlmodel import JSON, Column, Field, SQLModel
 
-from app.models.base_models import BaseModel, BaseReadModel, TaskStatus
+from app.models.base_models import (
+    BaseModel,
+    BaseReadModel,
+    ForbidExtraMixin,
+    TaskStatus,
+)
 
 
 class EmailNotification(SQLModel):
@@ -47,8 +52,7 @@ class TaskRead(TaskBase, BaseReadModel):
         return None
 
 
-class TaskUpdate(SQLModel):
-    model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
+class TaskUpdate(SQLModel, ForbidExtraMixin):
     status: TaskStatus | None = None
     description: str | None = None
     message: str | None = None

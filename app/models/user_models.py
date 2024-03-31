@@ -1,8 +1,8 @@
 from email_validator import validate_email
-from pydantic import ConfigDict, EmailStr, field_validator
+from pydantic import EmailStr, field_validator
 from sqlmodel import AutoString, Field
 
-from app.models.base_models import BaseModel, BaseReadModel
+from app.models.base_models import BaseModel, BaseReadModel, ForbidExtraMixin
 
 
 class UserBase(BaseModel):
@@ -20,8 +20,7 @@ class UserBase(BaseModel):
         return v.lower()
 
 
-class UserCreate(UserBase):
-    model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
+class UserCreate(UserBase, ForbidExtraMixin): ...
 
 
 class UserRead(UserBase, BaseReadModel):
@@ -36,15 +35,13 @@ class UserRead(UserBase, BaseReadModel):
     # updated_at: datetime | None
 
 
-class UserUpdate(BaseModel):
+class UserUpdate(BaseModel, ForbidExtraMixin):
     # class without param (table=True) will be a simple Pydantic BaseModel
     """
     create UserUpdate in addition to User model to avoid updating id,
     and also need to set all the update fields optional for the UPDATE endpoint, not PUT
     ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/update/#heroupdate-model
     """
-
-    model_config = ConfigDict(extra="forbid")  # type: ignore[assignment]
 
     name: str | None = None
     first_name: str | None = None
