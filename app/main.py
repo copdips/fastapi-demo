@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 
 from app.core.exceptions import register_exception_handlers
-from app.core.middlewares import lifespan
+from app.core.middlewares import lifespan, register_middlewares
 from app.core.router import register_routers
 from app.routes import v1
 from app.settings import settings
@@ -39,6 +39,7 @@ def create_app() -> FastAPI:
 
     # app.include_router(v1.router, prefix=v1.VERSION_PREFIX)
     register_exception_handlers(app)
+    register_middlewares(app)
     register_routers(app, v1)
     return app
 

@@ -9,6 +9,7 @@ import app
 DEFAULT_ENV_FILE = ".env"
 DEFAULT_API_ENV = "local"
 DEFAULT_API_VERSION = "0.0.0"
+APITALLY_CLIENT_ID = "52e18f0a-c986-495d-8a12-be2e139da490"
 
 
 def is_testing() -> bool:
@@ -68,6 +69,7 @@ class Settings(BaseSettings):
     testing: bool = is_testing()  # testing mode will use sqlite
     use_camel_case: bool = False
     logging_level: int = logging.DEBUG if debug else logging.INFO
+    apitally_client_id: str = APITALLY_CLIENT_ID
 
 
 settings = Settings()

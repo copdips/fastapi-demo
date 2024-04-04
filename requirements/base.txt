@@ -1,5 +1,6 @@
 # production requirements need to be pinned, here's for my quick demo only
 alembic
+apitally[fastapi]
 async-sqlmodel
 asyncpg
 devtools
