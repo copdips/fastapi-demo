@@ -4,7 +4,7 @@ from fastapi.routing import APIRoute
 
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logger
-from app.core.middlewares import lifespan, register_middlewares
+from app.core.middleware import lifespan, register_middlewares
 from app.core.router import register_routers
 from app.routes import v1
 from app.settings import settings

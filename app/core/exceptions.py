@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import NoResultFound
 
 from app.core.logging import get_logger
+from app.core.middlewares.request_id import get_request_id
 
 
 class NotFoundError(Exception):
@@ -43,8 +44,10 @@ def register_unhandled_exception(app: FastAPI):
     ):
         logger = get_logger()
         current_correlation_id = correlation_id.get() or ""
+        current_request_id = get_request_id()
         err_msg = (
             f"correlation_id: {current_correlation_id}, "
+            f"request_id: {current_request_id}, "
             f"Internal server error occurred: {ex}"
         )
         logger.exception(err_msg)
@@ -55,9 +58,13 @@ def register_unhandled_exception(app: FastAPI):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=(
                     f"Internal server error {exc_name} occurred, "
-                    f"correlation_id: {current_correlation_id}"
+                    f"correlation_id: {current_correlation_id} "
+                    f"request_id: {current_request_id}, "
                 ),
-                headers={"X-Request-ID": current_correlation_id},
+                headers={
+                    "X-Correlation-ID": current_correlation_id,
+                    "X-Request-ID": current_request_id,
+                },
             ),
         )
 
