@@ -1,6 +1,7 @@
 # production requirements need to be pinned, here's for my quick demo only
 alembic
 apitally[fastapi]
+asgi-correlation-id
 async-sqlmodel
 asyncpg
 devtools
