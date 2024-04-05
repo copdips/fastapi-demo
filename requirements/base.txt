@@ -8,10 +8,13 @@ devtools
 email-validator
 fastapi[all]
 gunicorn
+profyle
 pydantic-settings
+pyinstrument
 python-ulid
 sentry-sdk[fastapi]
 shortuuid
 SQLAlchemy
 sqlmodel
 uvicorn[standard]
+viztracer

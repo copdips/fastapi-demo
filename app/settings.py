@@ -65,11 +65,16 @@ class Settings(BaseSettings):
         "url": "https://copdips.com/",
         "email": "xiang.zhu@outlook.com",
     }
-    debug: bool = api_env == DEFAULT_API_ENV
-    testing: bool = is_testing()  # testing mode will use sqlite
     use_camel_case: bool = False
-    logging_level: int = logging.DEBUG if debug else logging.INFO
+
+    debug: bool = api_env == DEFAULT_API_ENV
+    testing: bool = (
+        is_testing()
+    )  # testing mode will use sqlite, and disable profiling middleware
+    profiling: bool = not testing
+    profiling_interval_seconds: float = 0.0001
     apitally_client_id: str = APITALLY_CLIENT_ID
+    logging_level: int = logging.DEBUG if debug else logging.INFO
 
 
 settings = Settings()

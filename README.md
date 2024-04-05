@@ -107,3 +107,47 @@ CREATE SCHEMA public;
 ## External Task
 
 Celery might not be the best tool: <https://github.com/tiangolo/full-stack-fastapi-template/pull/694>
+
+## Profiling
+
+### Pyinstrument
+
+<https://pyinstrument.readthedocs.io/>
+
+Add `$profile=1` in query param
+
+### Py-spy
+
+<https://github.com/benfred/py-spy>
+
+```bash
+py-spy top -- python -m uvicorn app.main:app
+
+# or
+make run
+lsof -i :8000
+py-spy top --pid $python_pid
+
+# or dump current call stack to console
+py-spy dump --pid $python_pid
+py-spy dump --pid $python_pid --locals # with locals vars
+```
+
+Run in Docker:
+
+```yaml
+# https://github.com/benfred/py-spy?tab=readme-ov-file#how-do-i-run-py-spy-in-docker
+your_service:
+   cap_add:
+     - SYS_PTRACE
+```
+
+Run in Kubernetes:
+
+```yaml
+# https://github.com/benfred/py-spy?tab=readme-ov-file#how-do-i-run-py-spy-in-kubernetes
+securityContext:
+  capabilities:
+    add:
+    - SYS_PTRACE
+```

@@ -46,7 +46,6 @@ class UserService(BaseService[User]):
         )
         return (await self.session.exec(query)).all()
         # for user, team in res:
-        # debug("=====================================")
         # debug(f"user_1: {user_1}")
         # debug("user:", user, "Team:", team)
         # breakpoint()

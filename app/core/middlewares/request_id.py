@@ -34,7 +34,6 @@ class RequestContextLogMiddleware(BaseHTTPMiddleware):
         #     ),
         # )
         request_id = _request_id_ctx_var.set(uuid4().hex)
-        # debug("========= in RequestContextLogMiddleware =========")
 
         response = await call_next(request)
         # response.headers["X-Correlation-ID"] = get_correlation_id()
@@ -43,5 +42,4 @@ class RequestContextLogMiddleware(BaseHTTPMiddleware):
         # _correlation_id_ctx_var.reset(correlation_id)
         _request_id_ctx_var.reset(request_id)
 
-        # debug("========= out RequestContextLogMiddleware =========")
         return response

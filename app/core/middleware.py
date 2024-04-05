@@ -2,8 +2,10 @@ from contextlib import asynccontextmanager
 
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
+from profyle.fastapi import ProfyleMiddleware
 
 from app.core.db import async_session_factory, init_db
+from app.core.middlewares.profiling import PyInstrumentMiddleware
 from app.core.middlewares.request_id import RequestContextLogMiddleware
 from app.settings import settings
 
@@ -47,3 +49,9 @@ def register_middlewares(_app: FastAPI):
     )
     # ! RequestContextLogMiddleware is not compatible with ApitallyMiddleware
     _app.add_middleware(RequestContextLogMiddleware)
+    if settings.profiling:
+        # run profyle start to start the ProfyleMiddleware profiling
+        # and visit http://127.0.0.1:5432 to see the result
+        _app.add_middleware(PyInstrumentMiddleware)
+        if settings.debug:
+            _app.add_middleware(ProfyleMiddleware)

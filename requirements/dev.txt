@@ -5,6 +5,7 @@ devtools
 erdantic
 ipython
 pre-commit
+py-spy
 pyright
 pytest
 pytest-asyncio
