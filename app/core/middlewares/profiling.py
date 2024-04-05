@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from pyinstrument import Profiler
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
-from app.settings import settings
+from app.config import settings
 
 
 class PyInstrumentMiddleware(BaseHTTPMiddleware):

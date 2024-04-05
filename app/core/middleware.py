@@ -4,10 +4,10 @@ from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from profyle.fastapi import ProfyleMiddleware
 
+from app.config import settings
 from app.core.db import async_session_factory, init_db
 from app.core.middlewares.profiling import PyInstrumentMiddleware
 from app.core.middlewares.request_id import RequestContextLogMiddleware
-from app.settings import settings
 
 
 @asynccontextmanager

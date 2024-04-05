@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 
+from app.config import settings
 from app.models.init_db import create_init_data
-from app.settings import settings
 
 """
 https://github.com/tiangolo/sqlmodel/blob/4c3f242ae215b28ef7b1dcb37411531999826d0d/sqlmodel/ext/asyncio/session.py#L99

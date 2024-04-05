@@ -2,8 +2,8 @@ import logging
 
 import asgi_correlation_id
 
+from app.config import settings
 from app.core.middlewares.request_id import get_request_id
-from app.settings import settings
 
 
 def get_logger():

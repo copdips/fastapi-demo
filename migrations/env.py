@@ -34,7 +34,7 @@ https://alembic.sqlalchemy.org/en/latest/naming.html#integration-of-naming-conve
 from app.models.db_models import SQLModel
 
 # ! import settings to set sqlalchemy.url
-from app.settings import settings
+from app.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

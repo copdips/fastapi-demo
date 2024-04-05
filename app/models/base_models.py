@@ -6,7 +6,7 @@ from pydantic import ConfigDict, computed_field
 from pydantic.alias_generators import to_camel, to_snake
 from sqlmodel import SQLModel
 
-from app.settings import settings
+from app.config import settings
 
 
 class TaskStatus(Enum):

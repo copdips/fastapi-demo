@@ -2,12 +2,12 @@ import sentry_sdk
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 
+from app.config import settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logger
 from app.core.middleware import lifespan, register_middlewares
 from app.core.router import register_routers
 from app.routes import v1
-from app.settings import settings
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
