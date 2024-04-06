@@ -41,8 +41,8 @@ def register_middlewares(_app: FastAPI):
         # StreamingResponse/FileResponse issue has been resolved:
         # https://github.com/encode/starlette/issues/1012#issuecomment-673461832
         CorrelationIdMiddleware,
-        header_name="x-correlation-id",
-        # ULID is not used as generator for a better consistency,,
+        header_name="x-correlation-id",  # locally generated unique x-request-id is handled by RequestContextLogMiddleware
+        # ULID is not used as generator for a better consistency, and CorrelationIdMiddleware generates by default uuid4 by eliminating the hyphen, which is very nice for copy.
         # as if x-request-id is given by client, CorrelationIdMiddleware only validates uuid format, but not ULID.
         # Otherwise, we need to also provide a validator for ULID.
         # generator=lambda: str(ULID()),

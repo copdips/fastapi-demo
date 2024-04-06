@@ -40,7 +40,7 @@ def create_app() -> FastAPI:
 
     # ! till here, lifespan is just declared but not called yet.
     # so configure_logger() is not set in lifesapn, but manually here.
-    configure_logger()
+    configure_logger(app)
     register_exception_handlers(app)
     register_middlewares(app)
     register_routers(app, v1)

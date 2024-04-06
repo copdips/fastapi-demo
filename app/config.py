@@ -42,6 +42,15 @@ class DBSettings(BaseSettings):
     DB_CONN_URL: str = Field(default=...)
 
 
+class LoggingSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+    APP_INSIGHTS_CONNECTION_STRING: str = Field(default=...)
+
+
 class Settings(BaseSettings):
     # use `= Field(default=...)` as per https://github.com/pydantic/pydantic/issues/3753#issuecomment-1060850457
     model_config = SettingsConfigDict(
@@ -50,6 +59,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     db_settings: DBSettings = Field(default_factory=DBSettings)
+    logging_settings: LoggingSettings = Field(default_factory=LoggingSettings)
     api_env: str = os.getenv("API_ENV", DEFAULT_API_ENV)
     api_version: str = getattr(app, "__VERSION__", DEFAULT_API_VERSION)
     api_title: str = f"FastAPI demo ({api_env})"
@@ -67,7 +77,8 @@ class Settings(BaseSettings):
     }
     use_camel_case: bool = False
 
-    debug: bool = api_env == DEFAULT_API_ENV
+    # debug: bool = api_env == DEFAULT_API_ENV
+    debug: bool = False
     testing: bool = (
         is_testing()
     )  # testing mode will use sqlite, and disable profiling middleware
@@ -75,6 +86,13 @@ class Settings(BaseSettings):
     profiling_interval_seconds: float = 0.0001
     apitally_client_id: str = APITALLY_CLIENT_ID
     logging_level: int = logging.DEBUG if debug else logging.INFO
+    logging_static_extra: dict[str, str] = {
+        "api_version": api_version,
+        "api_env": api_env,
+        "api_title": api_title,
+        "api_title_slug": api_title_slug,
+    }
+    enable_azure_monitor: bool = False
 
 
 settings = Settings()

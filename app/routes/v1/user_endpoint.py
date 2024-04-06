@@ -3,11 +3,13 @@ from typing import Annotated
 from fastapi import APIRouter, BackgroundTasks, Query, status
 
 from app.core.deps import EmailServiceDep, UserServiceDep
+from app.core.logging import get_logger
 from app.models.user_composite_models import UserReadComposite
 from app.models.user_models import UserCreate, UserRead, UserUpdate
 
 router = APIRouter()
 endpoint_name = "users"
+logger = get_logger()
 
 
 @router.get("/{user_id}", summary="Get single user", response_model=UserReadComposite)
@@ -19,6 +21,7 @@ async def get_user(
     user_service: UserServiceDep,
     user_id: str,
 ):
+    logger.info("Getting single user")
     return await user_service.get(user_id)
 
 
@@ -32,6 +35,7 @@ async def get_users(
     # limit: int = Query(default=100, le=100),
     limit: Annotated[int, Query(le=100)] = 100,
 ):
+    logger.info("Getting some users")
     return await user_service.get_many(skip, limit)
 
 

@@ -4,10 +4,12 @@ apitally[fastapi]
 asgi-correlation-id
 async-sqlmodel
 asyncpg
+azure-monitor-opentelemetry
 devtools
 email-validator
 fastapi[all]
 gunicorn
+opentelemetry-instrumentation-fastapi
 profyle
 pydantic-settings
 pyinstrument

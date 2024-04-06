@@ -24,6 +24,7 @@ class UserService(BaseService[User]):
 
     async def get(self, user_id: str) -> User:
         # selectinload(User.team) for eager loading
+        self.logger.info("Getting single user in service")
         return await self.get_by_id(
             user_id,
             [User.team],
@@ -44,6 +45,7 @@ class UserService(BaseService[User]):
             .offset(offset)
             .limit(limit)
         )
+        self.logger.info("Getting some users in service")
         return (await self.session.exec(query)).all()
         # for user, team in res:
         # debug(f"user_1: {user_1}")
@@ -60,6 +62,7 @@ class UserService(BaseService[User]):
         # it won't consider it as unset.
         # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/update/#remove-fields
         user_data_dump = new_data.model_dump(exclude_unset=True)
+        new_data.dict()
         if team_name := user_data_dump.pop("team_name", None):
             team = (
                 await self.session.exec(
