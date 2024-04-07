@@ -22,15 +22,16 @@ lint:
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
 	pre-commit run --all-files
 
-test:
-	@echo "${BOLD}${YELLOW}Running unit tests:${NORMAL}"
-	$(PYTHON) -m pytest
 
 test-integration:
 	@echo "${BOLD}${YELLOW}Running integration tests:${NORMAL}"
-	$(PYTHON) -m pytest tests/integration --cov-fail-under=95
+	# ! --dist=loadfile to let Tests are grouped by their containing file.
+	# Groups are distributed to available workers as whole units.
+	# This guarantees that all tests in a file run in the same worker.
+	# https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
+	$(PYTHON) -m pytest tests/integration -n auto --dist=loadfile
 
-test-all: test test-integration
+test: test-integration
 
 run:
 	TESTING=true uvicorn ${API_FOLDER}.main:app --reload

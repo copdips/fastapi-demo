@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from functools import wraps
 from typing import Any
 
@@ -62,7 +63,7 @@ def configure_logger(_app: FastAPI):
             logger_name=settings.api_title_slug,
         )
     logger = logging.getLogger(settings.api_title_slug)
-    handler = logging.StreamHandler()
+    stream_handler = logging.StreamHandler()
     formatter = logging.Formatter(
         "%(asctime)s"
         " - %(levelname)s"
@@ -72,8 +73,9 @@ def configure_logger(_app: FastAPI):
         " - [%(correlation_id)s][%(request_id)s]"
         ": %(message)s",
     )
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    stream_handler.setFormatter(formatter)
+    if os.environ.get("TESTING") != "yes":
+        logger.addHandler(stream_handler)
     logger.setLevel(settings.logging_level)
     logger.addFilter(asgi_correlation_id.CorrelationIdFilter())
     logger.addFilter(RequestIdFilter())

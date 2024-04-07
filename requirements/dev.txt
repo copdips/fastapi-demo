@@ -11,6 +11,7 @@ pytest
 pytest-asyncio
 pytest-cov
 pytest-env
+pytest-xdist
 ruff
 sqlacodegen>=3.0.0rc5
 types-setuptools
