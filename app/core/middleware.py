@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
+from fastapi.middleware.gzip import GZipMiddleware
 from profyle.fastapi import ProfyleMiddleware
 
 from app.config import settings
@@ -53,6 +54,8 @@ def register_middlewares(_app: FastAPI):
     #     client_id=settings.apitally_client_id,
     #     env="dev",  # or "prod"
     # )
+    # https://fastapi.tiangolo.com/advanced/middleware/#gzipmiddleware
+    _app.add_middleware(GZipMiddleware, minimum_size=1000)
     _app.add_middleware(LogRouteMiddleware)
     _app.add_middleware(
         # ! CorrelationIdMiddleware could use BaseHTTPMiddleware as
