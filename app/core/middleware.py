@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
+from msgpack_asgi import MessagePackMiddleware
 from profyle.fastapi import ProfyleMiddleware
 
 from app.config import settings
@@ -54,6 +55,13 @@ def register_middlewares(_app: FastAPI):
     #     client_id=settings.apitally_client_id,
     #     env="dev",  # or "prod"
     # )
+
+    """
+    https://github.com/florimondmanca/msgpack-asgi
+    curl -X 'GET' 'http://localhost:8000/v1/health/' -H 'accept: application/json'
+    curl -X 'GET' 'http://localhost:8000/v1/health/' -H 'accept: application/x-msgpack'
+    """
+    _app.add_middleware(MessagePackMiddleware)
     # https://fastapi.tiangolo.com/advanced/middleware/#gzipmiddleware
     _app.add_middleware(GZipMiddleware, minimum_size=1000)
     _app.add_middleware(LogRouteMiddleware)

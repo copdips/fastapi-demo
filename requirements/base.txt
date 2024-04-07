@@ -9,6 +9,7 @@ devtools
 email-validator
 fastapi[all]
 gunicorn
+msgpack-asgi
 opentelemetry-instrumentation-fastapi
 orjson
 profyle
