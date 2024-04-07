@@ -6,8 +6,12 @@ from profyle.fastapi import ProfyleMiddleware
 
 from app.config import settings
 from app.core.db import async_session_factory, init_db
+from app.core.logging import force_flush_logs, get_logger
+from app.core.middlewares.log_route import LogRouteMiddleware
 from app.core.middlewares.profiling import PyInstrumentMiddleware
 from app.core.middlewares.request_id import RequestContextLogMiddleware
+
+logger = get_logger()
 
 
 @asynccontextmanager
@@ -18,11 +22,24 @@ async def lifespan(_app: FastAPI):
     _app.state.settings = settings
     if settings.testing:
         await init_db(async_session_factory)
+
+    logger.info("App started successfully.")
     yield
+    # even got ctrl+c SIGINT signal, this block will be executed.
+    # but if we close the bash console forcefully, this block will not be executed.
+    logger.info("App is shutting down.")
+    force_flush_logs()
+    # trace_provider.force_flush(2000)
+    # meter_provider.force_flush(2000)
+    # log_provider.force_flush(2000)
+    # this final message will only be shown in the console.
+    logger.info("App shutdown successfully.")
 
 
 def register_middlewares(_app: FastAPI):
     # ! multiple middlewares order:
+    # https://github.com/tiangolo/fastapi/issues/5018#issuecomment-1152795409
+    # ! after test, first added middleware is called last
     # _app.add_middleware(A)
     # _app.add_middleware(B)
     #  request -> B -> A
@@ -36,6 +53,7 @@ def register_middlewares(_app: FastAPI):
     #     client_id=settings.apitally_client_id,
     #     env="dev",  # or "prod"
     # )
+    _app.add_middleware(LogRouteMiddleware)
     _app.add_middleware(
         # ! CorrelationIdMiddleware could use BaseHTTPMiddleware as
         # StreamingResponse/FileResponse issue has been resolved:

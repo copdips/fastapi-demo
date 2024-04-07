@@ -16,6 +16,7 @@ from app.core.middlewares.request_id import get_request_id
 
 
 def get_logger():
+    # must be used after configure_logger()
     return logging.getLogger(settings.api_title_slug)
 
 
@@ -36,6 +37,18 @@ class StaticExtraLogFilter(logging.Filter):
         for k, v in self.static_extra_tuples:
             setattr(record, k, v)
         return True
+
+
+def force_flush_logs():
+    logger = get_logger()
+    for h in logger.handlers:
+        h.flush()
+        # opentelemetry add _logger_provider to handlers
+        if hasattr(h, "_logger_provider") and hasattr(
+            h._logger_provider,  # pyright: ignore [reportAttributeAccessIssue]  # noqa: SLF001
+            "force_flush",
+        ):
+            h._logger_provider.force_flush()  # pyright: ignore [reportAttributeAccessIssue]  # noqa: SLF001
 
 
 def configure_logger(_app: FastAPI):

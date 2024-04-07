@@ -26,6 +26,9 @@ def get_request_id() -> str:
 
 
 class RequestContextLogMiddleware(BaseHTTPMiddleware):
+    # ! BaseHTTPMiddleware is not good when dealing with ContextVar,
+    # use pure AGSI Middleware instead, like what it does in CorrelationIdMiddleware.
+    # https://www.starlette.io/middleware/#limitations
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint):
         # correlation_id = _correlation_id_ctx_var.set(
         #     request.headers.get(
