@@ -10,6 +10,7 @@ email-validator
 fastapi[all]
 gunicorn
 opentelemetry-instrumentation-fastapi
+orjson
 profyle
 pydantic-settings
 pyinstrument

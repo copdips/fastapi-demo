@@ -1,5 +1,6 @@
 import sentry_sdk
 from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 from fastapi.routing import APIRoute
 
 from app.config import settings
@@ -36,6 +37,9 @@ def create_app() -> FastAPI:
         # `useUnsafeMarkdown` to add style to description
         swagger_ui_parameters={"useUnsafeMarkdown": True},
         generate_unique_id_function=custom_generate_unique_id,
+        # https://fastapi.tiangolo.com/advanced/custom-response/#use-orjsonresponse
+        # https://fastapi.tiangolo.com/advanced/custom-response/#default-response-class
+        default_response_class=ORJSONResponse,
     )
 
     # ! till here, lifespan is just declared but not called yet.
