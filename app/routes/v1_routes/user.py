@@ -4,8 +4,8 @@ from fastapi import APIRouter, BackgroundTasks, Query, status
 
 from app.core.deps import EmailServiceDep, UserServiceDep
 from app.core.logging import get_logger
-from app.models.user_composite_models import UserReadComposite
-from app.models.user_models import UserCreate, UserRead, UserUpdate
+from app.models.user import UserCreate, UserRead, UserUpdate
+from app.models.user_composite import UserReadComposite
 
 router = APIRouter()
 endpoint_name = "users"

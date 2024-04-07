@@ -8,8 +8,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.db import async_session_factory
 from app.core.logging import get_logger
 from app.services import TagService, TeamService, UserService
-from app.services.email_service import EmailService
-from app.services.task_service import TaskService
+from app.services.email import EmailService
+from app.services.task import TaskService
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:

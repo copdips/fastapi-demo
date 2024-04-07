@@ -7,9 +7,9 @@ from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
-from app.models.db_models import Tag, Team, User
-from app.models.team_models import TeamCreate, TeamUpdate
-from app.services.base_service import BaseService
+from app.models.db import Tag, Team, User
+from app.models.team import TeamCreate, TeamUpdate
+from app.services.base import BaseService
 
 
 class TeamService(BaseService[Team]):

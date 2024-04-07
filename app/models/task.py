@@ -4,7 +4,7 @@ from typing import Any, Self
 from pydantic import computed_field, model_validator
 from sqlmodel import JSON, Column, Field, SQLModel
 
-from app.models.base_models import (
+from app.models.base import (
     BaseModel,
     BaseReadModel,
     ForbidExtraMixin,

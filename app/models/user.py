@@ -2,7 +2,7 @@ from email_validator import validate_email
 from pydantic import EmailStr, field_validator
 from sqlmodel import AutoString, Field
 
-from app.models.base_models import BaseModel, BaseReadModel, ForbidExtraMixin
+from app.models.base import BaseModel, BaseReadModel, ForbidExtraMixin
 
 
 class UserBase(BaseModel):

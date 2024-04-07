@@ -7,7 +7,7 @@ from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logger
 from app.core.middleware import lifespan, register_middlewares
 from app.core.router import register_routers
-from app.routes import v1
+from app.routes import v1_routes
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -43,7 +43,7 @@ def create_app() -> FastAPI:
     configure_logger(app)
     register_exception_handlers(app)
     register_middlewares(app)
-    register_routers(app, v1)
+    register_routers(app, v1_routes)
     return app
 
 

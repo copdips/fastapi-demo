@@ -4,7 +4,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.deps import get_db_session
-from app.models.health_models import HealthRead
+from app.models.health import HealthRead
 
 router = APIRouter()
 endpoint_name = "health"

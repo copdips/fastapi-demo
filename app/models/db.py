@@ -8,12 +8,12 @@ from pydantic import ConfigDict, field_validator
 from sqlmodel import Field, MetaData, Relationship, SQLModel
 from ulid import ULID
 
-from app.models.base_models import BaseModel
-from app.models.email_models import EmailBase
-from app.models.tag_models import TagBase
-from app.models.task_model import EmailNotification, TaskBase
-from app.models.team_models import TeamBase
-from app.models.user_models import UserBase
+from app.models.base import BaseModel
+from app.models.email import EmailBase
+from app.models.tag import TagBase
+from app.models.task import EmailNotification, TaskBase
+from app.models.team import TeamBase
+from app.models.user import UserBase
 
 # declare SQLModel here to be used in alembic migrations/env.py to avoid MyPy error
 __all__ = ["SQLModel"]

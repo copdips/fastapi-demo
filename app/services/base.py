@@ -7,7 +7,7 @@ from sqlmodel import func, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
-from app.models.db_models import BaseSQLModel
+from app.models.db import BaseSQLModel
 
 # Create a TypeVar that can be any subclass of BaseSQLModel
 T = TypeVar("T", bound=BaseSQLModel)

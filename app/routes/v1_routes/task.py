@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.core.deps import TaskServiceDep
-from app.models.task_model import TaskRead
+from app.models.task import TaskRead
 
 router = APIRouter()
 endpoint_name = "tasks"

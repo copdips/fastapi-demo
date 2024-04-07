@@ -3,7 +3,7 @@ from datetime import datetime
 from email_validator import validate_email
 from pydantic import field_validator
 
-from app.models.base_models import BaseModel, BaseReadModel, ForbidExtraMixin
+from app.models.base import BaseModel, BaseReadModel, ForbidExtraMixin
 
 
 class EmailBase(BaseModel):

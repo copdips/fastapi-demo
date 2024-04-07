@@ -1,6 +1,6 @@
 from sqlmodel import Field
 
-from app.models.base_models import BaseModel, BaseReadModel, ForbidExtraMixin
+from app.models.base import BaseModel, BaseReadModel, ForbidExtraMixin
 
 
 class TeamBase(BaseModel):

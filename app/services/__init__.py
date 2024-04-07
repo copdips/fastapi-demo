@@ -1,5 +1,5 @@
-from app.services.tag_service import TagService
-from app.services.team_service import TeamService
-from app.services.user_service import UserService
+from app.services.tag import TagService
+from app.services.team import TeamService
+from app.services.user import UserService
 
 __all__ = ["TagService", "TeamService", "UserService"]

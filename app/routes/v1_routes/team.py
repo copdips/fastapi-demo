@@ -3,10 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Query, status
 
 from app.core.deps import TeamServiceDep
-from app.models.team_composite_models import (
-    TeamReadComposite,
-)
-from app.models.team_models import TeamCreate, TeamRead, TeamUpdate
+from app.models.team import TeamCreate, TeamRead, TeamUpdate
+from app.models.team_composite import TeamReadComposite
 
 router = APIRouter()
 endpoint_name = "teams"

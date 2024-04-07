@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.models.base_models import BaseModel
+from app.models.base import BaseModel
 
 
 class HealthRead(BaseModel):

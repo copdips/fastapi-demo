@@ -3,10 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Query, status
 
 from app.core.deps import TagServiceDep
-from app.models.tag_composite_models import (
-    TagReadComposite,
-)
-from app.models.tag_models import TagCreate, TagRead, TagUpdate
+from app.models.tag import TagCreate, TagRead, TagUpdate
+from app.models.tag_composite import TagReadComposite
 
 router = APIRouter()
 endpoint_name = "tags"

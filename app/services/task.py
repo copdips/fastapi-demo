@@ -2,10 +2,10 @@ import logging
 
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.base_models import TaskStatus
-from app.models.db_models import Task
-from app.models.task_model import TaskUpdate
-from app.services.base_service import BaseService
+from app.models.base import TaskStatus
+from app.models.db import Task
+from app.models.task import TaskUpdate
+from app.services.base import BaseService
 
 
 class TaskService(BaseService[Task]):

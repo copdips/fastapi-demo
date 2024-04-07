@@ -7,9 +7,9 @@ from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.exceptions import NotFoundError
-from app.models.db_models import Tag, Team
-from app.models.tag_models import TagCreate, TagUpdate
-from app.services.base_service import BaseService
+from app.models.db import Tag, Team
+from app.models.tag import TagCreate, TagUpdate
+from app.services.base import BaseService
 
 
 class TagService(BaseService[Tag]):

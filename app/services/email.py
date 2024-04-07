@@ -4,13 +4,13 @@ from datetime import UTC, datetime
 
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.db_models import Email, User
-from app.models.email_models import EmailCreate, EmailUpdate
-from app.models.user_composite_models import (
+from app.models.db import Email, User
+from app.models.email import EmailCreate, EmailUpdate
+from app.models.user import UserUpdate
+from app.models.user_composite import (
     UserReadCompositeOutOfAPI,
 )
-from app.models.user_models import UserUpdate
-from app.services.base_service import BaseService
+from app.services.base import BaseService
 
 
 class EmailService(BaseService[Email]):
