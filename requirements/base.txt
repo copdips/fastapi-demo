@@ -5,9 +5,11 @@ asgi-correlation-id
 async-sqlmodel
 asyncpg
 azure-monitor-opentelemetry
+celery
 devtools
 email-validator
 fastapi[all]
+flower
 gunicorn
 msgpack-asgi
 opentelemetry-instrumentation-fastapi
@@ -16,6 +18,7 @@ profyle
 pydantic-settings
 pyinstrument
 python-ulid
+redis
 sentry-sdk[fastapi]
 shortuuid
 SQLAlchemy

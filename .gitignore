@@ -165,3 +165,6 @@ test-output.xml
 testing.db
 .vscode/
 .vscode/settings.json
+
+# used by docker-compose.yml
+PIP_INDEX_URL.secret

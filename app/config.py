@@ -29,6 +29,19 @@ env_color = {
 
 
 class DBSettings(BaseSettings):
+    """
+    when using docker-compose, env vars will be injected by:
+
+    ```docker-compose.yml
+    env_file:
+      - .env
+    ```
+
+    Even when using a dotenv file, pydantic will still read environment variables
+    as well as the dotenv file, environment variables will always take priority over
+    values loaded from a dotenv file.
+    """
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -93,6 +106,11 @@ class Settings(BaseSettings):
         "api_title_slug": api_title_slug,
     }
     enable_azure_monitor: bool = False
+    # docker-compose use redis, but local docker use 127.0.0.1
+    redis_host: str = "redis"
+    # redis_host: str = "127.0.0.1"
+    celery_broker: str = f"redis://{redis_host}:6379/0"
+    celery_backend: str = f"redis://{redis_host}:6379/0"
 
 
 settings = Settings()

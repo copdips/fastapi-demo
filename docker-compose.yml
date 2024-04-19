@@ -1,0 +1,71 @@
+# docker compose build
+# docker compose up -d
+# docker compose logs -f
+# docker container inspect fastapi-demo-api-1
+# docker ps -aq | xargs docker rm -f && docker images -q | xargs docker rmi -f
+
+version: "3"
+
+secrets:
+  PIP_INDEX_URL:
+    file: PIP_INDEX_URL.secret
+
+services:
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      args:
+        app_version: "0.0.0"
+      secrets:
+        - PIP_INDEX_URL
+    image: api-full
+    # volumes:
+    #   - .:/app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  celery_worker:
+    build:
+      context: .
+      args:
+        # ! must specify the same version as the api container, because we're using the same image
+        app_version: "0.0.0"
+      secrets:
+        - PIP_INDEX_URL
+    image: api-full
+    command: celery -A app.core.celery worker --loglevel=info
+    # volumes:
+    #   - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - api
+      - redis
+
+  celery_flower:
+    build:
+      context: .
+      args:
+        app_version: "0.0.0"
+      secrets:
+        - PIP_INDEX_URL
+    image: api-full
+    command: celery -A app.core.celery flower --loglevel=info
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    # volumes:
+    #   - .:/app
+    depends_on:
+      - api
+      - redis

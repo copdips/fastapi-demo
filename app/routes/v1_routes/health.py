@@ -3,6 +3,7 @@ from sqlalchemy.exc import OperationalError
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app.celery_tasks.tasks import celery_task_demo
 from app.core.deps import get_db_session
 from app.models.health import HealthRead
 
@@ -26,7 +27,7 @@ async def get_health(
         "api_version": req.app.state.settings.api_version,
         "db_engine": db_session.bind.engine.name,
     }
-
+    celery_task_demo.delay()  # pyright: ignore[reportFunctionMemberAccess]
     try:
         res = await db_session.exec(select(1))
     except OperationalError as ex:

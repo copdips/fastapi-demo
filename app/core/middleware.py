@@ -4,7 +4,6 @@ from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
 from msgpack_asgi import MessagePackMiddleware
-from profyle.fastapi import ProfyleMiddleware
 
 from app.config import settings
 from app.core.db import async_session_factory, init_db
@@ -82,5 +81,5 @@ def register_middlewares(_app: FastAPI):
         # run profyle start to start the ProfyleMiddleware profiling
         # and visit http://127.0.0.1:5432 to see the result
         _app.add_middleware(PyInstrumentMiddleware)
-        if settings.debug:
-            _app.add_middleware(ProfyleMiddleware)
+        # if settings.debug:
+        #     _app.add_middleware(ProfyleMiddleware)
