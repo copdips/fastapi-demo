@@ -33,7 +33,7 @@ services:
     depends_on:
       - redis
 
-  celery_worker:
+  celery_worker_queue_low:
     build:
       context: .
       args:
@@ -42,7 +42,25 @@ services:
       secrets:
         - PIP_INDEX_URL
     image: api-full
-    command: celery -A app.core.celery worker --loglevel=info
+    command: celery -A app.core.celery worker --loglevel=info -Q low
+    # volumes:
+    #   - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - api
+      - redis
+
+  celery_worker_queue_high:
+    build:
+      context: .
+      args:
+        # ! must specify the same version as the api container, because we're using the same image
+        app_version: "0.0.0"
+      secrets:
+        - PIP_INDEX_URL
+    image: api-full
+    command: celery -A app.core.celery worker --loglevel=info -Q high
     # volumes:
     #   - .:/app
     env_file:
