@@ -6,6 +6,8 @@ from fastapi import APIRouter, WebSocket, status
 from app.celery_tasks.tasks import (
     celery_task_q_high,
     celery_task_q_low,
+    chain_celery_task_q_low,
+    group_celery_task_q_low,
 )
 from app.core.celery import celery_app
 from app.models.celery_task import CeleryTaskCreate
@@ -25,6 +27,28 @@ async def launch_celery_task_in_queue_low():
         10,
     )
     return {"task_id": result.id}
+
+
+@router.post(
+    "/lowgroup",
+    summary="launch celery task in queue low in group",
+    response_model=CeleryTaskCreate,
+    status_code=status.HTTP_201_CREATED,
+)
+async def launch_celery_task_in_queue_low_in_group():
+    result = group_celery_task_q_low.apply_async()
+    return {"task_id": result.id}
+
+
+@router.post(
+    "/lowchain",
+    summary="launch celery task in queue low in chain",
+    response_model=CeleryTaskCreate,
+    status_code=status.HTTP_201_CREATED,
+)
+async def launch_celery_task_in_queue_low_in_chain():
+    result = chain_celery_task_q_low()  # run chained task with () not apply_async()
+    return {"task_id": result.id}  # pyright: ignore[reportOptionalMemberAccess]
 
 
 @router.post(
