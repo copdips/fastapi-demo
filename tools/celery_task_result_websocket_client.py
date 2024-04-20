@@ -9,15 +9,23 @@ import websockets
 
 async def consume_websocket(task_id: str):
     ws_url = f"ws://localhost:8000/v1/celery_tasks/ws/{task_id}"
-    async with websockets.connect(ws_url) as websocket:
-        while True:
+    try:
+        async with websockets.connect(ws_url) as websocket:
+            while True:
+                response = await websocket.recv()
+                print(f"Received message: {str(response)}")
+                if response == "SUCCESS":
+                    print("Got success response")
+                    break
             response = await websocket.recv()
-            print(f"Received message: {str(response)}")
-            if response == "SUCCESS":
-                print("Got success response")
-                break
-        response = await websocket.recv()
-        print("result:", response)
+            print("result:", response)
+    except websockets.exceptions.ConnectionClosed as ex:
+        if ex.code == 1000:
+            print("Connection closed normally.")
+        else:
+            print(f"Connection closed with error: {ex}")
+    except Exception as ex:
+        print(f"Unhandled error: {ex}")
 
 
 if __name__ == "__main__":
