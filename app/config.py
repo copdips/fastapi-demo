@@ -107,8 +107,8 @@ class Settings(BaseSettings):
     }
     enable_azure_monitor: bool = False
     # docker-compose use redis, but local docker use 127.0.0.1
-    redis_host: str = "redis"
-    # redis_host: str = "127.0.0.1"
+    # when using localling wihout docker-compose: docker run --name my-redis -d redis:alpine
+    redis_host: str = "127.0.0.1" if testing else "redis"
     celery_broker: str = f"redis://{redis_host}:6379/0"
     celery_backend: str = f"redis://{redis_host}:6379/0"
 
