@@ -168,3 +168,5 @@ testing.db
 
 # used by docker-compose.yml
 PIP_INDEX_URL.secret
+
+celerybeat-schedule.*

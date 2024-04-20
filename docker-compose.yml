@@ -93,7 +93,21 @@ services:
       - "5555:5555"
     env_file:
       - .env
+    depends_on:
+      - api
+      - redis
 
+  celery_beat:
+    build:
+      context: .
+      args:
+        app_version: "0.0.0"
+      secrets:
+        - PIP_INDEX_URL
+    image: api-full
+    command: celery -A app.core.celery beat --loglevel=info
+    env_file:
+      - .env
     depends_on:
       - api
       - redis

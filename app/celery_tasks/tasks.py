@@ -1,3 +1,5 @@
+from celery.schedules import crontab
+
 from app.core.celery import celery_app
 from app.core.logging import get_logger
 
@@ -28,3 +30,15 @@ def celery_task_q_high(self, sleep_seconds: int = 2):
         raise self.retry(exc=ex, countdown=2)  # noqa: B904
     else:
         return "ok for celery_task_q_high"
+
+
+celery_app.conf.beat_schedule = {
+    "celery_task_q_low-every_minute": {
+        "task": "app.celery_tasks.tasks.celery_task_q_low",
+        "schedule": crontab(),
+        "args": (2,),  # ! args must be tuple
+        "options": {
+            "expires": 15.0,
+        },
+    },
+}
