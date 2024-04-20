@@ -15,17 +15,27 @@ secrets:
     file: PIP_INDEX_URL.secret
 
 services:
+  # docker run --rm -d \
+  #   --name rabbitmq \
+  #   -p 5672:5672 \
+  #   -p 15672:15672 \
+  #   -e RABBITMQ_DEFAULT_VHOST=fastapi-demo-local \
+  #   -e RABBITMQ_DEFAULT_USER=guest \
+  #   -e RABBITMQ_DEFAULT_PASS=guest \
+  #   rabbitmq:3-management-alpine
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management-alpine
     ports:
+      - 5672:5672
       - 15672:15672
     environment:
       # ! password for test only
-      RABBITMQ_DEFAULT_VHOST: vhost
+      RABBITMQ_DEFAULT_VHOST: fastapi-demo-local
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
+  # docker run --rm -d --name redis -p 6379:6379 redis:alpine
   redis:
     container_name: redis
     image: "redis:alpine"
@@ -133,6 +143,24 @@ services:
         - PIP_INDEX_URL
     image: api-full
     command: celery -A app.core.celery beat --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - redis
+      - api
+
+  taskiq_worker_queue_low:
+    container_name: taskiq_worker_queue_low
+    build:
+      context: .
+      args:
+        # ! must specify the same version as the api container, because we're using the same image
+        app_version: "0.0.0"
+      secrets:
+        - PIP_INDEX_URL
+    image: api-full
+    command: taskiq worker app.core.taskiq:taskiq_broker
     env_file:
       - .env
     depends_on:

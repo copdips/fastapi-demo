@@ -75,8 +75,9 @@ class Settings(BaseSettings):
     logging_settings: LoggingSettings = Field(default_factory=LoggingSettings)
     api_env: str = os.getenv("API_ENV", DEFAULT_API_ENV)
     api_version: str = getattr(app, "__VERSION__", DEFAULT_API_VERSION)
-    api_title: str = f"FastAPI demo ({api_env})"
-    api_title_slug: str = api_title.lower().replace(" ", "-")
+    api_name: str = "FastAPI demo"
+    api_title: str = f"{api_name} - ({api_env})"
+    api_title_slug: str = f"{api_name} {api_env}".lower().replace(" ", "-")
     api_description: str = (
         f'<span style="background-color: {env_color.get(api_env, DEFAULT_API_ENV)};font-size:15pt">(env: {api_env}) '
         "A simple [FastAPI](https://fastapi.tiangolo.com/)"
@@ -109,7 +110,9 @@ class Settings(BaseSettings):
     # docker-compose use redis, but local docker use 127.0.0.1
     # when using localling wihout docker-compose: docker run --name my-redis -d redis:alpine
     redis_host: str = "127.0.0.1" if testing else "redis"
-    celery_broker: str = "amqp://guest:guest@rabbitmq:5672/vhost"
+    rabbitmq_host: str = "127.0.0.1" if testing else "rabbitmq"
+    rabbitmq_url: str = f"amqp://guest:guest@{rabbitmq_host}:5672/{api_title_slug}"
+    celery_broker: str = rabbitmq_url
     celery_backend: str = f"redis://{redis_host}:6379/0"
 
 

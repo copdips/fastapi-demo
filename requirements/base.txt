@@ -23,5 +23,8 @@ sentry-sdk[fastapi]
 shortuuid
 SQLAlchemy
 sqlmodel
+taskiq
+taskiq-aio-pika
+taskiq-redis
 uvicorn[standard]
 viztracer
