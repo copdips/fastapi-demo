@@ -18,6 +18,7 @@ celery_app = Celery(
     broker=settings.celery_broker,
     backend=settings.celery_backend,
     broker_connection_retry_on_startup=True,
+    # include=["app.celery_tasks.tasks"],  # include must specify the tasks module path
 )
 
 # app.celery_tasks module must has a file called tasks.py to let celery discover it,

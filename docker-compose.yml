@@ -4,6 +4,10 @@
 # docker container inspect fastapi-demo-api-1
 # docker ps -aq | xargs docker rm -f && docker images -q | xargs docker rmi -f
 
+# rabbitmq http://localhost:15672/
+# celery flower: http://localhost:5555/
+# api: http://localhost:8000/docs
+
 version: "3"
 
 secrets:
@@ -11,6 +15,17 @@ secrets:
     file: PIP_INDEX_URL.secret
 
 services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 15672:15672
+    environment:
+      # ! password for test only
+      RABBITMQ_DEFAULT_VHOST: vhost
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
   redis:
     container_name: redis
     image: "redis:alpine"
@@ -32,6 +47,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - rabbitmq
       - redis
 
   celery_worker_queue_low:
@@ -48,8 +64,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - api
+      - rabbitmq
       - redis
+      - api
 
   celery_worker_queue_high_1:
     container_name: celery_worker_queue_high_1
@@ -65,8 +82,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - api
+      - rabbitmq
       - redis
+      - api
 
   celery_worker_queue_high_2:
     container_name: celery_worker_queue_high_2
@@ -82,8 +100,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - api
+      - rabbitmq
       - redis
+      - api
 
   celery_flower:
     container_name: celery_flower
@@ -100,8 +119,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - api
+      - rabbitmq
       - redis
+      - api
 
   celery_beat:
     container_name: celery_beat
@@ -116,5 +136,6 @@ services:
     env_file:
       - .env
     depends_on:
-      - api
+      - rabbitmq
       - redis
+      - api

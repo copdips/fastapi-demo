@@ -109,7 +109,7 @@ class Settings(BaseSettings):
     # docker-compose use redis, but local docker use 127.0.0.1
     # when using localling wihout docker-compose: docker run --name my-redis -d redis:alpine
     redis_host: str = "127.0.0.1" if testing else "redis"
-    celery_broker: str = f"redis://{redis_host}:6379/0"
+    celery_broker: str = "amqp://guest:guest@rabbitmq:5672/vhost"
     celery_backend: str = f"redis://{redis_host}:6379/0"
 
 
