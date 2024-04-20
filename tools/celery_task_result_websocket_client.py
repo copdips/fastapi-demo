@@ -1,5 +1,6 @@
 """use websocket to query celery task result:
 ipy /home/xiang/git/fastapi-demo/tools/celery_task_result_websocket_client.py {task_id}
+ref: https://medium.com/@youssefchamrah/empowering-applications-with-asynchronous-magic-the-celery-fastapi-docker-and-flower-ac119efc2e04
 """
 
 import asyncio
