@@ -46,3 +46,6 @@ run-with-multi-core:
 	# if multi core used, then workers = 2 * num_cpus + 1 as best practices
 	# https://fastapi.tiangolo.com/deployment/server-workers/#gunicorn-with-uvicorn-workers
 	gunicorn ${API_FOLDER}.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker
+
+run-docker-compose:
+	docker compose build && docker compose up -d
