@@ -40,10 +40,7 @@ class UserService(BaseService[User]):
         # query = select(User, Team).join(Team)  # inner join with both User and Team
         # query = select(User, Team).join(Team, isouter=True)  # left join
         query = (
-            select(User)
-            .options(selectinload(User.team))  # pyright: ignore[reportArgumentType]
-            .offset(offset)
-            .limit(limit)
+            select(User).options(selectinload(User.team)).offset(offset).limit(limit)
         )
         self.logger.info("Getting some users in service")
         return (await self.session.exec(query)).all()

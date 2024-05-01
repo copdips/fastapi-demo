@@ -33,12 +33,7 @@ class TagService(BaseService[Tag]):
         offset: int = 0,
         limit: int = Query(default=100, le=100),
     ) -> Sequence[Tag]:
-        query = (
-            select(Tag)
-            .options(selectinload(Tag.teams))  # pyright: ignore[reportArgumentType]
-            .offset(offset)
-            .limit(limit)
-        )
+        query = select(Tag).options(selectinload(Tag.teams)).offset(offset).limit(limit)
         return (await self.session.exec(query)).all()
 
     async def update(self, tag_id: str, new_data: TagUpdate) -> Tag:

@@ -31,7 +31,7 @@ def celery_task_q_high(self, sleep_seconds: int = 2):
         import time
 
         time.sleep(sleep_seconds)
-        1 / 0  # noqa: B018, pyright: ignore[reportUnusedExpression]
+        _ = 1 / 0  # , pyright: ignore[reportUnusedExpression]
         logger.info("Finished task: celery_task_q_high")
     except Exception as ex:
         msg = f"Got exception in task: celery_task_q_high with error: {ex}"

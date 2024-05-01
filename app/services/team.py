@@ -149,8 +149,8 @@ class TeamService(BaseService[Team]):
         """
         query = (
             select(Team)
-            .options(selectinload(Team.tags))  # pyright: ignore[reportArgumentType]
-            .options(selectinload(Team.users))  # pyright: ignore[reportArgumentType]
+            .options(selectinload(Team.tags))
+            .options(selectinload(Team.users))
             .offset(offset)
             .limit(limit)
         )
