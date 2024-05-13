@@ -9,6 +9,7 @@ from asgi_correlation_id import correlation_id
 from azure.monitor.opentelemetry import configure_azure_monitor
 from fastapi import FastAPI
 from opentelemetry import trace
+from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from typing_extensions import deprecated
 
@@ -59,7 +60,6 @@ def configure_logger(_app: FastAPI):
     correlation_id.set("")
     if settings.enable_azure_monitor:
         configure_azure_monitor(
-            connection_string=settings.logging_settings.APP_INSIGHTS_CONNECTION_STRING,
             logger_name=settings.api_title_slug,
         )
     logger = logging.getLogger(settings.api_title_slug)
@@ -81,6 +81,12 @@ def configure_logger(_app: FastAPI):
     logger.addFilter(RequestIdFilter())
     logger.addFilter(StaticExtraLogFilter(settings.logging_static_extra))
     FastAPIInstrumentor.instrument_app(_app)
+
+    # append trace info in error handler:
+    # https://github.com/open-telemetry/opentelemetry-python/issues/3477#issuecomment-1915743854
+    _app = OpenTelemetryMiddleware(  # pyright: ignore[reportAssignmentType]
+        _app,
+    )
     logger.info("logger configured")
 
 

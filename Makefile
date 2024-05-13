@@ -31,6 +31,7 @@ test-integration:
 	# https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
 	$(PYTHON) -m pytest tests/integration -n auto --dist=loadfile
 
+# ! need to run in advance: make run-docker-compose
 test: test-integration
 
 run:

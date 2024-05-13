@@ -4,6 +4,7 @@ from asgi_correlation_id import correlation_id
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import JSONResponse
+from opentelemetry import trace
 from sqlalchemy.exc import NoResultFound
 
 from app.core.logging import get_logger
@@ -27,13 +28,45 @@ EXCEPTION_AND_STATUS_CODE = [
 ]
 
 
+def get_operation_from_request(request: Request) -> dict[str, Any]:
+    path = request.url.path
+    method = request.method
+    return {
+        "method": method,
+        "path": path,
+        "operation": f"{method.upper()} {path}",
+    }
+
+
+def log_exception(ex: Exception, request: Request):
+    logger = get_logger()
+    # it seems that for whatever instrumenting_module_name we use, we get the same trace
+    # but the doc says that we should be take care of the instrumenting_module_name,
+    # it should be the same with in the app:
+    # https://github.com/open-telemetry/opentelemetry-python/blob/eef2015edd0d7c0a85840fd7bd1c7d57f1a8c2ee/opentelemetry-api/src/opentelemetry/trace/__init__.py#L202-L212
+    # ! to be tested more
+    # tracer = trace.get_tracer("opentelemetry.instrumentation.asgi")
+    tracer = trace.get_tracer(__name__)
+    with tracer.start_as_current_span("log_expcetion") as span:
+        current_correlation_id = correlation_id.get() or ""
+        err_msg = f"[correlation_id: {current_correlation_id}] Got error: {ex}"
+        logger.exception(
+            err_msg,
+            extra=get_operation_from_request(request)
+            | {"exception_name": ex.__class__.__name__},
+        )
+        span.set_attribute("exception_name", ex.__class__.__name__)
+        span.set_attribute("exception_message", err_msg)
+
+
 def register_exception_handler(app: FastAPI, exception: Any, status_code: int):
     @app.exception_handler(exception)
     async def exception_handler(
-        request: Request,  # noqa: ARG001, Unused function argument
-        exc: Any,
+        request: Request,  # , Unused function argument
+        ex: Any,
     ):
-        return JSONResponse(status_code=status_code, content={"message": str(exc)})
+        log_exception(ex, request)
+        return JSONResponse(status_code=status_code, content={"message": str(ex)})
 
 
 def register_unhandled_exception(app: FastAPI):
@@ -42,15 +75,9 @@ def register_unhandled_exception(app: FastAPI):
         request: Request,
         ex: Exception,
     ):
-        logger = get_logger()
+        log_exception(ex, request)
         current_correlation_id = correlation_id.get() or ""
         current_request_id = get_request_id()
-        err_msg = (
-            f"correlation_id: {current_correlation_id}, "
-            f"request_id: {current_request_id}, "
-            f"Internal server error occurred: {ex}"
-        )
-        logger.exception(err_msg)
         exc_name = ex.__class__.__name__
         return await http_exception_handler(
             request,

@@ -4,6 +4,7 @@ from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
 from msgpack_asgi import MessagePackMiddleware
+from opentelemetry import trace
 
 from app.config import settings
 from app.core.db import async_session_factory, init_db
@@ -37,6 +38,13 @@ async def lifespan(_app: FastAPI):
     # log_provider.force_flush(2000)
     # this final message will only be shown in the console.
     logger.info("App shutdown successfully.")
+
+
+def get_formatted_trace_id() -> str:
+    # return 32-bytes long format of trace id
+    span = trace.get_current_span()
+    trace_id = span.get_span_context().trace_id
+    return trace.format_trace_id(trace_id)
 
 
 def register_middlewares(_app: FastAPI):
@@ -76,6 +84,8 @@ def register_middlewares(_app: FastAPI):
         # as if x-request-id is given by client, CorrelationIdMiddleware only validates uuid format, but not ULID.
         # Otherwise, we need to also provide a validator for ULID.
         # generator=lambda: str(ULID()),
+        # in opentelemetry, each request has a unique trace id, all the spans within the same request share the same trace id.
+        generator=get_formatted_trace_id,
     )
     # ! RequestContextLogMiddleware is not compatible with ApitallyMiddleware
     _app.add_middleware(RequestContextLogMiddleware)

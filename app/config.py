@@ -61,7 +61,8 @@ class LoggingSettings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
-    APP_INSIGHTS_CONNECTION_STRING: str = Field(default=...)
+    # for Azure Application Insights
+    APPLICATIONINSIGHTS_CONNECTION_STRING: str = Field(default=...)
 
 
 class Settings(BaseSettings):
