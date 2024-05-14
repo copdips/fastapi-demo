@@ -1,10 +1,9 @@
-from collections.abc import Awaitable
 from datetime import UTC, datetime, timedelta
 
 import shortuuid
 import sqlalchemy as sa
-from async_sqlmodel import AsyncSQLModel, AwaitableField
 from pydantic import ConfigDict, field_validator
+from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped
 from sqlmodel import Field, MetaData, Relationship, SQLModel
 from ulid import ULID
@@ -35,7 +34,7 @@ SQLModel.metadata = MetaData(naming_convention=db_naming_convention)
 
 class BaseSQLModel(
     BaseModel,
-    AsyncSQLModel,
+    AsyncAttrs,
 ):
     # ! validate_assignment=True to validate during SALModel(table=True) instance creation
     # https://github.com/tiangolo/sqlmodel/issues/52#issuecomment-1998440311
@@ -67,6 +66,8 @@ class BaseSQLModel(
         default=None,
         sa_type=sa.DateTime(timezone=True),
         sa_column_kwargs={
+            # if relationship changes, for e.g. set one more user in a team
+            # the updated_at won't be updated automatically
             "onupdate": sa.func.now(),
             # ! should be callable if use pure python method, and should not be datetime.utcnow, as utc will be applied twice, once by utcnow, once by sa.DateTime(timezone=True)
             # "onupdate": datetime.now,
@@ -74,6 +75,7 @@ class BaseSQLModel(
     )
 
 
+# ! currently, can not put `table=True` in class `BaseSQLModel`, need to debug
 class TagTeamLink(BaseModel, table=True):
     # ! if need extra fields, for example, name, description, etc, add them here,
     # need to add Relationship:
@@ -104,7 +106,6 @@ class Team(BaseSQLModel, TeamBase, table=True):
             "cascade": "all,delete,delete-orphan",
         },
     )
-    awt_users: Awaitable[list["User"]] = AwaitableField(field="users")
     """
     in sa_relationship_kwargs, we can specify also:
     sa_relationship_kwargs={
@@ -129,7 +130,6 @@ class Team(BaseSQLModel, TeamBase, table=True):
         back_populates="teams",
         link_model=TagTeamLink,
     )
-    awt_tags: Awaitable[list["Tag"]] = AwaitableField(field="tags")
 
 
 class User(BaseSQLModel, UserBase, table=True):
@@ -157,7 +157,6 @@ class User(BaseSQLModel, UserBase, table=True):
     # ref: https://sqlmodel.tiangolo.com/tutorial/code-structure/#hero-model-file
     # from typing import Optional
     # team: Optional["Team"] | None = Relationship(back_populates="users")
-    awt_team: Awaitable[Team] = AwaitableField(field="team")
 
 
 class Tag(BaseSQLModel, TagBase, table=True):
@@ -169,7 +168,6 @@ class Tag(BaseSQLModel, TagBase, table=True):
         back_populates="tags",
         link_model=TagTeamLink,
     )
-    awt_teams: Awaitable[list["Team"]] = AwaitableField(field="teams")
 
 
 class Task(BaseSQLModel, TaskBase, table=True):

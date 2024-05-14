@@ -162,6 +162,26 @@ class TeamService(BaseService[Team]):
 
     async def update(self, team_id: str, new_data: TeamUpdate) -> Team:
         team = await self.get_by_id(team_id, [Team.tags, Team.users])
+        """
+        instead of `get_by_id` with `selectin_attributes=[Team.tags, Team.users]`,
+        we can also use below code to load related tags and users eagerly:
+
+            team = await self.get_by_id(team_id)
+            await team.awaitable_attrs.tags
+            await team.awaitable_attrs.users
+
+        It is not necessary to use `team.tags = await team.awaitable_attrs.tags`,
+        as `await team.awaitable_attrs.tags` populates team.tags automatically.
+
+        The outcome of this solution is that after: `await self.session.refresh(team)`,
+        team.tags and team.users will be purged, and if the route response model
+        requests tags and users fields, we will get Pydantic validation error.
+        We must call `team.awaitable_attrs` again to fix the error.
+
+        But if we use `team = await self.get_by_id(team_id, [Team.tags, Team.users])`,
+        after: `await self.session.refresh(team)`, team.tags and team.users are still
+        there, and also updated.
+        """
         team_data_dump = new_data.model_dump(exclude_unset=True)
         if "users_names" in team_data_dump:
             team.users = []
@@ -195,6 +215,5 @@ class TeamService(BaseService[Team]):
         await self.session.refresh(team)
         # to get updated related tags and user, we don't need below awt_tags, awt_users, as team has already the updated data, even session.refresh is not needed.
         # but if you need to display updated_at in the API result, then session.refresh() is needed.
-        team.tags = await team.awt_tags
-        # team.users = await team.awt_users
+
         return team
