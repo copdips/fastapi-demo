@@ -11,6 +11,8 @@ email-validator
 fastapi[all]
 flower
 gunicorn
+logfire
+logfire[fastapi]
 msgpack-asgi
 opentelemetry-instrumentation-fastapi
 orjson

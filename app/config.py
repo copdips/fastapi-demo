@@ -63,6 +63,11 @@ class LoggingSettings(BaseSettings):
     )
     # for Azure Application Insights
     APPLICATIONINSIGHTS_CONNECTION_STRING: str = Field(default=...)
+    # for Pydantic logfire
+    LOGFIRE_TOKEN: str = Field(default=...)
+    LOGFIRE_PROJECT_NAME: str = "fastapi-demo"
+    # for sentry
+    SENTRY_DSN: str = Field(default=...)
 
 
 class Settings(BaseSettings):

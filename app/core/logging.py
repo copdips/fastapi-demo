@@ -5,6 +5,8 @@ from functools import wraps
 from typing import Any
 
 import asgi_correlation_id
+import logfire
+import sentry_sdk
 from asgi_correlation_id import correlation_id
 from azure.monitor.opentelemetry import configure_azure_monitor
 from fastapi import FastAPI
@@ -54,6 +56,21 @@ def force_flush_logs():
 
 
 def configure_logger(_app: FastAPI):
+    sentry_sdk.init(
+        # https://github.com/getsentry/sentry-python/blob/master/sentry_sdk/integrations/fastapi.py
+        # although the doc says that if dns is not provided,
+        # https://docs.sentry.io/concepts/key-terms/dsn-explainer/#what-the-dsn-does
+        # it will search for SENTRY_DSN, the test shows KO,
+        # so we need to provide the dsn explicitly
+        dsn=settings.logging_settings.SENTRY_DSN,
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        traces_sample_rate=1.0,
+        # Set profiles_sample_rate to 1.0 to profile 100%
+        # of sampled transactions.
+        # We recommend adjusting this value in production.
+        profiles_sample_rate=1.0,
+    )
     # correlation_id.set(""), set default context var value to avoid opentelemetry span error:
     # Invalid type NoneType for attribute 'correlation_id' value.
     # Expected one of ['bool', 'str', 'bytes', 'int', 'float'] or a sequence of those types
@@ -81,6 +98,10 @@ def configure_logger(_app: FastAPI):
     logger.addFilter(RequestIdFilter())
     logger.addFilter(StaticExtraLogFilter(settings.logging_static_extra))
     FastAPIInstrumentor.instrument_app(_app)
+
+    # Pydantic logfire
+    logfire.configure()
+    logfire.instrument_fastapi(_app)
 
     # append trace info in error handler:
     # https://github.com/open-telemetry/opentelemetry-python/issues/3477#issuecomment-1915743854
