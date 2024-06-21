@@ -30,9 +30,7 @@ class BaseService(Generic[T]):
         self,
         model_id: str,  # ! this is the id column, not the uid PK column
         selectin_attributes: list[Any] | None = None,
-    ) -> (
-        T
-    ):  # Indicate that the return type is an instance of T, later we create sub class of BaseService with User as T: class UserService(BaseService[User])
+    ) -> T:  # Indicate that the return type is an instance of T, later we create sub class of BaseService with User as T: class UserService(BaseService[User])
         try:
             query = select(
                 self.model,

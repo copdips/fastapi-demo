@@ -40,29 +40,18 @@ repos:
       - id: python-use-type-annotations
   - repo: local
     hooks:
-      - id: bandit
-        name: bandit
-        entry: bandit
-        language: system
-        types: [python]
-        args:
-          - -c
-          - pyproject.toml
       - id: ruff
         name: ruff
-        entry: ruff
+        entry: ruff check --force-exclude
         language: system
-        types: [python]
-        args:
-          - "check"
-          - "."
-      - id: black
-        name: black
-        entry: black
+        types: [python, pyi]
+        args: []
+      - id: ruff-format
+        name: ruff-format
+        entry: ruff format --force-exclude
         language: system
-        types: [python]
-        args:
-          - "."
+        types: [python, pyi]
+        args: []
       - id: pyright
         name: pyright
         language: system

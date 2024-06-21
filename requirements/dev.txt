@@ -1,6 +1,4 @@
 aiosqlite
-bandit
-black
 devtools
 erdantic
 ipython
