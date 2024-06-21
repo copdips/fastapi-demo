@@ -36,8 +36,6 @@ classmethod-decorators = ["pydantic.validator"]
 
 [tool.pyright]
 reportUnnecessaryTypeIgnoreComment = true
-venvPath = "."
-venv = ".venv"
 exclude = ["_local_test", "tools", "migrations", ".venv"]
 # include = ["app"]
 
