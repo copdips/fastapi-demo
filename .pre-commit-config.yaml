@@ -46,12 +46,14 @@ repos:
         language: system
         types: [python, pyi]
         args: []
+        require_serial: true
       - id: ruff-format
         name: ruff-format
         entry: ruff format --force-exclude
         language: system
         types: [python, pyi]
         args: []
+        require_serial: true
       - id: pyright
         name: pyright
         language: system
