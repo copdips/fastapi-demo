@@ -42,11 +42,9 @@ RUN --mount=type=secret,id=PIP_INDEX_URL \
     PIP_INDEX_URL=$(cat /run/secrets/PIP_INDEX_URL) pip install --no-cache-dir -r requirements.txt
 
 
-COPY app /code/app
+COPY --chown=appuser:appuser app /code/app
 # for local test with docker build: (but unnecessary for docker compose, as it can load .env file directly )
 # COPY .env /code/.env
-
-RUN chown -R appuser:appuser /code
 
 # Switch to the non-privileged user to run the application.
 USER appuser
