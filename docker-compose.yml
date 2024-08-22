@@ -47,8 +47,6 @@ services:
       context: .
       args:
         app_version: "0.0.0"
-      secrets:
-        - PIP_INDEX_URL
     image: api-full
     env_file:
       - .env
@@ -65,8 +63,6 @@ services:
       args:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
-      secrets:
-        - PIP_INDEX_URL
     image: api-full
     command: celery -A app.core.celery worker --hostname=worker_q_lower_1 --loglevel=info -Q low
     env_file:
@@ -83,8 +79,6 @@ services:
       args:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
-      secrets:
-        - PIP_INDEX_URL
     image: api-full
     command: celery -A app.core.celery worker --hostname=worker_q_high_1 --loglevel=info -Q high
     env_file:
@@ -101,8 +95,6 @@ services:
       args:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
-      secrets:
-        - PIP_INDEX_URL
     image: api-full
     command: celery -A app.core.celery worker --hostname=worker_q_high_2 --loglevel=info -Q high
     env_file:
@@ -118,8 +110,6 @@ services:
       context: .
       args:
         app_version: "0.0.0"
-      secrets:
-        - PIP_INDEX_URL
     image: api-full
     command: celery -A app.core.celery flower --loglevel=info
     ports:
@@ -137,8 +127,6 @@ services:
       context: .
       args:
         app_version: "0.0.0"
-      secrets:
-        - PIP_INDEX_URL
     image: api-full
     command: celery -A app.core.celery beat --loglevel=info
     env_file:
@@ -155,8 +143,6 @@ services:
       args:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
-      secrets:
-        - PIP_INDEX_URL
     image: api-full
     command: taskiq worker app.core.taskiq:taskiq_broker
     env_file:
