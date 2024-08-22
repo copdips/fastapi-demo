@@ -13,6 +13,7 @@ ifneq (,$(findstring xterm,${TERM}))
 endif
 
 install:
+	sudo apt-get install python3-dev graphviz graphviz-dev
 	$(PYTHON) -m pip install -U pip
 	$(PYTHON) -m pip install -U -r requirements/base.txt
 	$(PYTHON) -m pip install -U -r requirements/dev.txt

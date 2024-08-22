@@ -170,3 +170,5 @@ testing.db
 PIP_INDEX_URL.secret
 
 celerybeat-schedule.*
+
+.ci_env

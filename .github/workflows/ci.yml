@@ -1,0 +1,67 @@
+name: ci
+run-name: ${{ github.workflow}} by @${{ github.actor }} ${{ github.event.pull_request.head.sha }}
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow}}-pr${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Use public pip index only for ci demo
+        run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret
+
+      - name: create env file from secret.CI_ENV
+        run: |
+          echo "${{ secrets.CI_ENV }}" > .env
+          echo "============== echo secrets.CI_ENV"
+          echo "${{ secrets.CI_ENV }}"
+          echo "============== cat .env"
+          cat .env
+          wc -l .env
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Build and run the Docker images
+        run: make run-docker-compose
+
+      - name: Install deps
+        run: |
+          python --version
+          make install
+
+      - name: Run tests
+        run: |
+          export LOGFIRE_SEND_TO_LOGFIRE=false
+          make test
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose down
