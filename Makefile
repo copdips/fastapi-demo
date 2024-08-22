@@ -13,7 +13,6 @@ ifneq (,$(findstring xterm,${TERM}))
 endif
 
 install:
-	sudo apt-get install python3-dev graphviz graphviz-dev
 	$(PYTHON) -m pip install -U pip
 	$(PYTHON) -m pip install -U -r requirements/base.txt
 	$(PYTHON) -m pip install -U -r requirements/dev.txt
@@ -32,7 +31,11 @@ test-integration:
 	# https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
 	$(PYTHON) -m pytest tests/integration -n auto --dist=loadfile
 
-# ! need to run in advance: make run-docker-compose
+test-unit:
+	@echo "${BOLD}${YELLOW}Running unit tests:${NORMAL}"
+	$(PYTHON) -m pytest tests/unit
+
+# ! need to run docker in advance: make run-docker-compose
 test: test-integration
 
 run:

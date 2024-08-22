@@ -6,8 +6,9 @@
 # docker exec -it my-api bash
 # docker ps -aq | xargs docker rm -f && docker images -q | xargs docker rmi -f
 
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.11
 FROM python:${PYTHON_VERSION}-slim as base
+
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1

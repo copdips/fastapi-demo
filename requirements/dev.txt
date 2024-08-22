@@ -1,4 +1,5 @@
 aiosqlite
+anyio==4.3.0  # https://github.com/agronholm/anyio/issues/754
 devtools
 erdantic
 ipython

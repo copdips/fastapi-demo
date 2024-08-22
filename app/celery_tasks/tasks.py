@@ -60,8 +60,8 @@ group_celery_task_q_low = group(
 )
 
 # chained task return the last task's result, can be queried by AsyncResult
-# if use s(), the return of the previous task will e the argument of the next task
-# with si(), the argument of the next task will e independent of the previous task's return
+# if use s(), the return of the previous task will be the argument of the next task
+# with si(), the argument of the next task will be independent of the previous task's return
 # https://docs.celeryq.dev/en/latest/userguide/canvas.html#immutability
 chain_celery_task_q_low = chain(
     celery_task_q_low.si(2),  # pyright: ignore[reportFunctionMemberAccess]

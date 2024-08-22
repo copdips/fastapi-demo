@@ -96,6 +96,7 @@ class Settings(BaseSettings):
         "email": "xiang.zhu@outlook.com",
     }
     use_camel_case: bool = False
+    repo_name: str = "fastapi-demo"
 
     # debug: bool = api_env == DEFAULT_API_ENV
     debug: bool = False
@@ -114,9 +115,9 @@ class Settings(BaseSettings):
     }
     enable_azure_monitor: bool = False
     # docker-compose use redis, but local docker use 127.0.0.1
-    # when using localling wihout docker-compose: docker run --name my-redis -d redis:alpine
-    redis_host: str = "127.0.0.1" if testing else "redis"
-    rabbitmq_host: str = "127.0.0.1" if testing else "rabbitmq"
+    # when using local test without docker-compose: docker run --name my-redis -d redis:alpine
+    redis_host: str = "127.0.0.1" if testing else f"{repo_name}-redis"
+    rabbitmq_host: str = "127.0.0.1" if testing else f"{repo_name}-rabbitmq"
     rabbitmq_url: str = f"amqp://guest:guest@{rabbitmq_host}:5672/{api_title_slug}"
     celery_broker: str = rabbitmq_url
     celery_backend: str = f"redis://{redis_host}:6379/0"
