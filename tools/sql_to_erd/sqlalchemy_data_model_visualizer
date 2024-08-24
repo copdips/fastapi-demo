@@ -1,0 +1,178 @@
+// Interactive Data Models
+digraph {
+    graph [bgcolor="#EEEEEE" rankdir=TB splines=spline]
+    node [fontname=Roboto fontsize=12 shape=none]
+    edge [fontname=Roboto fontsize=10]
+    Email [label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD COLSPAN="2" BGCOLOR="#3F51B5"><FONT COLOR="white">Email</FONT></TD></TR>
+        <TR>
+                         <TD BGCOLOR="#BBDEFB">type</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">subject</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">body</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">sender</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">to</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">cc</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">bcc</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">tracking_id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">uid</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (PK)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">created_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">updated_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR></TABLE>> URL="http://Email_details.html"]
+    Tag [label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD COLSPAN="2" BGCOLOR="#3F51B5"><FONT COLOR="white">Tag</FONT></TD></TR>
+        <TR>
+                         <TD BGCOLOR="#BBDEFB">name</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">uid</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (PK)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">created_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">updated_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR></TABLE>> URL="http://Tag_details.html"]
+    Tag -> Team [label=teams color="#1E88E5" style=dashed tooltip="Relation between Tag and Team"]
+    TagTeamLink [label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD COLSPAN="2" BGCOLOR="#3F51B5"><FONT COLOR="white">TagTeamLink</FONT></TD></TR>
+        <TR>
+                         <TD BGCOLOR="#BBDEFB">tag_id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (PK)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">team_id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (PK)</TD>
+                         </TR></TABLE>> URL="http://TagTeamLink_details.html"]
+    Task [label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD COLSPAN="2" BGCOLOR="#3F51B5"><FONT COLOR="white">Task</FONT></TD></TR>
+        <TR>
+                         <TD BGCOLOR="#BBDEFB">name</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">type</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">status</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR(11) ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">description</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">created_by</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">message</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">email_notification</TD>
+                         <TD BGCOLOR="#BBDEFB">JSON ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">context</TD>
+                         <TD BGCOLOR="#BBDEFB">JSON ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">uid</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (PK)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">created_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">updated_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">ended_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">task_duration</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR></TABLE>> URL="http://Task_details.html"]
+    Team [label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD COLSPAN="2" BGCOLOR="#3F51B5"><FONT COLOR="white">Team</FONT></TD></TR>
+        <TR>
+                         <TD BGCOLOR="#BBDEFB">name</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">headquarters</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">uid</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (PK)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">created_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">updated_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR></TABLE>> URL="http://Team_details.html"]
+    Team -> User [label=users color="#1E88E5" style=dashed tooltip="Relation between Team and User"]
+    Team -> Tag [label=tags color="#1E88E5" style=dashed tooltip="Relation between Team and Tag"]
+    User [label=<
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+        <TR><TD COLSPAN="2" BGCOLOR="#3F51B5"><FONT COLOR="white">User</FONT></TD></TR>
+        <TR>
+                         <TD BGCOLOR="#BBDEFB">name</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">first_name</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">last_name</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">email</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">uid</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (PK)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR (Unique,Index)</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">created_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">updated_at</TD>
+                         <TD BGCOLOR="#BBDEFB">DATETIME ()</TD>
+                         </TR><TR>
+                         <TD BGCOLOR="#BBDEFB">team_id</TD>
+                         <TD BGCOLOR="#BBDEFB">VARCHAR ()</TD>
+                         </TR></TABLE>> URL="http://User_details.html"]
+    User -> Team [label=team color="#1E88E5" style=dashed tooltip="Relation between User and Team"]
+}

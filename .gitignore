@@ -162,7 +162,7 @@ cython_debug/
 _local_test/
 VERSION
 test-output.xml
-testing.db
+db.sqlite3
 .vscode/
 .vscode/settings.json
 

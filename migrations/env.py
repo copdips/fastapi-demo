@@ -31,7 +31,7 @@ alembic will get it, and do the necessary automatically
 or set the naming convention in env.py itself, see:
 https://alembic.sqlalchemy.org/en/latest/naming.html#integration-of-naming-conventions-into-operations-autogenerate
 """
-from app.models.db_models import SQLModel
+from app.models.db import SQLModel
 
 # ! import settings to set sqlalchemy.url
 from app.config import settings

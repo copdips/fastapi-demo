@@ -1,6 +1,6 @@
 # ! must use sqlacodegen v3+ to generate models
-sqlacodegen sqlite:///testing.db
-sqlacodegen sqlite:///testing.db --generator sqlmodels
+sqlacodegen sqlite:///db.sqlite3
+sqlacodegen sqlite:///db.sqlite3 --generator sqlmodels
 
 . .env
 sqlacodegen $SQLACODEGEN_DB_CONN_URL

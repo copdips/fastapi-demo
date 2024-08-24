@@ -55,3 +55,6 @@ run-with-multi-core:
 
 run-docker-compose:
 	docker compose build && docker compose up -d
+
+dbsqlite:
+	sqlite3 db.sqlite3
