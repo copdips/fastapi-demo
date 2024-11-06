@@ -14,10 +14,10 @@ endif
 
 install:
 	sudo apt-get install python3-dev graphviz graphviz-dev
+	echo "linux dependencies installed"
 	@if [ ! -d "$(VENV_DIR)" ]; then
 		python3 -m venv $(VENV_DIR);
 	fi
-	. $(VENV_DIR)/bin/activate
 	$(PYTHON) -m pip install -U pip
 	if ! command -v uv &> /dev/null; then
 		$(PYTHON) -m pip install -U uv
