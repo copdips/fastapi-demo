@@ -40,7 +40,7 @@ COPY requirements/base.txt requirements.txt
 RUN --mount=type=secret,id=PIP_INDEX_URL \
     --mount=type=bind,source=requirements/base.txt,target=requirements.txt \
     pip install --upgrade pip uv && \
-    UV_DEFAULT_INDEX=$(cat /run/secrets/PIP_INDEX_URL) uv pip install --no-cache-dir -r requirements.txt
+    UV_SYSTEM_PYTHON=1 UV_DEFAULT_INDEX=$(cat /run/secrets/PIP_INDEX_URL) uv pip install --no-cache-dir -r requirements.txt
 
 
 COPY --chown=appuser:appuser app /code/app
