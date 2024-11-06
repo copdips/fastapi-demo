@@ -1,0 +1,79 @@
+name: on_merge
+run-name: 📦${{ github.workflow}} - @${{ github.actor }}
+
+on:
+  pull_request_target:
+    types:
+      - closed
+    branches:
+      - main
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  create_new_version:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    outputs:
+      target-env: ${{ steps.compute-new-version.outputs.target-env }}
+      new-version: ${{ steps.compute-new-version.outputs.new-version }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Get latest git tag
+        shell: bash
+        run: |
+          git fetch --tags
+          git_tags=$(git tag)
+          if [ -z $git_tags ]; then
+            echo "No git tag found, use fictive first git tag: $FICTIVE_FIRST_GIT_TAG"
+            latest_git_tag=$FICTIVE_FIRST_GIT_TAG
+          else
+            latest_git_tag=$(git tag -l --sort=-version:refname | grep "^[v0-9]" | head -n 1)
+            if [ -z $latest_git_tag ]; then
+              # in case, the tags are not starting with v or 0-9
+              echo "No git tag found, use fictive first git tag: $FICTIVE_FIRST_GIT_TAG"
+              latest_git_tag=$FICTIVE_FIRST_GIT_TAG
+            fi
+          fi
+          echo "LATEST_GIT_TAG=$latest_git_tag" >> $GITHUB_ENV
+        env:
+          # could be "v0.0.0" depending on the project
+          FICTIVE_FIRST_GIT_TAG: "0.0.0"
+
+      - name: compute_new_version
+        id: compute-new-version
+        run: |
+          echo "compute new version with a script and create two outputs target-env & new-version"
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+          echo "new-version=$new_version" >> $GITHUB_OUTPUT
+          echo "TARGET_ENV=$target_env" >> $GITHUB_ENV
+          echo "target-env=$target_env" >> $GITHUB_OUTPUT
+
+      - name: Push new git tag
+        shell: bash
+        run: |
+          git tag $NEW_VERSION
+          git push origin $NEW_VERSION
+          echo "::notice::Created new git tag (new version): $NEW_VERSION"
+
+  publish_to_artifactory:
+    needs: [create_new_version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish to Artifact
+        run: echo "publish to artifact"
+        env:
+          NEW_VERSION: ${{ needs.create_new_version.outputs.new-version }}
+          BUILD_COMMAND: make ci_build
+
+  deploy_on_merge:
+    needs: [create_new_version]
+    if: needs.create_new_version.outputs.target-env != ''
+    uses: ./.github/workflows/cd.yml
+    with:
+      target-env: ${{ needs.create_new_version.outputs.target-env }}
+      version: ${{ needs.create_new_version.outputs.new-version }}
+    secrets: inherit

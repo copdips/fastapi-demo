@@ -48,7 +48,8 @@ skips = ["B101"]
 ignore-paths = ["."]
 
 [tool.pytest.ini_options]
-testpaths = ["tests/unit"]
+# testpaths = ["tests/unit"]  # no unit test yet
+testpaths = ["tests/integration"]
 # https://pytest-asyncio.readthedocs.io/en/latest/concepts.html#auto-mode
 asyncio_mode = "auto"
 addopts = """

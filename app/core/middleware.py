@@ -27,7 +27,7 @@ async def lifespan(_app: FastAPI):
         await init_db(async_session_factory)
     await taskiq_broker.startup()
 
-    logger.info("App started successfully.")
+    logger.info("***App started successfully.")
     yield
     # even got ctrl+c SIGINT signal, this block will be executed.
     # but if we close the bash console forcefully, this block will not be executed.
@@ -37,7 +37,7 @@ async def lifespan(_app: FastAPI):
     # meter_provider.force_flush(2000)
     # log_provider.force_flush(2000)
     # this final message will only be shown in the console.
-    logger.info("App shutdown successfully.")
+    logger.info("***App shutdown successfully.")
 
 
 def get_formatted_trace_id() -> str:

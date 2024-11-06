@@ -1,0 +1,59 @@
+name: cd
+run-name: 🚀${{ github.workflow}} ${{ github.event.inputs.version }} to ${{ github.event.inputs.target-env }} by @${{ github.actor }} ${{ github.sha }}
+# only for deployment, not for creating new version and releasing, which are done in the workflow on_merge.yml
+
+on:
+  workflow_dispatch:
+    inputs:
+      target-env:
+        description: The target env to deploy
+        required: false
+        type: choice
+        default: dev
+        options: [dev, stg, prd]
+      version:
+        description: The version to deploy
+        required: true
+        type: string
+      message:
+        description: The message for tracking (optional)
+        required: false
+        type: string
+  workflow_call:
+    inputs:
+      target-env:
+        description: The target env to deploy
+        required: false
+        type: string
+        default: dev
+      version:
+        description: The version to deploy
+        required: true
+        type: string
+      message:
+        description: The message for tracking (optional)
+        required: false
+        type: string
+
+env:
+  PYTHON_VERSION: "3.12"
+  VERSION_FILE: VERSION
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target-env }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Write version file
+        run: |
+          echo ${{ inputs.version }} > ${{ env.VERSION_FILE }}

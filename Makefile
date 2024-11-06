@@ -14,15 +14,22 @@ endif
 
 install:
 	sudo apt-get install python3-dev graphviz graphviz-dev
+	@if [ ! -d "$(VENV_DIR)" ]; then
+		python3 -m venv $(VENV_DIR);
+	fi
 	$(PYTHON) -m pip install -U pip
-	$(PYTHON) -m pip install -U -r requirements/base.txt
-	$(PYTHON) -m pip install -U -r requirements/dev.txt
+	if ! command -v uv &> /dev/null; then
+		$(PYTHON) -m pip install -U uv
+	fi
+	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
+	uv pip install -Ur requirements/base.txt
+	uv pip install -Ur requirements/dev.txt
 	pre-commit autoupdate
 
 lint:
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
+	pre-commit autoupdate
 	pre-commit run --all-files
-
 
 test-integration:
 	@echo "${BOLD}${YELLOW}Running integration tests:${NORMAL}"
@@ -30,7 +37,7 @@ test-integration:
 	# Groups are distributed to available workers as whole units.
 	# This guarantees that all tests in a file run in the same worker.
 	# https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	$(PYTHON) -m pytest tests/integration -n auto --dist=loadfile
+	$(PYTHON) -m pytest tests/integration -n auto --dist=loadfile -s
 
 test-unit:
 	@echo "${BOLD}${YELLOW}Running unit tests:${NORMAL}"
