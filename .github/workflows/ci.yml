@@ -106,6 +106,17 @@ jobs:
           export LOGFIRE_SEND_TO_LOGFIRE=false
           make test
 
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Stop containers
         if: always()
         run: docker-compose down

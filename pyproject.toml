@@ -48,7 +48,7 @@ testpaths = ["tests/integration"]
 asyncio_mode = "auto"
 addopts = """
     -v -s
-    --junitxml=junit/test-results.xml
+    --junitxml=junit.xml
     --cov app
     --cov-report=html
     --cov-report=xml
