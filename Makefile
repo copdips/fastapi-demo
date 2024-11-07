@@ -72,5 +72,8 @@ run-with-multi-core:
 run-docker-compose:
 	docker compose build && docker compose up -d
 
+show-docker-compose-ps:
+	docker compose ps -a --format "table {{.Name}}\t{{.Image}}\t{{.State}}\t{{.Status}}"
+
 dbsqlite:
 	sqlite3 db.sqlite3
