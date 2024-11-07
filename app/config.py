@@ -77,8 +77,9 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
-    db_settings: DBSettings = Field(default_factory=DBSettings)
-    logging_settings: LoggingSettings = Field(default_factory=LoggingSettings)
+    db_settings: DBSettings = Field(default=DBSettings())
+    # another way to set default value is to use default_factory
+    logging_settings: LoggingSettings = Field(default_factory=lambda: LoggingSettings())
     api_env: str = os.getenv("API_ENV", DEFAULT_API_ENV)
     api_version: str = getattr(app, "__VERSION__", DEFAULT_API_VERSION)
     api_name: str = "FastAPI demo"
