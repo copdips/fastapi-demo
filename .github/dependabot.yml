@@ -8,17 +8,17 @@ updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/requirements" # Location of package manifests
     schedule:
-      interval: "weekly"    
+      interval: "weekly"
     commit-message:
       prefix: "pip prod"
       prefix-development: "pip dev"
-      
+
   - package-ecosystem: "github-actions"
     # Workflow files stored in the default location of `.github/workflows`. (You don't need to specify `/.github/workflows` for `directory`. You can use `directory: "/"`.)
     directory: "/"
     schedule:
       interval: "weekly"
-      
+
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
