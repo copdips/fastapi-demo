@@ -19,7 +19,48 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
+  ci_lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Use public pip index only for ci demo
+        run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret
+
+      - name: create env file from secret.CI_ENV
+        run: |
+          echo "${{ secrets.CI_ENV }}" > .env
+          echo "============== echo secrets.CI_ENV"
+          echo "${{ secrets.CI_ENV }}"
+          echo "============== cat .env"
+          cat .env
+          wc -l .env
+
+      - name: Install deps
+        run: |
+          python --version
+          make ci-install
+        env:
+          UV_SYSTEM_PYTHON: 1
+
+      - name: Run lint
+        run: |
+          export LOGFIRE_SEND_TO_LOGFIRE=false
+          export SKIP=pyright,pytest
+          make lint
+
+      # https://github.com/microsoft/pyright/blob/main/docs/ci-integration.md
+      - uses: jakebailey/pyright-action@v2
+
+  ci_test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,15 +100,6 @@ jobs:
         env:
           UV_SYSTEM_PYTHON: 1
 
-      - name: Run lint
-        run: |
-          export LOGFIRE_SEND_TO_LOGFIRE=false
-          export SKIP=pyright
-          make lint
-
-      # https://github.com/microsoft/pyright/blob/main/docs/ci-integration.md
-      - uses: jakebailey/pyright-action@v2
-
       - name: Run tests
         # above `make lint` includes pytest with default options
         run: |
@@ -81,7 +113,8 @@ jobs:
   ci_all_green:
     if: always()
     needs:
-      - ci
+      - ci_lint
+      - ci_test
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
