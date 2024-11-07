@@ -1,3 +1,4 @@
+.ONESHELL:
 SHELL=/bin/bash
 API_FOLDER=app
 VENV_NAME := $(shell [ -d venv ] && echo venv || echo .venv)
@@ -12,12 +13,15 @@ ifneq (,$(findstring xterm,${TERM}))
 	NORMAL	:= $(shell tput -Txterm sgr0)
 endif
 
-install:
-	sudo apt-get install python3-dev graphviz graphviz-dev
-	echo "linux dependencies installed"
-	@if [ ! -d "$(VENV_DIR)" ]; then
+new-venv:
+	if [ ! -d "$(VENV_DIR)" ]; then
 		python3 -m venv $(VENV_DIR);
 	fi
+
+install-linux-deps:
+	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev
+
+pip-install:
 	$(PYTHON) -m pip install -U pip
 	if ! command -v uv &> /dev/null; then
 		$(PYTHON) -m pip install -U uv
@@ -26,6 +30,10 @@ install:
 	uv pip install -Ur requirements/base.txt
 	uv pip install -Ur requirements/dev.txt
 	pre-commit autoupdate
+
+install: new-venv install-linux-deps pip-install
+
+ci-install: install-linux-deps pip-install
 
 lint:
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"

@@ -55,7 +55,7 @@ jobs:
       - name: Install deps
         run: |
           python --version
-          make install
+          make ci-install
         env:
           UV_SYSTEM_PYTHON: 1
 
