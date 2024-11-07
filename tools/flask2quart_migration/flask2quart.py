@@ -3,7 +3,6 @@ import os
 
 
 class FlaskToQuartTransformer(ast.NodeTransformer):
-
     def __init__(self):
         self.async_functions = set()
 

@@ -62,7 +62,11 @@ jobs:
       - name: Run lint
         run: |
           export LOGFIRE_SEND_TO_LOGFIRE=false
+          export SKIP=pyright
           make lint
+
+      # https://github.com/microsoft/pyright/blob/main/docs/ci-integration.md
+      - uses: jakebailey/pyright-action@v2
 
       - name: Run tests
         # above `make lint` includes pytest with default options

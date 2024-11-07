@@ -11,7 +11,6 @@ class PyInstrumentMiddleware(BaseHTTPMiddleware):
     # To invoke, make any request to your application with the GET parameter profile=1
     # and it will print the HTML result from pyinstrument.
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint):
-
         profiling = request.query_params.get("profile", False)
         if profiling:
             profiler = Profiler(

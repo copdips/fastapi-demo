@@ -5,7 +5,7 @@ erdantic
 ipython
 pre-commit
 py-spy
-pyright
+pyright[nodejs]
 pytest
 pytest-asyncio
 pytest-cov
