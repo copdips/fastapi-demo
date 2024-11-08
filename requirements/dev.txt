@@ -1,5 +1,5 @@
 aiosqlite
-anyio==4.6.2.post1  # https://github.com/agronholm/anyio/issues/754
+anyio==4.6.2.post1
 devtools
 erdantic
 ipython
