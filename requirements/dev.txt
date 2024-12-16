@@ -1,5 +1,5 @@
 aiosqlite
-anyio==4.6.2.post1
+anyio==4.7.0
 devtools
 erdantic
 ipython
