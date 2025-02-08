@@ -42,6 +42,8 @@ class DBSettings(BaseSettings):
     values loaded from a dotenv file.
     """
 
+    # ! pydantic_settings tries to load settings from environment variables with the same name as the settings fields, then from a .env file, if SettingsConfigDict is set like below, and finally from the default value.
+    # So we can load_env(override=True) at the beginning of the file, and then use the settings fields directly.
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

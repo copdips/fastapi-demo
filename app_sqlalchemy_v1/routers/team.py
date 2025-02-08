@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload  # added import
 
-from app_sqlachemy_v1.core.db import get_db_session
-from app_sqlachemy_v1.models.team import Team
+from app_sqlalchemy_v1.core.db import get_db_session
+from app_sqlalchemy_v1.models.team import Team
 
 router = APIRouter()
 
