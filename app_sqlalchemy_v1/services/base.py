@@ -35,6 +35,12 @@ class BaseService(Generic[T]):
                 for attr in selectin_attributes:
                     if isinstance(attr, list):
                         """
+                        The loader options can also be "chained" using method chaining to specify how loading should occur further levels deep:
+
+                        - https://docs.sqlalchemy.org/en/latest/orm/queryguide/relationships.html#relationship-loading-with-loader-options
+
+                        - https://stackoverflow.com/a/32992858
+
                         chained selectinload (multiple selectinload in one options)
                         often used for nested many-ton-many relationships:
 

@@ -68,6 +68,17 @@ async def create_init_data_from_list(async_session_factory: Callable[[], AsyncSe
         # sqlalchemy async session does not support bulk_insert_mappings
         # await session.bulk_insert_mappings(Team, teams_data)
         await session.execute(insert(Team), teams_data)
+        """
+        # ! can also use:
+        await async_session.run_sync(lambda session: session.bulk_insert_mappings(....))
+
+        as zzzeek said:
+        https://github.com/sqlalchemy/sqlalchemy/discussions/6935#discussioncomment-4789701
+
+        First is, you can absolutely use the existing legacy bulk APIs with async. Just use session.run_sync , which is how the asyncsession runs everything anyway:
+
+        Futhermore, sqlaclchemy v1.4 bulk_insert_mappings is less performant than v2
+        """
         teams_db = (await session.execute(select(Team))).scalars().all()
         teams_mapping = {team.name: team.id for team in teams_db}
 
