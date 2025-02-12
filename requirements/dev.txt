@@ -13,4 +13,5 @@ pytest-env
 pytest-xdist
 ruff
 sqlacodegen>=3.0.0rc5
+sqlalchemy2-stubs
 types-setuptools

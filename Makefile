@@ -77,3 +77,6 @@ show-docker-compose-ps:
 
 dbsqlite:
 	sqlite3 db.sqlite3
+
+run-sqlalchemy-v1:
+	TESTING=true uvicorn app_sqlalchemy_v1.main:app --reload
