@@ -55,6 +55,9 @@ class BaseSQLModel(
     )
     created_at: datetime = Field(
         sa_type=sa.DateTime(timezone=True),
+        # default vs default_factory:
+        # ! default_factory is introduced in sqlalchemy v2
+        # https://github.com/sqlalchemy/sqlalchemy/discussions/11372#discussioncomment-9370737
         default_factory=lambda: datetime.now(UTC),
         # or without lambda, but using datetime.utcnow throws deprecation error.
         # default_factory=datetime.utcnow,
