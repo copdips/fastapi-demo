@@ -3,10 +3,12 @@ from fastapi.responses import ORJSONResponse
 from fastapi.routing import APIRoute
 
 from app.config import settings
+from app.core.db import engine
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logger
 from app.core.middleware import lifespan, register_middlewares
 from app.core.router import register_routers
+from app.core.sql_admin import init_sqladmin
 from app.routes import v1_routes
 
 
@@ -36,6 +38,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
     register_middlewares(app)
     register_routers(app, v1_routes)
+    init_sqladmin(app, engine)
     return app
 
 

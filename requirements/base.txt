@@ -25,6 +25,7 @@ redis
 rich>=13.4.2
 sentry-sdk[fastapi]
 shortuuid
+sqladmin
 SQLAlchemy
 sqlmodel
 taskiq
