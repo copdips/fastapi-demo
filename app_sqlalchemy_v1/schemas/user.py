@@ -1,9 +1,9 @@
-
 from pydantic import BaseModel
 
 
 class UserCreate(BaseModel):
     name: str
+
 
 class UserRead(BaseModel):
     # diff between UserRead and User is that User has team as Relationship
@@ -13,6 +13,7 @@ class UserRead(BaseModel):
     # thus, we must use UserReadWithTeam as response type.
     id: str
     name: str
+
 
 class UserUpdate(BaseModel):
     # class without param (table=True) will be a simple Pydantic BaseModel

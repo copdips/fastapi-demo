@@ -1,5 +1,4 @@
-from dotenv import load_dotenv
-from pydantic import BaseModel, Field
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # load_dotenv(override=True)
@@ -35,6 +34,7 @@ class DBSettings(BaseSettings):
     as well as the dotenv file, environment variables will always take priority over
     values loaded from a dotenv file.
     """
+
     DB_NAME: str = Field(default=...)
     DB_PASSWORD: str = Field(default=...)
     DB_USERNAME: str = Field(default=...)

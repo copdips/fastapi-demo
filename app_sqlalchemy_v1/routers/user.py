@@ -23,6 +23,7 @@ async def get_users(
 ):
     return await user_service.get_many(skip, limit)
 
+
 @router.get("/{user_id}")
 async def get_user(user_service: UserServiceDep, user_id: str):
     try:

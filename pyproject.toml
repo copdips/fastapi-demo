@@ -38,8 +38,8 @@ classmethod-decorators = ["pydantic.validator"]
 reportUnnecessaryTypeIgnoreComment = true
 exclude = ["_local_test", "tools", "migrations", ".venv"]
 # include = ["app"]
-venvPath = "."
-venv = ".venv"
+# venvPath = "."
+# venv = ".venv"
 
 [tool.pytest.ini_options]
 # testpaths = ["tests/unit"]  # no unit test yet

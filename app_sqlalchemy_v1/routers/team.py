@@ -1,4 +1,3 @@
-from typing import AsyncGenerator
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,9 +20,7 @@ async def get_teams(session: AsyncSession = Depends(get_db_session)):
 @router.get("/{team_id}")
 async def get_team(team_id: int, session: AsyncSession = Depends(get_db_session)):
     result = await session.execute(
-        select(Team)
-        .options(selectinload(Team.users))
-        .where(Team.id == team_id)
+        select(Team).options(selectinload(Team.users)).where(Team.id == team_id)
     )
     team = result.scalars().first()
     if not team:

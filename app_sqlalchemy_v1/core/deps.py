@@ -9,6 +9,7 @@ from app_sqlalchemy_v1.services.user import UserService
 
 DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
 
+
 async def get_user_service(
     session: DBSessionDep,
 ) -> AsyncGenerator[UserService, None]:

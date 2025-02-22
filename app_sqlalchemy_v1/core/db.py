@@ -1,10 +1,9 @@
-from typing import AsyncGenerator, Callable
+from collections.abc import AsyncGenerator, Callable
 
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
 
-from app_sqlalchemy_v1.config import settings
 from app_sqlalchemy_v1.models.association import UserTagAssociation
 from app_sqlalchemy_v1.models.base import Base
 from app_sqlalchemy_v1.models.tag import Tag

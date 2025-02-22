@@ -17,4 +17,6 @@ graph = create_schema_graph(
     rankdir="LR",  # From left to right (instead of top to bottom)
     concentrate=False,  # Don't try to join the relation lines together
 )
-graph.write_png("./tools/sql_to_erd/sqlalchemy_schemadisplay_demo/sqlalchemy_schemadisplay.png")  # write out the file
+graph.write_png(
+    "./tools/sql_to_erd/sqlalchemy_schemadisplay_demo/sqlalchemy_schemadisplay.png"
+)  # write out the file
