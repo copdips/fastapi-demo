@@ -12,7 +12,6 @@ from app.core.logging import force_flush_logs, get_logger
 from app.core.middlewares.log_route import LogRouteMiddleware
 from app.core.middlewares.profiling import PyInstrumentMiddleware
 from app.core.middlewares.request_id import RequestContextLogMiddleware
-from app.core.taskiq import taskiq_broker
 
 logger = get_logger()
 
@@ -25,7 +24,11 @@ async def lifespan(_app: FastAPI):
     _app.state.settings = settings
     if settings.testing:
         await init_db(async_session_factory)
-    await taskiq_broker.startup()
+
+    # ! comment this part to be independent from docker compose
+    # as this part needs to start many services in docker compose
+    # from app.core.taskiq import taskiq_broker
+    # await taskiq_broker.startup()
 
     logger.info("***App started successfully.")
     yield
