@@ -1,8 +1,14 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy.orm import Mapped
 from sqlmodel import Field, Relationship
 
 from app_domain_based.app_common.models import BaseSQLModel
 from app_domain_based.app_user.schemas import UserBase
+
+if TYPE_CHECKING:
+    # https://sqlmodel.tiangolo.com/tutorial/code-structure/#import-only-while-editing-with-type_checking
+    from app_domain_based.app_team.models import Team
 
 
 class User(BaseSQLModel, UserBase, table=True):
@@ -25,7 +31,7 @@ class User(BaseSQLModel, UserBase, table=True):
     #         ForeignKey("team.uid", ondelete="CASCADE"),
     #     )
     # )
-    team : "Team" = Relationship(back_populates="users")
+    team: "Team" = Relationship(back_populates="users")
     # ! team can be declared with Optional["Team"] to avoid circular import
     # ref: https://sqlmodel.tiangolo.com/tutorial/code-structure/#hero-model-file
     # from typing import Optional

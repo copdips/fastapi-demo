@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped
 from sqlmodel import Relationship
@@ -6,6 +7,10 @@ from app_domain_based.app_common.models import BaseSQLModel
 from app_domain_based.app_team.schemas import TeamBase
 from app_domain_based.model_relationships.model_relationships import TagTeamLink
 
+if TYPE_CHECKING:
+    # https://sqlmodel.tiangolo.com/tutorial/code-structure/#import-only-while-editing-with-type_checking
+    from app_domain_based.app_tag.models import Tag
+    from app_domain_based.app_user.models import User
 
 class Team(BaseSQLModel, TeamBase, table=True):
     # one-to-many relationship [one side]: https://sqlmodel.tiangolo.com/tutorial/fastapi/teams/#add-teams-models
