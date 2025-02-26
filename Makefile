@@ -41,22 +41,37 @@ lint:
 	pre-commit run --all-files
 
 test-integration:
-	@echo "${BOLD}${YELLOW}Running integration tests:${NORMAL}"
+	@echo "${BOLD}${YELLOW}Running integration tests for app:${NORMAL}"
 	# ! --dist=loadfile to let Tests are grouped by their containing file.
 	# Groups are distributed to available workers as whole units.
 	# This guarantees that all tests in a file run in the same worker.
 	# https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
 	$(PYTHON) -m pytest tests/integration -n auto --dist=loadfile -s
 
+test-integration-domain-based:
+	@echo "${BOLD}${YELLOW}Running integration tests for app_domain_based:${NORMAL}"
+	# ! --dist=loadfile to let Tests are grouped by their containing file.
+	# Groups are distributed to available workers as whole units.
+	# This guarantees that all tests in a file run in the same worker.
+	# https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
+	$(PYTHON) -m pytest tests_domain_based/integration --cov app_domain_based --cov-append -n auto --dist=loadfile -s
+
 test-unit:
-	@echo "${BOLD}${YELLOW}Running unit tests:${NORMAL}"
+	@echo "${BOLD}${YELLOW}Running unit tests for app:${NORMAL}"
 	$(PYTHON) -m pytest tests/unit
 
+test-unit-domain-based:
+	@echo "${BOLD}${YELLOW}Running unit tests for app_domain_based:${NORMAL}"
+	$(PYTHON) -m pytest tests_domain_based/unit --cov app_domain_based --cov-append
+
 # ! need to run docker in advance: make run-docker-compose
-test: test-integration
+test: test-integration test-integration-domain-based
 
 run:
 	TESTING=true uvicorn ${API_FOLDER}.main:app --reload
+
+run-app-domain-based:
+	TESTING=true uvicorn ${API_FOLDER}_domain_based.main:app --reload
 
 run-with-external-db:
 	uvicorn ${API_FOLDER}.main:app --reload
