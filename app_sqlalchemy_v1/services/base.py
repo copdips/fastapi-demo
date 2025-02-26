@@ -5,7 +5,7 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.core.exceptions import NotFoundError
+from app_sqlalchemy_v1.core.exceptions import NotFoundError
 from app_sqlalchemy_v1.models.base import BaseMixin
 
 # Create a TypeVar that can be any subclass of BaseSQLModel
