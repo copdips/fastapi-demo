@@ -12,6 +12,9 @@ from app_domain_based.core.logging import force_flush_logs, get_logger
 from app_domain_based.core.middlewares.log_route import LogRouteMiddleware
 from app_domain_based.core.middlewares.profiling import PyInstrumentMiddleware
 from app_domain_based.core.middlewares.request_id import RequestContextLogMiddleware
+from app_domain_based.core.middlewares.trailing_slash import (
+    RemoveTailingSlashMiddleware,
+)
 
 logger = get_logger()
 
@@ -73,6 +76,7 @@ def register_middlewares(_app: FastAPI):
     curl -X 'GET' 'http://localhost:8000/v1/health/' -H 'accept: application/json'
     curl -X 'GET' 'http://localhost:8000/v1/health/' -H 'accept: application/x-msgpack'
     """
+    _app.add_middleware(RemoveTailingSlashMiddleware)
     _app.add_middleware(MessagePackMiddleware)
     # https://fastapi.tiangolo.com/advanced/middleware/#gzipmiddleware
     _app.add_middleware(GZipMiddleware, minimum_size=1000)

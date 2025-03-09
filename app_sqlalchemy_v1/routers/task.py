@@ -21,7 +21,7 @@ async def task():
     print("Task is done")
 
 
-@router.get("/")
+@router.get("")
 async def run_task(background_tasks: BackgroundTasks):
     background_tasks.add_task(higher_task)
     return {}

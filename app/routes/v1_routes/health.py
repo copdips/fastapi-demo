@@ -11,7 +11,7 @@ endpoint_name = "health"
 
 
 @router.get(
-    "/",
+    "",
     summary="Get API health status",
     response_model=HealthRead,
 )

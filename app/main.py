@@ -39,6 +39,7 @@ def create_app() -> FastAPI:
     register_middlewares(app)
     register_routers(app, v1_routes)
     init_sqladmin(app, engine)
+
     return app
 
 

@@ -25,7 +25,7 @@ def test_create_tag(client: TestClient):
 
 def test_get_all_tags(client: TestClient):
     tag_count = 2
-    response = client.get(f"{base_url}/?offset=0&limit={tag_count}")
+    response = client.get(f"{base_url}?offset=0&limit={tag_count}")
     assert response.status_code == status.HTTP_200_OK
     json_response = response.json()
     assert len(json_response) == tag_count

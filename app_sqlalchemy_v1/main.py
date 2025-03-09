@@ -1,6 +1,8 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.requests import Request
+from fastapi.responses import RedirectResponse
 from sqladmin import Admin, ModelView
 
 from app_sqlalchemy_v1.core.db import engine, init_db
@@ -15,6 +17,14 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="FastAPI Demo", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def remove_trailing_slash(request: Request, call_next):
+    if request.url.path.endswith("/") and request.url.path != "/":
+        return RedirectResponse(url=request.url.path.rstrip("/"), status_code=308)
+    return await call_next(request)
+
 
 # Include routers
 app.include_router(task_router, prefix="/tasks", tags=["tasks"])

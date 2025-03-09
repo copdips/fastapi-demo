@@ -27,7 +27,7 @@ async def get_team(
 
 
 @router.get(
-    "/",
+    "",
     summary="Get teams",
     response_model=list[TeamReadComposite],
 )
@@ -44,7 +44,7 @@ async def get_teams(
 
 
 @router.post(
-    "/",
+    "",
     summary="Create a new team",
     response_model=TeamRead,
     status_code=status.HTTP_201_CREATED,

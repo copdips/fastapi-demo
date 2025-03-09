@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/",
+    "",
     response_model=list[UserRead],
 )
 async def get_users(
@@ -32,7 +32,7 @@ async def get_user(user_service: UserServiceDep, user_id: str):
         raise HTTPException(status_code=404, detail=str(ex)) from ex
 
 
-@router.post("/")
+@router.post("")
 async def create_user(user_service: UserServiceDep, user: UserCreate):
     return await user_service.create(user)
 

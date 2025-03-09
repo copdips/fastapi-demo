@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -10,7 +9,7 @@ from app_sqlalchemy_v1.models.team import Team
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def get_teams(session: AsyncSession = Depends(get_db_session)):
     result = await session.execute(select(Team))
     teams = result.scalars().all()
@@ -28,7 +27,7 @@ async def get_team(team_id: int, session: AsyncSession = Depends(get_db_session)
     return team
 
 
-@router.post("/")
+@router.post("")
 async def create_team(name: str, session: AsyncSession = Depends(get_db_session)):
     new_team = Team(name=name)
     session.add(new_team)

@@ -27,7 +27,7 @@ async def get_tag(
 
 
 @router.get(
-    "/",
+    "",
     summary="Get tags",
     response_model=list[TagReadComposite],
 )
@@ -44,7 +44,7 @@ async def get_tags(
 
 
 @router.post(
-    "/",
+    "",
     summary="Create a new tag",
     response_model=TagRead,
     status_code=status.HTTP_201_CREATED,

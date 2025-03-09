@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     # https://sqlmodel.tiangolo.com/tutorial/code-structure/#import-only-while-editing-with-type_checking
     from app_domain_based.app_team.models import Team
 
+
 class Tag(BaseSQLModel, TagBase, table=True):
     # one-to-many relationship [one side]: https://sqlmodel.tiangolo.com/tutorial/fastapi/teams/#add-teams-models
     # cannot use list[User] as by this point the Python interpreter doesn't know of any class User.

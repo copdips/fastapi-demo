@@ -23,7 +23,7 @@ def test_create_team(client: TestClient):
 
 def test_get_all_teams(client: TestClient):
     team_count = 2
-    response = client.get(f"{base_url}/?offset=0&limit={team_count}")
+    response = client.get(f"{base_url}?offset=0&limit={team_count}")
     assert response.status_code == status.HTTP_200_OK
     json_response = response.json()
     assert len(json_response) == team_count

@@ -26,7 +26,7 @@ async def get_user(
     return await user_service.get(user_id)
 
 
-@router.get("/", summary="Get users", response_model=list[UserReadComposite])
+@router.get("", summary="Get users", response_model=list[UserReadComposite])
 async def get_users(
     *,
     user_service: UserServiceDep,
@@ -41,7 +41,7 @@ async def get_users(
 
 
 @router.post(
-    "/",
+    "",
     summary="Create a new user",
     response_model=UserRead,
     status_code=status.HTTP_201_CREATED,  # default success status code is 200
