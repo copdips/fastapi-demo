@@ -1,5 +1,6 @@
 aiosqlite
 anyio==4.8.0
+coredumpy
 devtools
 erdantic
 ipython
