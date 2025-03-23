@@ -17,7 +17,7 @@ lint.ignore = [
     "ISC001", # single-line-implicit-string-concatenation
 ]
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = [
+"tests*/**/*.py" = [
     # at least this three should be fine in tests:
     "S101", # asserts allowed in tests...
     # "ARG", # Unused function args -> fixtures nevertheless are functionally relevant...

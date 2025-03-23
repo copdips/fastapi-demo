@@ -1,8 +1,8 @@
 from collections.abc import AsyncGenerator, Callable
 
 from sqlalchemy import insert, select
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine  # type: ignore
-from sqlalchemy.orm import sessionmaker  # type: ignore
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 
 from app_sqlalchemy_v1.models.association import UserTagAssociation
 from app_sqlalchemy_v1.models.base import Base
@@ -15,6 +15,7 @@ DATABASE_URL = "sqlite+aiosqlite:///./app_sqlalchemy_v1.sqlite3"
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,
+    pool_pre_ping=True,  # Verify connection is still active
     # Required for SQLite
     connect_args={"check_same_thread": False},
 )
@@ -128,5 +129,11 @@ async def init_db():
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-    async with async_session() as session:
-        yield session
+    async with async_session() as session, session.begin():
+        try:
+            yield session
+        except Exception:
+            # Any exception will trigger a rollback thanks to the explicit session.begin() context manager:
+            # https://docs.sqlalchemy.org/en/20/orm/session_transaction.html#explicit-begin
+            # Just re-raise to let FastAPI handle the error response
+            raise

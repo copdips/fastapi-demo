@@ -174,3 +174,4 @@ celerybeat-schedule.*
 
 .ci_env
 junit.xml
+dumps/

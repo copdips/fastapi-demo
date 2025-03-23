@@ -14,6 +14,7 @@ from app_sqlalchemy_v1.routers import tag_router, task_router, team_router, user
 async def lifespan(_app: FastAPI):
     await init_db()
     yield
+    await engine.dispose()
 
 
 app = FastAPI(title="FastAPI Demo", lifespan=lifespan)

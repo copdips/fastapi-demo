@@ -37,6 +37,7 @@ if settings.testing:
     engine = create_async_engine(
         sqlalchemy_db_url,
         echo=settings.debug,
+        pool_pre_ping=True,  # Verify connection is still active
         connect_args={"check_same_thread": False},
         # sqlite pool class could be set automatically by SQLAlchemy
         # https://docs.sqlalchemy.org/en/20/dialects/sqlite.html#threading-pooling-behavior
@@ -51,7 +52,13 @@ else:
     # ! traditional QueuePool is not asyncio compatible
     # AsyncAdaptedQueuePool is used instead, and set automatically when using create_async_engine
     # https://docs.sqlalchemy.org/en/20/core/pooling.html#connection-pool-configuration
-    engine = create_async_engine(sqlalchemy_db_url, echo=settings.debug)
+    engine = create_async_engine(
+        sqlalchemy_db_url,
+        echo=settings.debug,
+        pool_pre_ping=True,  # Verify connection is still active
+        pool_size=10,  # Adjust based on expected concurrent requests
+        max_overflow=20,
+    )
 
 async_session_factory: type[AsyncSession] = async_sessionmaker(  # type: ignore[assignment]
     bind=engine,

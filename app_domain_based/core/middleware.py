@@ -7,7 +7,7 @@ from msgpack_asgi import MessagePackMiddleware
 from opentelemetry import trace
 
 from app_domain_based.config import settings
-from app_domain_based.core.db import async_session_factory, init_db
+from app_domain_based.core.db import async_session_factory, engine, init_db
 from app_domain_based.core.logging import force_flush_logs, get_logger
 from app_domain_based.core.middlewares.log_route import LogRouteMiddleware
 from app_domain_based.core.middlewares.profiling import PyInstrumentMiddleware
@@ -35,6 +35,7 @@ async def lifespan(_app: FastAPI):
 
     logger.info("***App started successfully.")
     yield
+    await engine.dispose()
     # even got ctrl+c SIGINT signal, this block will be executed.
     # but if we close the bash console forcefully, this block will not be executed.
     logger.info("App is shutting down.")

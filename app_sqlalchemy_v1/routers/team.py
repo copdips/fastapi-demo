@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -10,14 +12,14 @@ router = APIRouter()
 
 
 @router.get("")
-async def get_teams(session: AsyncSession = Depends(get_db_session)):
+async def get_teams(session: Annotated[AsyncSession, Depends(get_db_session)]):
     result = await session.execute(select(Team))
     teams = result.scalars().all()
     return teams
 
 
 @router.get("/{team_id}")
-async def get_team(team_id: int, session: AsyncSession = Depends(get_db_session)):
+async def get_team(team_id: int, session: Annotated[AsyncSession, Depends(get_db_session)]):
     result = await session.execute(
         select(Team).options(selectinload(Team.users)).where(Team.id == team_id)
     )
@@ -28,7 +30,7 @@ async def get_team(team_id: int, session: AsyncSession = Depends(get_db_session)
 
 
 @router.post("")
-async def create_team(name: str, session: AsyncSession = Depends(get_db_session)):
+async def create_team(name: str, session: Annotated[AsyncSession, Depends(get_db_session)]):
     new_team = Team(name=name)
     session.add(new_team)
     await session.commit()

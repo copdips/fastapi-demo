@@ -19,6 +19,11 @@ class UserService(BaseService[User]):
     async def create(self, user: UserCreate) -> User:
         db_user = User.model_validate(user)  # Pydantic v1: User.from_orm(user)
         self.session.add(db_user)
+        # await self.session.commit()
+        # await self.session.flush()
+        # breakpoint()
+        # db_user.name = "Updated name"
+        # raise ValueError("This is a test exception")
         await self.session.commit()
         return db_user
 

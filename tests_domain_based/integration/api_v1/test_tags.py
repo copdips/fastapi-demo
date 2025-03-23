@@ -14,8 +14,6 @@ def test_create_tag(client: TestClient):
         base_url,
         json=body,
     )
-    print(f"response: {response.json()}")
-    print(f"base_url: {base_url}")
     assert response.status_code == status.HTTP_201_CREATED
 
     json_response = response.json()

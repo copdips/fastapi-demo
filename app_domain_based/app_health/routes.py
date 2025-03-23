@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.exc import OperationalError
 from sqlmodel import select
@@ -19,7 +21,7 @@ async def get_health(
     req: Request,
     response: Response,
     # ! better to create a dedicated health_service instead of direct db_session
-    db_session: AsyncSession = Depends(get_db_session),
+    db_session: Annotated[AsyncSession, Depends(get_db_session)],
 ):
     response.headers["Cache-Control"] = "no-cache"
     meta = {

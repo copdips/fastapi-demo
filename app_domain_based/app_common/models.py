@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 
 import shortuuid
 import sqlalchemy as sa
-from pydantic import ConfigDict, field_validator
+from pydantic import ConfigDict
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlmodel import Field, MetaData, SQLModel
 from ulid import ULID

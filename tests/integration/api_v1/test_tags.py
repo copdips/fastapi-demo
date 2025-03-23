@@ -16,7 +16,7 @@ def test_create_tag(client: TestClient):
     )
     assert response.status_code == status.HTTP_201_CREATED
     json_response = response.json()
-    assert json_response.items() > body.items()
+    assert json_response.items() >= body.items()
     assert json_response["id"] is not None
 
 

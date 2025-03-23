@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import Mapped
 from sqlmodel import Field, Relationship
 
 from app_domain_based.app_common.models import BaseSQLModel

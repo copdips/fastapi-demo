@@ -14,8 +14,14 @@ from app_domain_based.core.logging import get_logger
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_factory() as session:
-        yield session
+    async with async_session_factory() as session, session.begin():
+        try:
+            yield session
+        except Exception:
+            # Any exception will trigger a rollback thanks to the explicit session.begin() context manager:
+            # https://docs.sqlalchemy.org/en/20/orm/session_transaction.html#explicit-begin
+            # Just re-raise to let FastAPI handle the error response
+            raise
 
 
 async def get_task_service(
