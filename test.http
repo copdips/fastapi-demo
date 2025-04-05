@@ -1,0 +1,5 @@
+### get teams
+GET http://localhost:8000/v1/teams
+
+### get teams count
+GET http://localhost:8000/v1/teams/count

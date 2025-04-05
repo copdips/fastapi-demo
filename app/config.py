@@ -102,10 +102,10 @@ class Settings(BaseSettings):
     repo_name: str = "fastapi-demo"
 
     # debug: bool = api_env == DEFAULT_API_ENV
-    debug: bool = False
     testing: bool = (
         is_testing()
     )  # testing mode will use sqlite, and disable profiling middleware
+    debug: bool = testing
     profiling: bool = not testing
     profiling_interval_seconds: float = 0.0001
     apitally_client_id: str = APITALLY_CLIENT_ID

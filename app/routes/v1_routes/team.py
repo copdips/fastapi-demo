@@ -11,6 +11,18 @@ endpoint_name = "teams"
 
 
 @router.get(
+    "/count",
+    summary="Get teams count",
+    response_model=int,
+)
+async def get_teams_count(
+    *,
+    team_service: TeamServiceDep,
+):
+    return await team_service.count()
+
+
+@router.get(
     "/{team_id}",
     summary="Get single team",
     response_model=TeamReadComposite,
