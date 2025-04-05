@@ -8,6 +8,7 @@ azure-monitor-opentelemetry
 celery
 devtools
 email-validator
+fastapi-mcp
 fastapi[all]>=0.110.0
 flower
 gunicorn

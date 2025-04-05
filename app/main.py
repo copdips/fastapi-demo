@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi.routing import APIRoute
+from fastapi_mcp import add_mcp_server
 
 from app.config import settings
 from app.core.db import engine
@@ -14,8 +15,10 @@ from app.routes import v1_routes
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     # output: health-get_health@v1
-    return f"{route.tags[0]}-{route.name}@{route.path.split('/')[1]}"
-
+    tags = route.tags
+    # fastapi-mcp mounts /mount route without tags
+    tag = tags[0] if tags else "default"
+    return f"{tag}-{route.name}@{route.path.split('/')[1]}"
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -39,6 +42,7 @@ def create_app() -> FastAPI:
     register_middlewares(app)
     register_routers(app, v1_routes)
     init_sqladmin(app, engine)
+    add_mcp_server(app, mount_path="/mcp", name="mcp")
 
     return app
 
