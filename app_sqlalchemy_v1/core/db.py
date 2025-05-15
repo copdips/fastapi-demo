@@ -128,12 +128,14 @@ async def init_db():
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+    # sqlalchemy v1 doesn't have from sqlalchemy.ext.asyncio import async_sessionmaker
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    # # Using begin() context manager automatically handles commit/rollback/raise
+    # https://docs.sqlalchemy.org/en/20/orm/session_transaction.html#explicit-begin
+
+    # if use async with async_session_factory() as session:  without session.begin(),
+    # you need to manually commit, but rollback on error is always automatically handled
     async with async_session() as session, session.begin():
-        try:
-            yield session
-        except Exception:
-            # Any exception will trigger a rollback thanks to the explicit session.begin() context manager:
-            # https://docs.sqlalchemy.org/en/20/orm/session_transaction.html#explicit-begin
-            # Just re-raise to let FastAPI handle the error response
-            raise
+        yield session
+        # session.commit() is automatically called when exiting the context manager by using begin()
+        # but the services, we can still add session.commit()

@@ -5,6 +5,8 @@
 Based on the tutorials for [FastAPI](https://fastapi.tiangolo.com/tutorial/) and [SQLModel](https://sqlmodel.tiangolo.com/),
 this project serves a simple demonstration of creating a REST API using FastAPI and SQLModel, incorporating async DB operations, and adhering to what I understand as best practices.
 
+## Layouts
+
 ## Database
 
 The database uses PostgreSQL for regular operations and SQLite for testing with the following schema.
