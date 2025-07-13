@@ -14,6 +14,25 @@ T = TypeVar("T", bound=BaseSQLModel)
 
 
 class BaseService(Generic[T]):
+    """
+    https://mypy.readthedocs.io/en/stable/generics.html#defining-generic-classes
+    although we can use new Generic syntax introduced in Python 3.12 as:
+
+    class BaseService[T]:
+        def __init__(
+            self,
+            session: AsyncSession,
+            # Specify that model is of type T, as model will be injected by sub class dynamically
+            model: type[T],
+            logger: logging.Logger,
+        ):
+        ...
+
+    but with the new syntax, we lost the type of T,
+    with the old syntax, the type var T is bound to BaseSQLModel:
+        T = TypeVar("T", bound=BaseSQLModel)
+    which is more explicit.
+    """
     def __init__(
         self,
         session: AsyncSession,
