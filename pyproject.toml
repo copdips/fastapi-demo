@@ -77,14 +77,13 @@ init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 
-
 [project]
 name = "fastapi-demo"
 dynamic = ["version", "dependencies", "optional-dependencies"]
 authors = [{ name = "Xiang ZHU", email = "xiang.zhu@outlook.com" }]
 description = "fastapi-demo"
 readme = "README.md"
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.12,<3.14"
 classifiers = [
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3.12",
