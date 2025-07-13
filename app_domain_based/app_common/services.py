@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Generic, TypeVar
+from typing import Any
 
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
@@ -9,11 +9,20 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app_domain_based.app_common.models import BaseSQLModel
 from app_domain_based.core.exceptions import NotFoundError
 
-# Create a TypeVar that can be any subclass of BaseSQLModel
-T = TypeVar("T", bound=BaseSQLModel)
 
+class BaseService[T: BaseSQLModel]:
+    """
+    The above syntax is for Python 3.12 and later only.
+    For earlier versions, use the following syntax:
+    https://mypy.readthedocs.io/en/stable/generics.html#type-variables-with-upper-bounds
 
-class BaseService(Generic[T]):
+        from typing import Generic, TypeVar
+
+        T = TypeVar("T", bound=BaseSQLModel)
+        class BaseService(Generic[T]):
+            ...
+
+    """
     def __init__(
         self,
         session: AsyncSession,

@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Generic, TypeVar
+from typing import Any
 
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
@@ -9,29 +9,19 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.core.exceptions import NotFoundError
 from app.models.db import BaseSQLModel
 
-# Create a TypeVar that can be any subclass of BaseSQLModel
-T = TypeVar("T", bound=BaseSQLModel)
 
-
-class BaseService(Generic[T]):
+class BaseService[T: BaseSQLModel]:
     """
-    https://mypy.readthedocs.io/en/stable/generics.html#defining-generic-classes
-    although we can use new Generic syntax introduced in Python 3.12 as:
+    The above syntax is for Python 3.12 and later only.
+    For earlier versions, use the following syntax:
+    https://mypy.readthedocs.io/en/stable/generics.html#type-variables-with-upper-bounds
 
-    class BaseService[T]:
-        def __init__(
-            self,
-            session: AsyncSession,
-            # Specify that model is of type T, as model will be injected by sub class dynamically
-            model: type[T],
-            logger: logging.Logger,
-        ):
-        ...
+        from typing import Generic, TypeVar
 
-    but with the new syntax, we lost the type of T,
-    with the old syntax, the type var T is bound to BaseSQLModel:
         T = TypeVar("T", bound=BaseSQLModel)
-    which is more explicit.
+        class BaseService(Generic[T]):
+            ...
+
     """
     def __init__(
         self,

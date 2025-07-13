@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar
+from typing import Any
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import NoResultFound
@@ -8,11 +8,20 @@ from sqlalchemy.orm import selectinload
 from app_sqlalchemy_v1.core.exceptions import NotFoundError
 from app_sqlalchemy_v1.models.base import BaseMixin
 
-# Create a TypeVar that can be any subclass of BaseSQLModel
-T = TypeVar("T", bound=BaseMixin)
 
+class BaseService[T: BaseMixin]:
+    """
+    The above syntax is for Python 3.12 and later only.
+    For earlier versions, use the following syntax:
+    https://mypy.readthedocs.io/en/stable/generics.html#type-variables-with-upper-bounds
 
-class BaseService(Generic[T]):
+        from typing import Generic, TypeVar
+
+        T = TypeVar("T", bound=BaseSQLModel)
+        class BaseService(Generic[T]):
+            ...
+
+    """
     def __init__(
         self,
         session: AsyncSession,

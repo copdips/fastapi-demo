@@ -13,6 +13,10 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: debug-statements
+        # without specifying `language_version: python 3.12`,
+        # it generates SyntaxError: invalid syntax for Python 3.12 new Generic syntax:
+        # class BaseService[T: BaseSQLModel]:
+        language_version: python 3.12
       - id: requirements-txt-fixer
       - id: detect-private-key
       - id: mixed-line-ending
