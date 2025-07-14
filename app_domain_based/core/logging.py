@@ -55,7 +55,7 @@ def force_flush_logs():
             h._logger_provider.force_flush()  # pyright: ignore [reportAttributeAccessIssue]  # noqa: SLF001
 
 
-def configure_logger(_app: FastAPI):
+def configure_logger(fastapi_app: FastAPI):
     sentry_sdk.init(
         # https://github.com/getsentry/sentry-python/blob/master/sentry_sdk/integrations/fastapi.py
         # although the doc says that if dns is not provided,
@@ -97,16 +97,16 @@ def configure_logger(_app: FastAPI):
     logger.addFilter(asgi_correlation_id.CorrelationIdFilter())
     logger.addFilter(RequestIdFilter())
     logger.addFilter(StaticExtraLogFilter(settings.logging_static_extra))
-    FastAPIInstrumentor.instrument_app(_app)
+    FastAPIInstrumentor.instrument_app(fastapi_app)
 
     # Pydantic logfire
     logfire.configure()
-    logfire.instrument_fastapi(_app)
+    logfire.instrument_fastapi(fastapi_app)
 
     # append trace info in error handler:
     # https://github.com/open-telemetry/opentelemetry-python/issues/3477#issuecomment-1915743854
-    _app = OpenTelemetryMiddleware(  # pyright: ignore[reportAssignmentType]
-        _app,
+    OpenTelemetryMiddleware(  # pyright: ignore[reportAssignmentType]
+        fastapi_app,
     )
     logger.info("logger configured")
 

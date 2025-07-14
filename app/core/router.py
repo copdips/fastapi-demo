@@ -7,9 +7,9 @@ from fastapi import APIRouter, FastAPI
 
 def _add_child_router(parent_router: APIRouter, child_router_module: types.ModuleType):
     parent_router.include_router(
-        child_router_module.router,
-        prefix=f"/{child_router_module.endpoint_name}",
-        tags=[child_router_module.endpoint_name],
+        child_router_module.router,  # type: ignore
+        prefix=f"/{child_router_module.endpoint_name}",  # type: ignore
+        tags=[child_router_module.endpoint_name],  # type: ignore
     )
 
 
@@ -28,10 +28,10 @@ def _list_submodules(package: types.ModuleType) -> list[types.ModuleType]:
 def register_routers(app: FastAPI, routers_parent_module: types.ModuleType):
     routers_module = _list_submodules(routers_parent_module)
     [
-        _add_child_router(routers_parent_module.router, router)
+        _add_child_router(routers_parent_module.router, router)  # type: ignore
         for router in routers_module
     ]
     app.include_router(
-        routers_parent_module.router,
-        prefix=routers_parent_module.VERSION_PREFIX,
+        routers_parent_module.router,  # type: ignore
+        prefix=routers_parent_module.VERSION_PREFIX,  # type: ignore
     )

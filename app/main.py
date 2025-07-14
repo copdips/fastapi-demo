@@ -20,6 +20,7 @@ def custom_generate_unique_id(route: APIRoute) -> str:
     tag = tags[0] if tags else "default"
     return f"{tag}-{route.name}@{route.path.split('/')[1]}"
 
+
 def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.api_title,

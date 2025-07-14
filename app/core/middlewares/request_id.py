@@ -8,10 +8,10 @@ from starlette.requests import Request
 # CORRELATION_ID_CTX_KEY = "correlation_id"
 REQUEST_ID_CTX_KEY = "request_id"
 
-# _correlation_id_ctx_var: ContextVar[str | None] = ContextVar(
+# _correlation_id_ctx_var: ContextVar[str | None] = ContextVar[str | None](
 #     CORRELATION_ID_CTX_KEY, default=None
 # )
-_request_id_ctx_var: ContextVar[str | None] = ContextVar(
+_request_id_ctx_var: ContextVar[str | None] = ContextVar[str | None](
     REQUEST_ID_CTX_KEY,
     default=None,
 )

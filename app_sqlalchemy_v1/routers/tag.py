@@ -18,7 +18,9 @@ async def get_tags(session: Annotated[AsyncSession, Depends(get_db_session)]):
 
 
 @router.post("")
-async def create_tag(name: str, session: Annotated[AsyncSession, Depends(get_db_session)]):
+async def create_tag(
+    name: str, session: Annotated[AsyncSession, Depends(get_db_session)]
+):
     new_tag = Tag(name=name)
     session.add(new_tag)
     await session.commit()

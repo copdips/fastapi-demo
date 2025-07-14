@@ -1,9 +1,9 @@
 import re
 from enum import StrEnum
 
-import sqlalchemy as sa
 from pydantic import ConfigDict, computed_field
 from pydantic.alias_generators import to_camel, to_snake
+from sqlalchemy import orm
 from sqlmodel import SQLModel
 
 from app_domain_based.config import settings
@@ -17,7 +17,7 @@ class TaskStatus(StrEnum):
 
 
 class BaseModel(SQLModel):
-    @sa.orm.declared_attr
+    @orm.declared_attr
     @classmethod
     def __tablename__(cls) -> str:
         return to_snake(cls.__name__)

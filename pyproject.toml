@@ -36,7 +36,7 @@ classmethod-decorators = ["pydantic.validator"]
 
 [tool.pyright]
 reportUnnecessaryTypeIgnoreComment = true
-exclude = ["_local_test", "tools", "migrations", ".venv"]
+exclude = ["_local_test", "tools", "migrations", ".venv", "app_sqlalchemy_v1"]
 # include = ["app"]
 # venvPath = "."
 # venv = ".venv"
@@ -58,6 +58,11 @@ addopts = """
 # env is enabled by pytest-env
 env = ["TESTING=yes"]
 
+[tool.pyrefly]
+# python-version = "3.12"
+project-excludes = ["_local_test", "tools", "migrations", ".venv", "app_sqlalchemy_v1"]
+
+
 [tool.mypy]
 plugins = ["pydantic.mypy"]
 exclude = ["^.venv/", "^build/", "^_local_test/"]
@@ -76,6 +81,9 @@ disallow_untyped_defs = false
 init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
+
+[tool.ty.src]
+exclude = ["_local_test", "tools", "migrations", ".venv", "app_sqlalchemy_v1"]
 
 [project]
 name = "fastapi-demo"

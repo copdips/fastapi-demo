@@ -2,7 +2,7 @@ import importlib
 import pkgutil
 import types
 
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 
 
 def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleType):
@@ -22,7 +22,7 @@ def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleTyp
                         f"app_domain_based.{sub_mod_name}.{sub_sub_mod_name}"
                     )
                     app.include_router(
-                        routes_mod.router,
+                        routes_mod.router,  # type: ignore
                         prefix=f"/{route_version}/{route_namespace_name}s",
                         tags=[route_namespace_name],
                     )

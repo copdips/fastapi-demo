@@ -23,6 +23,7 @@ class BaseService[T: BaseSQLModel]:
             ...
 
     """
+
     def __init__(
         self,
         session: AsyncSession,

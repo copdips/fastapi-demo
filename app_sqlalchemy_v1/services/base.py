@@ -22,6 +22,7 @@ class BaseService[T: BaseMixin]:
             ...
 
     """
+
     def __init__(
         self,
         session: AsyncSession,
