@@ -45,7 +45,7 @@ jobs:
     environment: ${{ inputs.target-env }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ inputs.version }}
 
