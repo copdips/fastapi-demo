@@ -2,7 +2,7 @@ import importlib
 import pkgutil
 import types
 
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 
 
 def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleType):
@@ -10,10 +10,12 @@ def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleTyp
     Iterate all app_xxx submodules in app root module,
     if found routes.py file, add it to app router.
     """
-    for file_finder, sub_mod_name, _ in pkgutil.iter_modules(app_root_module.__path__):
+    for module_finder, sub_mod_name, _ispkg in pkgutil.iter_modules(
+        app_root_module.__path__
+    ):
         if sub_mod_name.startswith("app_"):
-            for _, sub_sub_mod_name, _ in pkgutil.iter_modules(
-                [f"{file_finder.path}/{sub_mod_name}"]
+            for _module_finder, sub_sub_mod_name, _ispkg in pkgutil.iter_modules(
+                [f"{module_finder.path}/{sub_mod_name}"]
             ):
                 if sub_sub_mod_name.startswith("routes_"):
                     route_namespace_name = sub_mod_name.removeprefix("app_")
@@ -22,7 +24,7 @@ def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleTyp
                         f"app_domain_based.{sub_mod_name}.{sub_sub_mod_name}"
                     )
                     app.include_router(
-                        routes_mod.router,  # type: ignore
+                        routes_mod.router,  # ty: ignore[unresolved-attribute]
                         prefix=f"/{route_version}/{route_namespace_name}s",
                         tags=[route_namespace_name],
                     )

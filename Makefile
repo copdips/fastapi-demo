@@ -15,27 +15,29 @@ endif
 
 new-venv:
 	if [ ! -d "$(VENV_DIR)" ]; then
-		python3 -m venv $(VENV_DIR);
+		uv venv $(VENV_DIR);
 	fi
-
-install-linux-deps:
-	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev
-
-pip-install:
 	$(PYTHON) -m pip install -U pip
 	if ! command -v uv &> /dev/null; then
 		$(PYTHON) -m pip install -U uv
 	fi
+	. $(VENV_DIR)/bin/activate
+
+install-linux-deps:
+	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev
+
+pip-install: new-venv
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
 	uv pip install -Ur requirements/base.txt
 	uv pip install -Ur requirements/dev.txt
 	pre-commit autoupdate
+	uv pip list
 
-install: new-venv install-linux-deps pip-install
+install: install-linux-deps pip-install
 
 ci-install: install-linux-deps pip-install
 
-lint:
+lint: new-venv
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
 	pre-commit autoupdate
 	pre-commit run --all-files

@@ -32,6 +32,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
+
       - name: Use public pip index only for ci demo
         run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret
 
@@ -48,17 +51,15 @@ jobs:
         run: |
           python --version
           make ci-install
+          which ruff uv fastapi python
         env:
           UV_SYSTEM_PYTHON: 1
 
       - name: Run lint
         run: |
           export LOGFIRE_SEND_TO_LOGFIRE=false
-          export SKIP=pyright,pytest
+          # export SKIP=pytest
           make lint
-
-      # https://github.com/microsoft/pyright/blob/main/docs/ci-integration.md
-      - uses: jakebailey/pyright-action@v2
 
   ci_test:
     runs-on: ubuntu-latest
@@ -72,6 +73,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
 
       - name: Use public pip index only for ci demo
         run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret

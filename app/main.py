@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from fastapi.routing import APIRoute
-from fastapi_mcp import add_mcp_server
+from fastapi_mcp import FastApiMCP
 
 from app.config import settings
 from app.core.db import engine
@@ -43,7 +43,8 @@ def create_app() -> FastAPI:
     register_middlewares(app)
     register_routers(app, v1_routes)
     init_sqladmin(app, engine)
-    add_mcp_server(app, mount_path="/mcp", name="mcp")
+    mcp = FastApiMCP(app)
+    mcp.mount()
 
     return app
 

@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from typing import ClassVar
 
 from fastapi import FastAPI
 from fastapi.requests import Request
@@ -37,7 +38,7 @@ admin = Admin(app, engine)
 
 
 class UserAdmin(ModelView, model=User):
-    column_list = [c_attr.key for c_attr in User.__mapper__.column_attrs]
+    column_list: ClassVar = [c_attr.key for c_attr in User.__mapper__.column_attrs]
     can_create = False
     can_edit = False
     can_delete = False
@@ -49,4 +50,4 @@ admin.add_view(UserAdmin)
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # noqa: S104 hardcoded-bind-all-interfaces, this is for test, check app/main.py

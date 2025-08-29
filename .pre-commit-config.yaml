@@ -4,7 +4,7 @@
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-json
         exclude: devcontainer.json
@@ -16,7 +16,7 @@ repos:
         # without specifying `language_version: python 3.12`,
         # it generates SyntaxError: invalid syntax for Python 3.12 new Generic syntax:
         # class BaseService[T: BaseSQLModel]:
-        language_version: python 3.12
+        # language_version: python 3.12
       - id: requirements-txt-fixer
       - id: detect-private-key
       - id: mixed-line-ending
@@ -44,31 +44,31 @@ repos:
       - id: python-use-type-annotations
   - repo: local
     hooks:
-      - id: ruff
-        name: ruff
+      - id: ruff-check
+        name: ruff-check
         entry: ruff check --force-exclude
         language: system
-        types: [python, pyi]
+        types_or: [python, pyi, jupyter]
         args: []
         require_serial: true
       - id: ruff-format
         name: ruff-format
         entry: ruff format --force-exclude
         language: system
-        types: [python, pyi]
+        types_or: [python, pyi, jupyter]
         args: []
         require_serial: true
-      - id: pyright
-        name: pyright
-        entry: pyright
-        language: system
-        types: [python, pyi]
-        args: []
+      # - id: pyright
+      #   name: pyright
+      #   entry: pyright
+      #   language: system
+      #   types_or: [python, pyi, jupyter]
+      #   args: []
       - id: ty
         name: ty
         entry: ty check
         language: system
-        types: [python, pyi]
+        types_or: [python, pyi, jupyter]
         args: []
       - id: pytest
         name: pytest

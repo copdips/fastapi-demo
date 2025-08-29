@@ -1,9 +1,12 @@
 [tool.ruff]
 fix = true
 show-fixes = true
-lint.select = ["ALL"]
-lint.ignore = [
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
     # https://beta.ruff.rs/docs/rules/
+    "T201",   # print found # ! not used in prod
     "D",      # pydocstyle
     "E501",   # line too long, handled by black
     "B008",   # do not perform function calls in argument defaults

@@ -18,7 +18,7 @@ class TaskStatus(Enum):
 
 class BaseModel(SQLModel):
     @orm.declared_attr
-    @classmethod
+    @classmethod  # without @classmethod, linter will claim a self instead of cls
     def __tablename__(cls) -> str:
         return to_snake(cls.__name__)
 

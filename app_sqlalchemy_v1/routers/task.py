@@ -13,11 +13,11 @@ async def higher_task():
 
 async def task():
     print("first sync sleep")
-    sleep(5)
+    sleep(5)  # noqa: ASYNC251
     print("first async sleep")
     await asyncio.sleep(5)
     print("2nd sync sleep")
-    sleep(5)
+    sleep(5)  # noqa: ASYNC251
     print("Task is done")
 
 

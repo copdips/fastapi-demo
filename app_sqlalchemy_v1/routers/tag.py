@@ -13,8 +13,7 @@ router = APIRouter()
 @router.get("")
 async def get_tags(session: Annotated[AsyncSession, Depends(get_db_session)]):
     result = await session.execute(select(Tag))
-    tags = result.scalars().all()
-    return tags
+    return result.scalars().all()
 
 
 @router.post("")

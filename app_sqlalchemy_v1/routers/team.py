@@ -14,8 +14,7 @@ router = APIRouter()
 @router.get("")
 async def get_teams(session: Annotated[AsyncSession, Depends(get_db_session)]):
     result = await session.execute(select(Team))
-    teams = result.scalars().all()
-    return teams
+    return result.scalars().all()
 
 
 @router.get("/{team_id}")

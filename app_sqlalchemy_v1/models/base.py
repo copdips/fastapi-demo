@@ -27,6 +27,7 @@ def get_ulid():
 @declarative_mixin
 class BaseMixin:
     @declared_attr
+    @classmethod
     def __tablename__(cls):
         return to_snake(cls.__name__)
 
