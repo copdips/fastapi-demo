@@ -26,7 +26,7 @@ jobs:
         python-version: ["3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-python@v5
         with:
@@ -51,9 +51,8 @@ jobs:
         run: |
           python --version
           make ci-install
-          which ruff uv fastapi python
-        env:
-          UV_SYSTEM_PYTHON: 1
+        # env:
+        #   UV_SYSTEM_PYTHON: 1
 
       - name: Run lint
         run: |
@@ -68,7 +67,7 @@ jobs:
         python-version: ["3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-python@v5
         with:
@@ -101,8 +100,8 @@ jobs:
         run: |
           python --version
           make ci-install
-        env:
-          UV_SYSTEM_PYTHON: 1
+        # env:
+        #   UV_SYSTEM_PYTHON: 1
 
       - name: Run tests
         # above `make lint` includes pytest with default options

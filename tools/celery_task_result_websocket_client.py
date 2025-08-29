@@ -6,6 +6,7 @@ ref: https://medium.com/@youssefchamrah/empowering-applications-with-asynchronou
 import asyncio
 
 import websockets
+from websockets.exceptions import ConnectionClosed
 
 
 async def consume_websocket(task_id: str):
@@ -20,7 +21,7 @@ async def consume_websocket(task_id: str):
                     break
             response = await websocket.recv()
             print("result:", response)
-    except websockets.exceptions.ConnectionClosed as ex:
+    except ConnectionClosed as ex:
         if ex.code == 1000:
             print("Connection closed normally.")
         else:

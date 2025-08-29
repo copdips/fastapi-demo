@@ -48,7 +48,7 @@ class FlaskToQuartTransformer(ast.NodeTransformer):
 
     def visit_FunctionDef(self, node, parent=None):
         self.async_functions.add(node.name)
-        async_func = ast.AsyncFunctionDef(
+        async_func = ast.AsyncFunctionDef(  # ty: ignore[no-matching-overload]
             name=node.name,
             args=node.args,
             body=[self.visit(i, node) for i in node.body],

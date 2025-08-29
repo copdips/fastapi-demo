@@ -21,23 +21,26 @@ new-venv:
 	if ! command -v uv &> /dev/null; then
 		$(PYTHON) -m pip install -U uv
 	fi
-	. $(VENV_DIR)/bin/activate
+
 
 install-linux-deps:
 	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev
 
 pip-install: new-venv
+	. $(VENV_DIR)/bin/activate
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
 	uv pip install -Ur requirements/base.txt
 	uv pip install -Ur requirements/dev.txt
-	pre-commit autoupdate
 	uv pip list
+	pre-commit autoupdate
+	which pip python uv ruff fastapi pre-commit
 
 install: install-linux-deps pip-install
 
 ci-install: install-linux-deps pip-install
 
-lint: new-venv
+lint:
+	. $(VENV_DIR)/bin/activate
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
 	pre-commit autoupdate
 	pre-commit run --all-files

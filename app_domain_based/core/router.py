@@ -15,7 +15,7 @@ def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleTyp
     ):
         if sub_mod_name.startswith("app_"):
             for _module_finder, sub_sub_mod_name, _ispkg in pkgutil.iter_modules(
-                [f"{module_finder.path}/{sub_mod_name}"]
+                [f"{module_finder.path}/{sub_mod_name}"]  # ty: ignore[unresolved-attribute]
             ):
                 if sub_sub_mod_name.startswith("routes_"):
                     route_namespace_name = sub_mod_name.removeprefix("app_")

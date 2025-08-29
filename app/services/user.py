@@ -64,7 +64,6 @@ class UserService(BaseService[User]):
         # it won't consider it as unset.
         # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/update/#remove-fields
         user_data_dump = new_data.model_dump(exclude_unset=True)
-        new_data.dict()
         if team_name := user_data_dump.pop("team_name", None):
             team = (
                 await self.session.exec(

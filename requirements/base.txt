@@ -28,6 +28,8 @@ sentry-sdk[fastapi]
 shortuuid
 sqladmin
 SQLAlchemy
+sqlalchemy-data-model-visualizer
+sqlalchemy_schemadisplay
 sqlmodel
 taskiq
 taskiq-aio-pika
