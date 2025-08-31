@@ -24,8 +24,7 @@ new-venv:
 
 
 install-linux-deps:
-	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev
-
+	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev clang
 pip-install: new-venv
 	. $(VENV_DIR)/bin/activate
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
