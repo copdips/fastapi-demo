@@ -3,6 +3,8 @@ from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends
+
+# from fastapi_dependency import Depends
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.db import async_session_factory
