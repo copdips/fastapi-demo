@@ -13,6 +13,7 @@ from fastapi import FastAPI
 from opentelemetry import trace
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from rich.logging import RichHandler
 from typing_extensions import deprecated
 
 from app.config import settings
@@ -80,7 +81,6 @@ def configure_logger(fastapi_app: FastAPI):
             logger_name=settings.api_title_slug,
         )
     logger = logging.getLogger(settings.api_title_slug)
-    stream_handler = logging.StreamHandler()
     formatter = logging.Formatter(
         "%(asctime)s"
         " - %(levelname)s"
@@ -90,9 +90,13 @@ def configure_logger(fastapi_app: FastAPI):
         " - [%(correlation_id)s][%(request_id)s]"
         ": %(message)s",
     )
-    stream_handler.setFormatter(formatter)
+    # stream_handler = logging.StreamHandler()
+    # stream_handler.setFormatter(formatter)
+    rich_handler = RichHandler(rich_tracebacks=True)
+    rich_handler.setFormatter(formatter)
     if os.environ.get("TESTING") != "yes":
-        logger.addHandler(stream_handler)
+        # logger.addHandler(stream_handler)
+        logger.addHandler(rich_handler)
     logger.setLevel(settings.logging_level)
     logger.addFilter(asgi_correlation_id.CorrelationIdFilter())
     logger.addFilter(RequestIdFilter())
