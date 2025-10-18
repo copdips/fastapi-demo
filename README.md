@@ -3,9 +3,17 @@
 [![codecov](https://codecov.io/gh/copdips/fastapi-demo/graph/badge.svg?token=VM2WT1XTYM)](https://codecov.io/gh/copdips/fastapi-demo)
 
 Based on the tutorials for [FastAPI](https://fastapi.tiangolo.com/tutorial/) and [SQLModel](https://sqlmodel.tiangolo.com/),
-this project serves a simple demonstration of creating a REST API using FastAPI and SQLModel, incorporating async DB operations, and adhering to what I understand as best practices.
+this project serves a demonstration of creating a REST API using FastAPI and SQLModel, incorporating async DB operations.
 
 ## Layouts
+
+Main directories:
+
+- **app**: standard FastAPI app structure
+- **tests**: integration tests for **app**
+- **app_domain_based**: (preferred) domain-based structure
+- **tests_domain_based**: integration tests for **app_domain_based**
+- **app_sqlalchemy_v1**: (archived) using SQLAlchemy v1 style with async support
 
 ## Database
 

@@ -13,19 +13,21 @@ ifneq (,$(findstring xterm,${TERM}))
 	NORMAL	:= $(shell tput -Txterm sgr0)
 endif
 
-new-venv:
-	if [ ! -d "$(VENV_DIR)" ]; then
-		uv venv $(VENV_DIR);
-	fi
-	$(PYTHON) -m pip install -U pip
-	if ! command -v uv &> /dev/null; then
-		$(PYTHON) -m pip install -U uv
-	fi
+venv:
+	uv venv --allow-existing
+# 	if [ ! -d "$(VENV_DIR)" ]; then
+# 		uv venv $(VENV_DIR);
+# 	fi
+# 	$(PYTHON) -m pip install -U pip
+# 	if ! command -v uv &> /dev/null; then
+# 		$(PYTHON) -m pip install -U uv
+# 	fi
 
 
 install-linux-deps:
 	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev clang
-pip-install: new-venv
+
+uv-pip-install: venv
 	. $(VENV_DIR)/bin/activate
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
 	uv pip install -Ur requirements/base.txt
@@ -34,15 +36,16 @@ pip-install: new-venv
 	pre-commit autoupdate
 	which pip python uv ruff fastapi pre-commit
 
-install: install-linux-deps pip-install
+install: install-linux-deps uv-pip-install
 
-ci-install: install-linux-deps pip-install
+ci-install: install-linux-deps uv-pip-install
 
 lint:
 	. $(VENV_DIR)/bin/activate
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
-	pre-commit autoupdate
-	pre-commit run --all-files
+	uv run pre-commit autoupdate
+	uv run pre-commit run --files $(git diff --name-only HEAD)
+
 
 test-integration:
 	@echo "${BOLD}${YELLOW}Running integration tests for app:${NORMAL}"

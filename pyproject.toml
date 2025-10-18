@@ -109,6 +109,9 @@ documentation = "https://github.com/copdips/fastapi-demo"
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+packages = ["app", "app_domain_based"]
+
 [tool.setuptools.dynamic]
 version = { file = ["VERSION"] }
 
