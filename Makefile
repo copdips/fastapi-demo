@@ -44,7 +44,7 @@ lint:
 	. $(VENV_DIR)/bin/activate
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
 	uv run pre-commit autoupdate
-	uv run pre-commit run --files $(git diff --name-only HEAD)
+	uv run pre-commit run --files $(git ls-files -m -o --exclude-standard)
 
 
 test-integration:
