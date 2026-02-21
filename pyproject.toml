@@ -124,6 +124,7 @@ ignore = [
 "tests*/**/*.py" = [
     # at least this three should be fine in tests:
     "S101", # asserts allowed in tests...
+    "INP001",  # implicit-namespace-package
     # "ARG", # Unused function args -> fixtures nevertheless are functionally relevant...
     # "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
 ]
@@ -153,6 +154,7 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 addopts = """
     -v -s
+    --import-mode=importlib
     --junitxml=junit.xml
     --cov app
     --cov-report=html

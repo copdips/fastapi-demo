@@ -1,12 +1,9 @@
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from tests.integration.api_v1 import API_ROUTE_VERSION
 
-base_url = f"/{API_ROUTE_VERSION}/tags"
-
-
-def test_create_tag(client: TestClient):
+def test_create_tag(client: TestClient, api_route_version: str):
+    base_url = f"/{api_route_version}/tags"
     body = {
         "name": "t1",
     }
@@ -20,7 +17,8 @@ def test_create_tag(client: TestClient):
     assert json_response["id"] is not None
 
 
-def test_get_all_tags(client: TestClient):
+def test_get_all_tags(client: TestClient, api_route_version: str):
+    base_url = f"/{api_route_version}/tags"
     tag_count = 2
     response = client.get(f"{base_url}?offset=0&limit={tag_count}")
     assert response.status_code == status.HTTP_200_OK

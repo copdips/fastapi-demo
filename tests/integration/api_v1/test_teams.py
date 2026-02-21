@@ -1,12 +1,9 @@
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from tests.integration.api_v1 import API_ROUTE_VERSION
 
-base_url = f"/{API_ROUTE_VERSION}/teams"
-
-
-def test_create_team(client: TestClient):
+def test_create_team(client: TestClient, api_route_version: str):
+    base_url = f"/{api_route_version}/teams"
     body = {
         "name": "t1",
         "headquarters": "h1",
@@ -21,7 +18,8 @@ def test_create_team(client: TestClient):
     assert json_response["id"] is not None
 
 
-def test_get_all_teams(client: TestClient):
+def test_get_all_teams(client: TestClient, api_route_version: str):
+    base_url = f"/{api_route_version}/teams"
     team_count = 2
     response = client.get(f"{base_url}?offset=0&limit={team_count}")
     assert response.status_code == status.HTTP_200_OK
