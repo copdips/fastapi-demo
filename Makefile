@@ -30,7 +30,7 @@ uv-sync-dev: venv
 
 uv-update:
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
-	uv sync --upgrade
+	uv sync --upgrade --all-extras --all-groups
 
 install: install-linux-deps uv-sync-dev
 

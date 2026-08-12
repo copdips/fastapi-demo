@@ -5,6 +5,7 @@ from fastapi_mcp import FastApiMCP
 
 from app.config import settings
 from app.core.db import engine
+from app.core.docs import add_scalar_docs
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logger
 from app.core.middleware import lifespan, register_middlewares
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
     register_middlewares(app)
     register_routers(app, v1_routes)
+    add_scalar_docs(app)
     init_sqladmin(app, engine)
     mcp = FastApiMCP(app)
     mcp.mount()
