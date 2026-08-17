@@ -9,7 +9,7 @@ celery
 devtools
 email-validator
 fastapi-mcp
-fastapi[all]>=0.110.0
+fastapi[all]>=0.141.1
 fastapi_dependency
 flower
 gunicorn
