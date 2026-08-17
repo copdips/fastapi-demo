@@ -24,7 +24,7 @@ pyinstrument
 python-ulid
 pyyaml>=6
 redis
-rich>=13.4.2
+rich>=15.0.0
 sentry-sdk[fastapi]
 shortuuid
 sqladmin
