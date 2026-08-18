@@ -26,9 +26,9 @@ def get_path_params(request: Request) -> dict[str, Any]:
     # https://github.com/tiangolo/fastapi/discussions/7902#discussioncomment-5145119
     routes = request.app.router.routes
     for route in routes:
-        match, scope = route.matches(request)
+        match, scope = route.matches(request.scope)
         if match == Match.FULL:
-            return scope["path_params"]
+            return scope.get("path_params", {})
     return {}
 
 

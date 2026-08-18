@@ -3,21 +3,37 @@ import logging
 import os
 from functools import wraps
 from typing import Any
+from warnings import deprecated
 
 import asgi_correlation_id
 import logfire
 import sentry_sdk
 from asgi_correlation_id import correlation_id
-from azure.monitor.opentelemetry import configure_azure_monitor
 from fastapi import FastAPI
 from opentelemetry import trace
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from rich.logging import RichHandler
-from typing_extensions import deprecated
 
 from app.config import settings
 from app.core.middlewares.request_id import get_request_id
+
+
+def _configure_azure_monitor() -> None:
+    if not settings.enable_azure_monitor:
+        return
+    try:
+        from azure.monitor.opentelemetry import (  # noqa: PLC0415
+            configure_azure_monitor as azure_monitor_configure,
+        )
+    except ImportError as exc:
+        msg = (
+            "Azure Monitor is enabled, but importing azure-monitor-opentelemetry "
+            "failed. Install a compatible opentelemetry/azure-monitor stack or "
+            "disable settings.enable_azure_monitor."
+        )
+        raise RuntimeError(msg) from exc
+    azure_monitor_configure(logger_name=settings.api_title_slug)
 
 
 def get_logger():
@@ -76,10 +92,7 @@ def configure_logger(fastapi_app: FastAPI):
     # Invalid type NoneType for attribute 'correlation_id' value.
     # Expected one of ['bool', 'str', 'bytes', 'int', 'float'] or a sequence of those types
     correlation_id.set("")
-    if settings.enable_azure_monitor:
-        configure_azure_monitor(
-            logger_name=settings.api_title_slug,
-        )
+    _configure_azure_monitor()
     logger = logging.getLogger(settings.api_title_slug)
     formatter = logging.Formatter(
         "%(asctime)s"

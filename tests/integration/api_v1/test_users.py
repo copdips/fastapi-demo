@@ -1,12 +1,9 @@
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from tests.integration.api_v1 import API_ROUTE_VERSION
 
-base_url = f"/{API_ROUTE_VERSION}/users"
-
-
-def test_create_user(client: TestClient):
+def test_create_user(client: TestClient, api_route_version: str):
+    base_url = f"/{api_route_version}/users"
     body = {
         "name": "a1",
         "first_name": "b1",
@@ -23,7 +20,8 @@ def test_create_user(client: TestClient):
     assert json_response["id"] is not None
 
 
-def test_get_all_users(client: TestClient):
+def test_get_all_users(client: TestClient, api_route_version: str):
+    base_url = f"/{api_route_version}/users"
     user_count = 2
     response = client.get(f"{base_url}?offset=0&limit={user_count}")
     assert response.status_code == status.HTTP_200_OK
