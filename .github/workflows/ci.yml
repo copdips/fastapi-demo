@@ -54,6 +54,9 @@ jobs:
         # env:
         #   UV_SYSTEM_PYTHON: 1
 
+      - name: Update pre-commit hooks
+        run: uv run pre-commit autoupdate
+
       - name: Run lint
         run: |
           export LOGFIRE_SEND_TO_LOGFIRE=false
