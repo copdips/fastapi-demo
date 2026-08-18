@@ -22,7 +22,7 @@ install-linux-deps:
 uv-sync: venv
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
 	uv sync --frozen
-	pre-commit autoupdate
+	uv run pre-commit autoupdate
 
 uv-sync-dev: venv
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
