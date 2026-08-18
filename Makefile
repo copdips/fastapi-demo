@@ -22,7 +22,7 @@ install-linux-deps:
 uv-sync: venv
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
 	uv sync --frozen
-	pre-commit autoupdate
+	uv run pre-commit autoupdate
 
 uv-sync-dev: venv
 	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
@@ -39,7 +39,6 @@ ci-install: install-linux-deps uv-sync-dev
 lint:
 	. $(VENV_DIR)/bin/activate
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
-	uv run pre-commit autoupdate
 	uv run pre-commit run --files $(git ls-files -m -o --exclude-standard)
 
 test-integration:
