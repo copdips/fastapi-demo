@@ -13,7 +13,7 @@ fastapi[all]>=0.141.1
 fastapi_dependency
 flower
 gunicorn
-logfire>=4.40.0
+logfire>=4.41.0
 msgpack-asgi
 opentelemetry-instrumentation-fastapi
 orjson
