@@ -18,7 +18,7 @@ msgpack-asgi
 opentelemetry-instrumentation-fastapi
 orjson
 # profyle>=0.3.0 # profyle 0.3.0 depends on typer<0.8.0 and >=0.7.0
-pydantic>=2.13.4
+pydantic>=2.13.5
 pydantic-settings
 pyinstrument
 python-ulid
