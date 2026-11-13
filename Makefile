@@ -14,7 +14,7 @@ ifneq (,$(findstring xterm,${TERM}))
 endif
 
 venv:
-	uv venv -p 3.13.9 --allow-existing
+	uv venv -p 3.14 --allow-existing
 
 install-linux-deps:
 	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev clang
@@ -34,7 +34,9 @@ uv-update:
 
 install: install-linux-deps uv-sync-dev
 
-ci-install: install-linux-deps uv-sync-dev
+ci-install: install-linux-deps venv
+	export UV_DEFAULT_INDEX=$$PIP_INDEX_URL
+	uv sync --locked --all-extras --all-groups
 
 lint:
 	. $(VENV_DIR)/bin/activate

@@ -5,19 +5,18 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/requirements" # Location of package manifests
+  - package-ecosystem: "uv"
+    # uv updates pyproject.toml and uv.lock together, so the manifest and the
+    # lock never drift.
+    directory: "/"
     # One grouped PR per week: the ruleset requires branches to be up to date,
     # so separate PRs go stale as soon as the first one merges.
     groups:
-      pip:
+      uv:
         patterns:
           - "*"
     schedule:
       interval: "weekly"
-    commit-message:
-      prefix: "pip prod"
-      prefix-development: "pip dev"
 
   - package-ecosystem: "github-actions"
     # Workflow files stored in the default location of `.github/workflows`. (You don't need to specify `/.github/workflows` for `directory`. You can use `directory: "/"`.)

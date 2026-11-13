@@ -9,6 +9,8 @@
 ARG PYTHON_VERSION=3.14
 FROM python:${PYTHON_VERSION}-slim as base
 
+# Install uv from the official image instead of pip.
+COPY --from=ghcr.io/astral-sh/uv:0.12.3 /uv /uvx /bin/
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -16,6 +18,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Keeps Python from buffering stdout and stderr to avoid situations where
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
+
+# uv settings for container builds:
+# - UV_COMPILE_BYTECODE: compile bytecode at install time, faster startup
+# - UV_LINK_MODE=copy: the cache mount is on a different filesystem
+# - UV_NO_DEV: never install development dependencies
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_NO_DEV=1
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#user
@@ -31,21 +41,30 @@ RUN adduser \
 
 WORKDIR /code
 
-COPY requirements/base.txt requirements.txt
-
-# Download dependencies as a separate step to take advantage of Docker's caching.
-# Leverage a cache mount to /root/.cache/pip to speed up subsequent builds.
-# Leverage a bind mount to requirements.txt to avoid having to copy them into
-# into this layer.
+# Install dependencies as a separate layer to take advantage of Docker's cache.
+# Only pyproject.toml and uv.lock are mounted, so the lock cannot be checked
+# here: --frozen installs exactly the versions recorded in uv.lock.
 RUN --mount=type=secret,id=PIP_INDEX_URL \
-    --mount=type=bind,source=requirements/base.txt,target=requirements.txt \
-    pip install --upgrade pip uv && \
-    UV_SYSTEM_PYTHON=1 UV_DEFAULT_INDEX=$(cat /run/secrets/PIP_INDEX_URL) uv pip install --no-cache-dir -r requirements.txt
-
+    --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    UV_DEFAULT_INDEX=$(cat /run/secrets/PIP_INDEX_URL) \
+    uv sync --frozen --no-install-project
 
 COPY --chown=appuser:appuser app /code/app
 # for local test with docker build: (but unnecessary for docker compose, as it can load .env file directly )
 # COPY .env /code/.env
+
+# The project is present now, so --locked asserts that uv.lock still matches
+# pyproject.toml. A stale lock fails here instead of silently installing it.
+RUN --mount=type=secret,id=PIP_INDEX_URL \
+    --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    UV_DEFAULT_INDEX=$(cat /run/secrets/PIP_INDEX_URL) \
+    uv sync --locked --no-install-project
+
+ENV PATH="/code/.venv/bin:$PATH"
 
 # Switch to the non-privileged user to run the application.
 USER appuser
