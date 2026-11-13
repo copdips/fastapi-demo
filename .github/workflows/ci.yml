@@ -38,14 +38,19 @@ jobs:
       - name: Use public pip index only for ci demo
         run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret
 
-      - name: create env file from secret.CI_ENV
+      - name: create .env file
+        # Dependabot PRs cannot read repository secrets, so fall back to the
+        # committed dummy file. Tests run with TESTING=yes and use in-memory
+        # sqlite, so the DB values only need to be present, not valid.
         run: |
-          echo "${{ secrets.CI_ENV }}" > .env
-          echo "============== echo secrets.CI_ENV"
-          echo "${{ secrets.CI_ENV }}"
-          echo "============== cat .env"
-          cat .env
+          if [ -n "$CI_ENV" ]; then
+            printf '%s\n' "$CI_ENV" > .env
+          else
+            cp .github/ci.env .env
+          fi
           wc -l .env
+        env:
+          CI_ENV: ${{ secrets.CI_ENV }}
 
       - name: Install deps
         run: |
@@ -79,14 +84,19 @@ jobs:
       - name: Use public pip index only for ci demo
         run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret
 
-      - name: create env file from secret.CI_ENV
+      - name: create .env file
+        # Dependabot PRs cannot read repository secrets, so fall back to the
+        # committed dummy file. Tests run with TESTING=yes and use in-memory
+        # sqlite, so the DB values only need to be present, not valid.
         run: |
-          echo "${{ secrets.CI_ENV }}" > .env
-          echo "============== echo secrets.CI_ENV"
-          echo "${{ secrets.CI_ENV }}"
-          echo "============== cat .env"
-          cat .env
+          if [ -n "$CI_ENV" ]; then
+            printf '%s\n' "$CI_ENV" > .env
+          else
+            cp .github/ci.env .env
+          fi
           wc -l .env
+        env:
+          CI_ENV: ${{ secrets.CI_ENV }}
 
       - name: Install Docker Compose
         run: |
