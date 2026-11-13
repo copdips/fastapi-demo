@@ -13,7 +13,7 @@ Main directories:
 - **tests**: integration tests for **app**
 - **app_domain_based**: (preferred) domain-based structure
 - **tests_domain_based**: integration tests for **app_domain_based**
-- **app_sqlalchemy_v1**: (archived) using SQLAlchemy v1 style with async support
+- **archive/app_sqlalchemy_v1**: (archived) using SQLAlchemy v1 style with async support
 
 ## Database
 
