@@ -1,6 +1,6 @@
 # production requirements need to be pinned, here's for my quick demo only
 alembic
-apitally[fastapi]>=0.25.1
+apitally[fastapi]>=1.0.0
 asgi-correlation-id
 async-sqlmodel
 asyncpg
@@ -9,20 +9,20 @@ celery
 devtools
 email-validator
 fastapi-mcp
-fastapi[all]>=0.141.1
+fastapi[all]>=0.162.4
 fastapi_dependency
 flower
 gunicorn
-logfire>=4.40.0
+logfire>=5.5.0
 msgpack-asgi
 opentelemetry-instrumentation-fastapi
 orjson
 # profyle>=0.3.0 # profyle 0.3.0 depends on typer<0.8.0 and >=0.7.0
-pydantic>=2.13.4
+pydantic>=2.14.3
 pydantic-settings
 pyinstrument
 python-ulid
-pyyaml>=6
+pyyaml>=6.0.3
 redis
 rich>=15.0.0
 sentry-sdk[fastapi]
@@ -35,6 +35,6 @@ sqlmodel
 taskiq
 taskiq-aio-pika
 taskiq-redis
-typer>=0.12.3
+typer>=0.29.0
 uvicorn[standard]
 viztracer
