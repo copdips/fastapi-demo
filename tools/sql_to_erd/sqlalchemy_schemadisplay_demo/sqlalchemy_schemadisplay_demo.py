@@ -5,7 +5,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy_schemadisplay import create_schema_graph
 
-from app.models.db import SQLModel
+from app_standard.models.db import SQLModel
 
 # create the pydot graph object by autoloading all tables via a bound metadata object
 graph = create_schema_graph(

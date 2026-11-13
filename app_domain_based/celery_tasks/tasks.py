@@ -40,7 +40,7 @@ def celery_task_q_high(self, sleep_seconds: int = 2):
 
 celery_app.conf.beat_schedule = {
     "celery_task_q_low_in_schedule-every_minute": {
-        "task": "app.celery_tasks.tasks.celery_task_q_low_in_schedule",
+        "task": "app_standard.celery_tasks.tasks.celery_task_q_low_in_schedule",
         "schedule": crontab(),
         "args": [2],  # args must be iterable, list or tuple all ok.
         "options": {

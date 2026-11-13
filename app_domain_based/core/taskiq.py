@@ -1,7 +1,7 @@
 """taskiq
 
 worker:
-taskiq worker app.core.taskiq:taskiq_broker
+taskiq worker app_standard.core.taskiq:taskiq_broker
 """
 
 from taskiq_aio_pika import AioPikaBroker
