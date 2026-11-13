@@ -7,6 +7,12 @@ version: 2
 updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/requirements" # Location of package manifests
+    # One grouped PR per week: the ruleset requires branches to be up to date,
+    # so separate PRs go stale as soon as the first one merges.
+    groups:
+      pip:
+        patterns:
+          - "*"
     schedule:
       interval: "weekly"
     commit-message:
@@ -16,6 +22,10 @@ updates:
   - package-ecosystem: "github-actions"
     # Workflow files stored in the default location of `.github/workflows`. (You don't need to specify `/.github/workflows` for `directory`. You can use `directory: "/"`.)
     directory: "/"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     schedule:
       interval: "weekly"
 
