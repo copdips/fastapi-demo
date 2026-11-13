@@ -2,7 +2,6 @@
 alembic
 apitally[fastapi]>=1.0.0
 asgi-correlation-id
-async-sqlmodel
 asyncpg
 azure-monitor-opentelemetry
 celery
@@ -31,7 +30,7 @@ sqladmin
 SQLAlchemy
 sqlalchemy-data-model-visualizer
 sqlalchemy_schemadisplay
-sqlmodel
+sqlmodel>=0.0.50
 taskiq
 taskiq-aio-pika
 taskiq-redis
