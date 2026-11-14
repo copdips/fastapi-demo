@@ -1,6 +1,6 @@
 .ONESHELL:
 SHELL=/bin/bash
-API_FOLDER=app_standard
+API_FOLDER=app_layer_based
 VENV_NAME := $(shell [ -d venv ] && echo venv || echo .venv)
 VENV_DIR=${VENV_NAME}
 PYTHON=$(shell if [ -d $(VENV_DIR) ]; then echo $(VENV_DIR)/bin/python; else echo python; fi)
@@ -44,7 +44,7 @@ lint:
 	uv run pre-commit run --files $(git ls-files -m -o --exclude-standard)
 
 test-integration:
-	@echo "${BOLD}${YELLOW}Running integration tests for app_standard:${NORMAL}"
+	@echo "${BOLD}${YELLOW}Running integration tests for app_layer_based:${NORMAL}"
 # ! --dist=loadfile to let Tests are grouped by their containing file.
 # Groups are distributed to available workers as whole units.
 # This guarantees that all tests in a file run in the same worker.
@@ -60,7 +60,7 @@ test-integration-domain-based:
 	uv run pytest tests_domain_based/integration --cov app_domain_based --cov-append -n auto --dist=loadfile -s
 
 test-unit:
-	@echo "${BOLD}${YELLOW}Running unit tests for app_standard:${NORMAL}"
+	@echo "${BOLD}${YELLOW}Running unit tests for app_layer_based:${NORMAL}"
 	uv run pytest tests/unit
 
 test-unit-domain-based:

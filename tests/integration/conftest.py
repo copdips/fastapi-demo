@@ -3,7 +3,7 @@ from collections.abc import Generator
 import pytest
 from fastapi.testclient import TestClient
 
-from app_standard.main import app
+from app_layer_based.main import app
 
 API_ROUTE_VERSION = "v1"
 

@@ -64,7 +64,7 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_standard.core.celery worker --hostname=worker_q_lower_1 --loglevel=info -Q low
+    command: celery -A app_layer_based.core.celery worker --hostname=worker_q_lower_1 --loglevel=info -Q low
     env_file:
       - .env
     depends_on:
@@ -80,7 +80,7 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_standard.core.celery worker --hostname=worker_q_high_1 --loglevel=info -Q high
+    command: celery -A app_layer_based.core.celery worker --hostname=worker_q_high_1 --loglevel=info -Q high
     env_file:
       - .env
     depends_on:
@@ -96,7 +96,7 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_standard.core.celery worker --hostname=worker_q_high_2 --loglevel=info -Q high
+    command: celery -A app_layer_based.core.celery worker --hostname=worker_q_high_2 --loglevel=info -Q high
     env_file:
       - .env
     depends_on:
@@ -111,7 +111,7 @@ services:
       args:
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_standard.core.celery flower --loglevel=info
+    command: celery -A app_layer_based.core.celery flower --loglevel=info
     ports:
       - "5555:5555"
     env_file:
@@ -128,7 +128,7 @@ services:
       args:
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_standard.core.celery beat --loglevel=info
+    command: celery -A app_layer_based.core.celery beat --loglevel=info
     env_file:
       - .env
     depends_on:
@@ -144,7 +144,7 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: taskiq worker app_standard.core.taskiq:taskiq_broker
+    command: taskiq worker app_layer_based.core.taskiq:taskiq_broker
     env_file:
       - .env
     depends_on:

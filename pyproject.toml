@@ -94,7 +94,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["app_standard", "app_domain_based"]
+packages = ["app_layer_based", "app_domain_based"]
 
 [tool.setuptools.dynamic]
 version = { file = ["VERSION"] }
@@ -144,7 +144,7 @@ classmethod-decorators = ["pydantic.validator"]
 [tool.pyright]
 reportUnnecessaryTypeIgnoreComment = true
 exclude = ["_local_test", "tools", "migrations", ".venv", "archive"]
-# include = ["app_standard"]
+# include = ["app_layer_based"]
 # venvPath = "."
 # venv = ".venv"
 
@@ -158,7 +158,7 @@ addopts = """
     -v -s
     --import-mode=importlib
     --junitxml=junit.xml
-    --cov app_standard
+    --cov app_layer_based
     --cov-report=html
     --cov-report=xml
     --cov-report=term-missing:skip-covered
