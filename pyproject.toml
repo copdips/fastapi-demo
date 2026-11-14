@@ -90,6 +90,10 @@ dev = [
     "types-setuptools==84.2.0.20261104",
 ]
 
+[tool.uv]
+# fastapi-mcp 0.4.0 calls Server(name, description); mcp 2.x changed the signature.
+constraint-dependencies = ["mcp<2"]
+
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
