@@ -10,9 +10,9 @@ this project serves a demonstration of creating a REST API using FastAPI and SQL
 Main directories:
 
 - **app_layer_based_sqlmodel**: layered FastAPI app structure (routes, services, models, schemas), using SQLModel
-- **tests_layer_based_sqlmodel**: integration tests for **app_layer_based_sqlmodel**
+- **tests/app_layer_based_sqlmodel**: integration tests for **app_layer_based_sqlmodel**
 - **app_domain_based_sqlalchemy**: (preferred) domain-based structure, using SQLAlchemy 2.x
-- **tests_domain_based_sqlalchemy**: integration tests for **app_domain_based_sqlalchemy**
+- **tests/app_domain_based_sqlalchemy**: integration tests for **app_domain_based_sqlalchemy**
 - **archive/app_sqlalchemy_v1**: (archived) using SQLAlchemy v1 style with async support
 
 ## Database
