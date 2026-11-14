@@ -14,7 +14,8 @@ ifneq (,$(findstring xterm,${TERM}))
 endif
 
 venv:
-	uv venv -p 3.14 --allow-existing
+	# python version comes from .python-version
+	uv venv --allow-existing
 
 install-linux-deps:
 	sudo apt update && sudo apt install python3-dev graphviz graphviz-dev clang
