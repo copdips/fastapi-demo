@@ -1,0 +1,82 @@
+name: Refresh Lock
+run-name: "🔄[${{ github.workflow }}] by @${{ github.actor }}"
+
+on:
+  # Weekly, after the Dependabot run.
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the refresh token
+        # A PAT is required: pushes and pull requests created with GITHUB_TOKEN
+        # do not trigger workflows, so ci_all_green would never run and
+        # auto-merge would wait forever.
+        env:
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: |
+          if [ -z "$REFRESH_TOKEN" ]; then
+            echo "::error::Add a fine-grained PAT as REFRESH_TOKEN (Contents: read and write, Pull requests: read and write)."
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+
+      - uses: astral-sh/setup-uv@v7
+
+      - name: Upgrade transitive dependencies
+        # Direct dependencies are pinned with == in pyproject.toml, so this
+        # only moves entries that live in uv.lock alone.
+        run: uv lock --upgrade
+
+      - name: Check the lock
+        run: uv lock --check
+
+      - name: Create .env for tests
+        # The tests run with TESTING=yes and in-memory sqlite; they only need
+        # the settings fields to be present, not valid.
+        run: cp .github/ci.env .env
+
+      - name: Install dependencies
+        run: uv sync --locked --all-extras --all-groups
+
+      - name: Run tests
+        run: make test
+
+      - name: Create pull request
+        id: cpr
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.REFRESH_TOKEN }}
+          branch: chore/refresh-lock
+          delete-branch: true
+          commit-message: "chore(deps): refresh uv.lock"
+          title: "chore(deps): refresh uv.lock"
+          body: |
+            `uv lock --upgrade` moved transitive dependencies to their latest
+            allowed versions.
+
+            Direct dependencies are pinned with `==` in `pyproject.toml` and are
+            not touched here; Dependabot handles those.
+
+            Tests ran in the refresh workflow; CI runs on this pull request.
+
+      - name: Enable auto-merge
+        # Remove this step if a lock refresh should always be reviewed by hand.
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+        run: gh pr merge --auto --squash "$PR_NUMBER"
