@@ -2,11 +2,17 @@ from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Query, status
 
-from app_domain_based_sqlalchemy.app_common.deps import EmailServiceDep
+from app_domain_based_sqlalchemy.app_email.deps import EmailServiceDep
 from app_domain_based_sqlalchemy.app_user.deps import UserServiceDep
-from app_domain_based_sqlalchemy.app_user.schemas import UserCreate, UserRead, UserUpdate
+from app_domain_based_sqlalchemy.app_user.schemas import (
+    UserCreate,
+    UserRead,
+    UserUpdate,
+)
 from app_domain_based_sqlalchemy.core.logging import get_logger
-from app_domain_based_sqlalchemy.schema_composites.schema_composites import UserReadComposite
+from app_domain_based_sqlalchemy.schema_composites.schema_composites import (
+    UserReadComposite,
+)
 
 router = APIRouter()
 endpoint_name = "users"

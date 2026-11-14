@@ -1,16 +1,19 @@
-import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app_domain_based_sqlalchemy.app_common.models import Base
 from app_domain_based_sqlalchemy.core.exceptions import NotFoundError
 
+if TYPE_CHECKING:
+    import logging
 
-class BaseService[T: Base]:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+
+class BaseRepository[T: Base]:
     """
     The above syntax is for Python 3.12 and later only.
     For earlier versions, use the following syntax:
@@ -19,7 +22,7 @@ class BaseService[T: Base]:
         from typing import Generic, TypeVar
 
         T = TypeVar("T", bound=Base)
-        class BaseService(Generic[T]):
+        class BaseRepository(Generic[T]):
             ...
 
     """
@@ -40,7 +43,7 @@ class BaseService[T: Base]:
         self,
         model_id: str,  # ! this is the id column, not the uid PK column
         selectin_attributes: list[Any] | None = None,
-    ) -> T:  # Indicate that the return type is an instance of T, later we create sub class of BaseService with User as T: class UserService(BaseService[User])
+    ) -> T:  # Indicate that the return type is an instance of T, later we create sub class of BaseRepository with User as T: class UserService(BaseRepository[User])
         try:
             query = select(
                 self.model,
@@ -50,7 +53,8 @@ class BaseService[T: Base]:
                     query = query.options(
                         selectinload(attr),
                     )
-            query = query.where(self.model.id == model_id)
+            # the generic bound has no declared columns; every T has an id column
+            query = query.where(self.model.id == model_id)  # ty: ignore[missing-attribute]
             item = (await self.session.execute(query)).scalars().one()
         except NoResultFound as ex:
             err_msg = f"{self.model_name} with id {model_id} not found"

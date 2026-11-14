@@ -1,19 +1,24 @@
-import logging
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from fastapi import Query
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app_domain_based_sqlalchemy.app_common.services import BaseService
+from app_domain_based_sqlalchemy.app_common.repositories import BaseRepository
 from app_domain_based_sqlalchemy.app_team.models import Team
 from app_domain_based_sqlalchemy.app_user.models import User
-from app_domain_based_sqlalchemy.app_user.schemas import UserCreate, UserUpdate
 from app_domain_based_sqlalchemy.core.exceptions import NotFoundError
 
+if TYPE_CHECKING:
+    import logging
+    from collections.abc import Sequence
 
-class UserService(BaseService[User]):
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app_domain_based_sqlalchemy.app_user.schemas import UserCreate, UserUpdate
+
+
+class UserService(BaseRepository[User]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, User, logger)
 
@@ -53,10 +58,14 @@ class UserService(BaseService[User]):
         user_data_dump = new_data.model_dump(exclude_unset=True)
         if team_name := user_data_dump.pop("team_name", None):
             team = (
-                await self.session.execute(
-                    select(Team).where(Team.name == team_name),
+                (
+                    await self.session.execute(
+                        select(Team).where(Team.name == team_name),
+                    )
                 )
-            ).scalars().one()
+                .scalars()
+                .one()
+            )
             user.team_id = team.id
         for key, value in user_data_dump.items():
             setattr(user, key, value)

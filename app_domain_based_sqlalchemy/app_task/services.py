@@ -1,14 +1,16 @@
-import logging
+from typing import TYPE_CHECKING
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from app_domain_based_sqlalchemy.app_common.schemas import TaskStatus
-from app_domain_based_sqlalchemy.app_common.services import BaseService
-from app_domain_based_sqlalchemy.app_task.models import Task
+from app_domain_based_sqlalchemy.app_common.repositories import BaseRepository
+from app_domain_based_sqlalchemy.app_task.models import Task, TaskStatus
 from app_domain_based_sqlalchemy.app_task.schemas import TaskUpdate
 
+if TYPE_CHECKING:
+    import logging
 
-class TaskService(BaseService[Task]):
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+
+class TaskService(BaseRepository[Task]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Task, logger)
 

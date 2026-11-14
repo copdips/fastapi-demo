@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-from typing import Any, Self
+from typing import Any
 
 from pydantic import computed_field, model_validator
 
@@ -7,8 +7,8 @@ from app_domain_based_sqlalchemy.app_common.schemas import (
     BaseModel,
     BaseReadModel,
     ForbidExtraMixin,
-    TaskStatus,
 )
+from app_domain_based_sqlalchemy.app_task.models import TaskStatus
 
 
 class EmailNotification(BaseModel):
@@ -17,14 +17,15 @@ class EmailNotification(BaseModel):
     on_all: list[str]
 
     @model_validator(mode="before")
-    def format_emails(self) -> Self:
+    @classmethod
+    def format_emails(cls, data: Any) -> Any:
         def _format_emails(v) -> list[str]:
             return list({email.lower() for email in v})
 
-        self["on_done"] = _format_emails(self.get("on_done") or [])
-        self["on_failed"] = _format_emails(self.get("on_failed") or [])
-        self["on_all"] = _format_emails(self.get("on_all") or [])
-        return self
+        data["on_done"] = _format_emails(data.get("on_done") or [])
+        data["on_failed"] = _format_emails(data.get("on_failed") or [])
+        data["on_all"] = _format_emails(data.get("on_all") or [])
+        return data
 
 
 class TaskBase(BaseModel):

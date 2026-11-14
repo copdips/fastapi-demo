@@ -1,10 +1,17 @@
 from datetime import datetime, timedelta
+from enum import StrEnum
 
 from sqlalchemy import JSON, DateTime, Enum, Interval, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app_domain_based_sqlalchemy.app_common.models import BaseSQLModel
-from app_domain_based_sqlalchemy.app_common.schemas import TaskStatus
+
+
+class TaskStatus(StrEnum):
+    in_progress = "in_progress"
+    pending = "pending"
+    done = "done"
+    failed = "failed"
 
 
 class Task(BaseSQLModel):

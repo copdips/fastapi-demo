@@ -1,21 +1,24 @@
 import asyncio
-import logging
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-# from app_domain_based_sqlalchemy.services.base import BaseService
-from app_domain_based_sqlalchemy.app_common.services import BaseService
+from app_domain_based_sqlalchemy.app_common.repositories import BaseRepository
 from app_domain_based_sqlalchemy.app_email.models import Email
 from app_domain_based_sqlalchemy.app_email.schemas import EmailCreate, EmailUpdate
-from app_domain_based_sqlalchemy.app_user.models import User
-from app_domain_based_sqlalchemy.app_user.schemas import UserUpdate
 from app_domain_based_sqlalchemy.schema_composites.schema_composites import (
     UserReadCompositeOutOfAPI,
 )
 
+if TYPE_CHECKING:
+    import logging
 
-class EmailService(BaseService[Email]):
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app_domain_based_sqlalchemy.app_user.models import User
+    from app_domain_based_sqlalchemy.app_user.schemas import UserUpdate
+
+
+class EmailService(BaseRepository[Email]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Email, logger)
 

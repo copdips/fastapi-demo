@@ -1,18 +1,13 @@
 import re
-from enum import StrEnum
 
-from pydantic import BaseModel as PydanticBaseModel
-from pydantic import ConfigDict, computed_field
+from pydantic import (
+    BaseModel as PydanticBaseModel,
+    ConfigDict,
+    computed_field,
+)
 from pydantic.alias_generators import to_camel
 
 from app_domain_based_sqlalchemy.config import settings
-
-
-class TaskStatus(StrEnum):
-    in_progress = "in_progress"
-    pending = "pending"
-    done = "done"
-    failed = "failed"
 
 
 class BaseModel(PydanticBaseModel):
@@ -53,7 +48,8 @@ class HateoasModel(BaseModel):
         # model name TeamReadComposite will get teams as table_name too,
         # which means the model name should be well prepared.
         endpoint = f"{table_name}s"
-        href = f"/{endpoint}/{self.id}"
+        # subclasses declare the id column; this base model does not
+        href = f"/{endpoint}/{self.id}"  # ty: ignore[missing-attribute]
         return HateoasLinks.model_validate(
             {
                 "self": {"href": href, "title": table_name},

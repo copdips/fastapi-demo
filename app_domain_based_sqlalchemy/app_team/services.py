@@ -1,20 +1,25 @@
-import logging
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from fastapi import Query
-from sqlalchemy.orm import selectinload
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from app_domain_based_sqlalchemy.app_common.services import BaseService
+from app_domain_based_sqlalchemy.app_common.repositories import BaseRepository
 from app_domain_based_sqlalchemy.app_tag.models import Tag
 from app_domain_based_sqlalchemy.app_team.models import Team
-from app_domain_based_sqlalchemy.app_team.schemas import TeamCreate, TeamUpdate
 from app_domain_based_sqlalchemy.app_user.models import User
 from app_domain_based_sqlalchemy.core.exceptions import NotFoundError
 
+if TYPE_CHECKING:
+    import logging
+    from collections.abc import Sequence
 
-class TeamService(BaseService[Team]):
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app_domain_based_sqlalchemy.app_team.schemas import TeamCreate, TeamUpdate
+
+
+class TeamService(BaseRepository[Team]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Team, logger)
 
@@ -193,10 +198,14 @@ class TeamService(BaseService[Team]):
             users: Sequence[User] = []
             if users_names:
                 users = (
-                    await self.session.execute(
-                        select(User).where(User.name.in_(users_names)),
+                    (
+                        await self.session.execute(
+                            select(User).where(User.name.in_(users_names)),
+                        )
                     )
-                ).scalars().all()
+                    .scalars()
+                    .all()
+                )
                 if len(users) != len(users_names):
                     msg = "Some users not found."
                     raise NotFoundError(msg)
@@ -206,10 +215,14 @@ class TeamService(BaseService[Team]):
             tags: Sequence[Tag] = []
             if tags_names:
                 tags = (
-                    await self.session.execute(
-                        select(Tag).where(Tag.name.in_(tags_names)),
+                    (
+                        await self.session.execute(
+                            select(Tag).where(Tag.name.in_(tags_names)),
+                        )
                     )
-                ).scalars().all()
+                    .scalars()
+                    .all()
+                )
                 if len(tags) != len(tags_names):
                     msg = "Some tags not found."
                     raise NotFoundError(msg)

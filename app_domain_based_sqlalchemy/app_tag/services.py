@@ -1,19 +1,24 @@
-import logging
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from fastapi import Query
-from sqlalchemy.orm import selectinload
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from app_domain_based_sqlalchemy.app_common.services import BaseService
+from app_domain_based_sqlalchemy.app_common.repositories import BaseRepository
 from app_domain_based_sqlalchemy.app_tag.models import Tag
-from app_domain_based_sqlalchemy.app_tag.schemas import TagCreate, TagUpdate
 from app_domain_based_sqlalchemy.app_team.models import Team
 from app_domain_based_sqlalchemy.core.exceptions import NotFoundError
 
+if TYPE_CHECKING:
+    import logging
+    from collections.abc import Sequence
 
-class TagService(BaseService[Tag]):
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from app_domain_based_sqlalchemy.app_tag.schemas import TagCreate, TagUpdate
+
+
+class TagService(BaseRepository[Tag]):
     def __init__(self, session: AsyncSession, logger: logging.Logger):
         super().__init__(session, Tag, logger)
 
@@ -48,14 +53,18 @@ class TagService(BaseService[Tag]):
             teams: Sequence[Team] = []
             if teams_names:
                 teams = (
-                    await self.session.execute(
-                        select(Team).where(
-                            Team.name.in_(
-                                teams_names,
+                    (
+                        await self.session.execute(
+                            select(Team).where(
+                                Team.name.in_(
+                                    teams_names,
+                                ),
                             ),
-                        ),
+                        )
                     )
-                ).scalars().all()
+                    .scalars()
+                    .all()
+                )
                 if len(teams) != len(teams_names):
                     msg = "Some teams not found."
                     raise NotFoundError(msg)
