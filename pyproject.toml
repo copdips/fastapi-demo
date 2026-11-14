@@ -150,8 +150,8 @@ exclude = ["_local_test", "tools", "migrations", ".venv", "archive"]
 # venv = ".venv"
 
 [tool.pytest.ini_options]
-# testpaths = ["tests/unit"]  # no unit test yet
-testpaths = ["tests/integration"]
+# testpaths = ["tests_layer_based/unit"]  # no unit test yet
+testpaths = ["tests_layer_based/integration"]
 # https://pytest-asyncio.readthedocs.io/en/latest/concepts.html#auto-mode
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"

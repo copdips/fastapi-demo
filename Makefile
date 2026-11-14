@@ -49,7 +49,7 @@ test-integration:
 # Groups are distributed to available workers as whole units.
 # This guarantees that all tests in a file run in the same worker.
 # https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	uv run pytest tests/integration -n auto --dist=loadfile -s
+	uv run pytest tests_layer_based/integration -n auto --dist=loadfile -s
 
 test-integration-domain-based:
 	@echo "${BOLD}${YELLOW}Running integration tests for app_domain_based:${NORMAL}"
@@ -61,7 +61,7 @@ test-integration-domain-based:
 
 test-unit:
 	@echo "${BOLD}${YELLOW}Running unit tests for app_layer_based:${NORMAL}"
-	uv run pytest tests/unit
+	uv run pytest tests_layer_based/unit
 
 test-unit-domain-based:
 	@echo "${BOLD}${YELLOW}Running unit tests for app_domain_based:${NORMAL}"
