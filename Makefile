@@ -49,7 +49,7 @@ test-integration:
 # Groups are distributed to available workers as whole units.
 # This guarantees that all tests in a file run in the same worker.
 # https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	uv run pytest tests/app_layer_based_sqlmodel/integration -n auto --dist=loadfile -s
+	uv run pytest tests/integration -k app_layer_based_sqlmodel -n auto --dist=loadfile -s
 
 test-integration-domain-based:
 	@echo "${BOLD}${YELLOW}Running integration tests for app_domain_based_sqlalchemy:${NORMAL}"
@@ -57,15 +57,15 @@ test-integration-domain-based:
 # Groups are distributed to available workers as whole units.
 # This guarantees that all tests in a file run in the same worker.
 # https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	uv run pytest tests/app_domain_based_sqlalchemy/integration --cov app_domain_based_sqlalchemy --cov-append -n auto --dist=loadfile -s
+	uv run pytest tests/integration -k app_domain_based_sqlalchemy --cov app_domain_based_sqlalchemy --cov-append -n auto --dist=loadfile -s
 
 test-unit:
 	@echo "${BOLD}${YELLOW}Running unit tests for app_layer_based_sqlmodel:${NORMAL}"
-	uv run pytest tests/app_layer_based_sqlmodel/unit
+	uv run pytest tests/unit
 
 test-unit-domain-based:
 	@echo "${BOLD}${YELLOW}Running unit tests for app_domain_based_sqlalchemy:${NORMAL}"
-	uv run pytest tests/app_domain_based_sqlalchemy/unit --cov app_domain_based_sqlalchemy --cov-append
+	uv run pytest tests/unit --cov app_domain_based_sqlalchemy --cov-append
 
 test: test-integration test-integration-domain-based
 
