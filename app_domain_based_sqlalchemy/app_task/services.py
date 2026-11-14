@@ -1,6 +1,6 @@
 import logging
 
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app_domain_based_sqlalchemy.app_common.schemas import TaskStatus
 from app_domain_based_sqlalchemy.app_common.services import BaseService
@@ -15,7 +15,8 @@ class TaskService(BaseService[Task]):
     async def update(self, task_id: str, new_data: TaskUpdate) -> Task:
         task = await self.get_by_id(task_id)
         task_data_dump = new_data.model_dump(exclude_unset=True)
-        task.sqlmodel_update(task_data_dump)
+        for key, value in task_data_dump.items():
+            setattr(task, key, value)
         self.session.add(task)
         await self.session.commit()
         await self.session.refresh(task)

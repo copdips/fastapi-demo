@@ -2,7 +2,6 @@ from datetime import UTC, datetime
 from typing import Any, Self
 
 from pydantic import computed_field, model_validator
-from sqlmodel import JSON, Column, Field, SQLModel
 
 from app_domain_based_sqlalchemy.app_common.schemas import (
     BaseModel,
@@ -12,7 +11,7 @@ from app_domain_based_sqlalchemy.app_common.schemas import (
 )
 
 
-class EmailNotification(SQLModel):
+class EmailNotification(BaseModel):
     on_done: list[str]
     on_failed: list[str]
     on_all: list[str]
@@ -31,12 +30,12 @@ class EmailNotification(SQLModel):
 class TaskBase(BaseModel):
     name: str
     type: str
-    status: TaskStatus = Field(default=TaskStatus.in_progress)
+    status: TaskStatus = TaskStatus.in_progress
     description: str | None = None
     created_by: str | None = None
     message: str | None = None
-    email_notification: EmailNotification | None = Field(sa_column=Column(JSON))
-    context: dict[str, Any] | None = Field(default=None, sa_column=Column(JSON))
+    email_notification: EmailNotification | None = None
+    context: dict[str, Any] | None = None
 
 
 class TaskRead(TaskBase, BaseReadModel):
@@ -52,7 +51,7 @@ class TaskRead(TaskBase, BaseReadModel):
         return None
 
 
-class TaskUpdate(SQLModel, ForbidExtraMixin):
+class TaskUpdate(BaseModel, ForbidExtraMixin):
     status: TaskStatus | None = None
     description: str | None = None
     message: str | None = None

@@ -2,15 +2,10 @@ from datetime import UTC, datetime
 
 import shortuuid
 import sqlalchemy as sa
-from pydantic import ConfigDict
+from sqlalchemy import DateTime, MetaData, String
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlmodel import Field, MetaData, SQLModel
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from ulid import ULID
-
-from app_domain_based_sqlalchemy.app_common.schemas import BaseModel
-
-# declare SQLModel here to be used in alembic migrations/env.py to avoid MyPy error
-__all__ = ["SQLModel"]
 
 # https://medium.com/@chjiang15/dont-forget-your-naming-constraints-sqlalchemy-alembic-top-tip-89022a54a4b0
 db_naming_convention = {
@@ -23,50 +18,38 @@ db_naming_convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     "pk": "pk_%(table_name)s",
 }
-SQLModel.metadata = MetaData(naming_convention=db_naming_convention)
 
 
-class BaseSQLModel(
-    BaseModel,
-    AsyncAttrs,
-):
-    # ! validate_assignment=True to validate during SALModel(table=True) instance creation
-    # https://github.com/tiangolo/sqlmodel/issues/52#issuecomment-1998440311
-    model_config = ConfigDict(
-        validate_assignment=True,
-    )  # pyright: ignore[reportAssignmentType]
+class Base(AsyncAttrs, DeclarativeBase):
+    metadata = MetaData(naming_convention=db_naming_convention)
+
+
+class BaseSQLModel(Base):
+    __abstract__ = True
 
     # ! if uid and id are computed at SQL level, we should add `| None` on the typing,
-    # and add `default=None` in the Field.
+    # and add `default=None` in mapped_column.
     # Here both of uid and id columns are computed at python level, so no need to add `| None`
-    # ref: https://sqlmodel.tiangolo.com/tutorial/create-db-and-table/#primary-key-id
-    uid: str = Field(default_factory=lambda: str(ULID()), primary_key=True)
-    id: str = Field(
-        default_factory=shortuuid.uuid,
+    uid: Mapped[str] = mapped_column(
+        String(26),
+        primary_key=True,
+        default=lambda: str(ULID()),
+    )
+    id: Mapped[str] = mapped_column(
+        String(22),
         index=True,
         nullable=False,
         unique=True,
+        default=shortuuid.uuid,
     )
-    created_at: datetime = Field(
-        sa_type=sa.DateTime(timezone=True),
-        # default vs default_factory:
-        # ! default_factory is introduced in sqlalchemy v2
-        # https://github.com/sqlalchemy/sqlalchemy/discussions/11372#discussioncomment-9370737
-        default_factory=lambda: datetime.now(UTC),
-        # or without lambda, but using datetime.utcnow throws deprecation error.
-        # default_factory=datetime.utcnow,
-        # ! dont use default=datetime.utcnow() as it applies the same datetime to all rows.
-        # ! https://docs.pydantic.dev/latest/concepts/models/#fields-with-dynamic-default-values
-        # default=datetime.utcnow(),
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
     )
-    updated_at: datetime | None = Field(
+    updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
         default=None,
-        sa_type=sa.DateTime(timezone=True),
-        sa_column_kwargs={
-            # if relationship changes, for e.g. set one more user in a team
-            # the updated_at won't be updated automatically
-            "onupdate": sa.func.now(),
-            # ! should be callable if use pure python method, and should not be datetime.utcnow, as utc will be applied twice, once by utcnow, once by sa.DateTime(timezone=True)
-            # "onupdate": datetime.now,
-        },
+        # if relationship changes, for e.g. set one more user in a team
+        # the updated_at won't be updated automatically
+        onupdate=sa.func.now(),
     )

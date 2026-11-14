@@ -3,8 +3,8 @@ from collections.abc import Sequence
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
-from sqlmodel import col, select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app_domain_based_sqlalchemy.app_common.services import BaseService
 from app_domain_based_sqlalchemy.app_tag.models import Tag
@@ -18,7 +18,7 @@ class TagService(BaseService[Tag]):
         super().__init__(session, Tag, logger)
 
     async def create(self, tag: TagCreate) -> Tag:
-        db_tag = Tag.model_validate(tag)
+        db_tag = Tag(**tag.model_dump())
         self.session.add(db_tag)
         await self.session.commit()
         return db_tag
@@ -35,34 +35,34 @@ class TagService(BaseService[Tag]):
         limit: int = Query(default=100, le=100),
     ) -> Sequence[Tag]:
         query = select(Tag).options(selectinload(Tag.teams)).offset(offset).limit(limit)
-        return (await self.session.exec(query)).all()
+        return (await self.session.execute(query)).scalars().all()
 
     async def update(self, tag_id: str, new_data: TagUpdate) -> Tag:
         tag = await self.get_by_id(tag_id, [Tag.teams])
         tag_data_dump = new_data.model_dump(exclude_unset=True)
+        # ! query before assigning the relationship: assigning first marks the
+        # previously associated rows as removed, and the autoflush before the
+        # SELECT would delete/clear them.
         if "teams_names" in tag_data_dump:
-            # set tag.teams to empty list to use tag.teams.extend() later as teams got from .all() is a Sequence type.
-            # MyPy complains on `tag.teams = teams` but not `tag.teams.extend(teams)`
-            # to use extend(), must pre-set tag.teams to empty list.
-            tag.teams = []
+            teams_names = set(tag_data_dump.pop("teams_names") or [])
             teams: Sequence[Team] = []
-            if teams_names := set(tag_data_dump.pop("teams_names")):
+            if teams_names:
                 teams = (
-                    await self.session.exec(
+                    await self.session.execute(
                         select(Team).where(
-                            col(Team.name).in_(
+                            Team.name.in_(
                                 teams_names,
                             ),
                         ),
                     )
-                ).all()
+                ).scalars().all()
                 if len(teams) != len(teams_names):
                     msg = "Some teams not found."
                     raise NotFoundError(msg)
-            tag.teams.extend(teams)
-        tag.sqlmodel_update(tag_data_dump)
+            tag.teams = list(teams)
+        for key, value in tag_data_dump.items():
+            setattr(tag, key, value)
         self.session.add(tag)
         await self.session.commit()
-        await self.session.refresh(tag)
-        tag.teams = await tag.awt_teams
+        await self.session.refresh(tag, ["teams"])
         return tag

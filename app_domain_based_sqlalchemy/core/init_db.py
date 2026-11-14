@@ -1,11 +1,11 @@
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app_domain_based_sqlalchemy.app_tag.models import Tag
 from app_domain_based_sqlalchemy.app_team.models import Team
 from app_domain_based_sqlalchemy.app_user.models import User
 
 
-async def create_init_data(async_session_factory: type[AsyncSession]):
+async def create_init_data(async_session_factory: async_sessionmaker[AsyncSession]):
     async with async_session_factory() as session:
         tag_admin = Tag(name="admin")
         tag_reader = Tag(name="reader")

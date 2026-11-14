@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.exc import OperationalError
-from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app_domain_based_sqlalchemy.app_common.deps import get_db_session
 from app_domain_based_sqlalchemy.app_health.schemas import HealthRead
@@ -29,7 +29,7 @@ async def get_health(
         "db_engine": db_session.bind.engine.name,
     }
     try:
-        res = await db_session.exec(select(1))
+        res = (await db_session.execute(select(1))).scalars()
     except OperationalError as ex:
         response.status_code = 503
         return HealthRead(

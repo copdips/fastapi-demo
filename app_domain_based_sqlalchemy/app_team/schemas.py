@@ -1,5 +1,3 @@
-from sqlmodel import Field
-
 from app_domain_based_sqlalchemy.app_common.schemas import (
     BaseModel,
     BaseReadModel,
@@ -8,7 +6,7 @@ from app_domain_based_sqlalchemy.app_common.schemas import (
 
 
 class TeamBase(BaseModel):
-    name: str = Field(unique=True, index=True)
+    name: str
     headquarters: str
 
 
@@ -17,8 +15,6 @@ class TeamCreate(TeamBase, ForbidExtraMixin): ...
 
 class TeamRead(TeamBase, BaseReadModel):
     id: str
-    # created_at: datetime
-    # updated_at: datetime | None
 
 
 class TeamUpdate(BaseModel, ForbidExtraMixin):

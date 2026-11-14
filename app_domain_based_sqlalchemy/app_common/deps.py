@@ -3,7 +3,7 @@ from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # from app_domain_based_sqlalchemy.services.email import EmailService
 # from app_domain_based_sqlalchemy.services.task import TaskService
@@ -14,15 +14,12 @@ from app_domain_based_sqlalchemy.core.logging import get_logger
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    # # Using begin() context manager automatically handles commit/rollback/raise
-    # https://docs.sqlalchemy.org/en/20/orm/session_transaction.html#explicit-begin
-
-    # if use async with async_session_factory() as session:  without session.begin(),
-    # you need to manually commit, but rollback on error is always automatically handled
-    async with async_session_factory() as session, session.begin():
+    # No session.begin() here: the services commit explicitly, and a transaction
+    # opened by begin() cannot be used again after an explicit commit()
+    # ("Can't operate on closed transaction inside context manager").
+    # Closing the session rolls back any uncommitted work on error.
+    async with async_session_factory() as session:
         yield session
-        # session.commit() is automatically called when exiting the context manager by using begin()
-        # but the services, we can still add session.commit()
 
 
 async def get_task_service(

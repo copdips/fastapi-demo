@@ -2,9 +2,9 @@ import logging
 from collections.abc import Sequence
 
 from fastapi import Query
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app_domain_based_sqlalchemy.app_common.services import BaseService
 from app_domain_based_sqlalchemy.app_team.models import Team
@@ -18,7 +18,7 @@ class UserService(BaseService[User]):
         super().__init__(session, User, logger)
 
     async def create(self, user: UserCreate) -> User:
-        db_user = User.model_validate(user)  # Pydantic v1: User.from_orm(user)
+        db_user = User(**user.model_dump())
         self.session.add(db_user)
         await self.session.commit()
         return db_user
@@ -35,20 +35,12 @@ class UserService(BaseService[User]):
         self,
         offset: int = 0,
         limit: int = Query(default=100, le=100),
-    ) -> Sequence[User]:  # List[Union[User, Team]
-        # query = select(User, Team).where(User.team_id == Team.id) # inner join
-        # query = select(User).join(Team)  # inner join with User data only
-        # query = select(User, Team).join(Team)  # inner join with both User and Team
-        # query = select(User, Team).join(Team, isouter=True)  # left join
+    ) -> Sequence[User]:
         query = (
             select(User).options(selectinload(User.team)).offset(offset).limit(limit)
         )
         self.logger.info("Getting some users in service")
-        return (await self.session.exec(query)).all()
-        # for user, team in res:
-        # debug(f"user_1: {user_1}")
-        # debug("user:", user, "Team:", team)
-        # breakpoint()
+        return (await self.session.execute(query)).scalars().all()
 
     async def update(self, user_id: str, new_data: UserUpdate) -> User:
         user: User = await self.get_by_id(user_id)
@@ -58,20 +50,19 @@ class UserService(BaseService[User]):
         # exclude_unset=True is important, as it will not update fields with unset value.
         # it's very powerful where if client intentionally set a field to None,
         # it won't consider it as unset.
-        # ref: https://sqlmodel.tiangolo.com/tutorial/fastapi/update/#remove-fields
         user_data_dump = new_data.model_dump(exclude_unset=True)
         if team_name := user_data_dump.pop("team_name", None):
             team = (
-                await self.session.exec(
+                await self.session.execute(
                     select(Team).where(Team.name == team_name),
                 )
-            ).one()
+            ).scalars().one()
             user.team_id = team.id
-        user.sqlmodel_update(user_data_dump)
+        for key, value in user_data_dump.items():
+            setattr(user, key, value)
         self.session.add(user)
         await self.session.commit()
-        # right after session.commit(), user object is no more accessible,
-        # so we need to refresh it, and also get update_at field updated.
-        await self.session.refresh(user)
-        user.team = await user.awt_team
+        # right after session.commit(), the relationship is expired, so reload it
+        # together with the updated_at column.
+        await self.session.refresh(user, ["team"])
         return user

@@ -3,8 +3,8 @@ from collections.abc import Sequence
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
-from sqlmodel import col, select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app_domain_based_sqlalchemy.app_common.services import BaseService
 from app_domain_based_sqlalchemy.app_tag.models import Tag
@@ -19,7 +19,7 @@ class TeamService(BaseService[Team]):
         super().__init__(session, Team, logger)
 
     async def create(self, team: TeamCreate) -> Team:
-        db_team = Team.model_validate(team)
+        db_team = Team(**team.model_dump())
         self.session.add(db_team)
         await self.session.commit()
         return db_team
@@ -160,7 +160,7 @@ class TeamService(BaseService[Team]):
         # if a team has 3 users, the result will be 3 tuples of (Team, User), which is not convenient.
         # query = select(Team, User).join(User).offset(offset).limit(limit)
         # ref: https://github.com/tiangolo/sqlmodel/issues/643#issuecomment-2010763043
-        return (await self.session.exec(query)).all()
+        return (await self.session.execute(query)).scalars().all()
 
     async def update(self, team_id: str, new_data: TeamUpdate) -> Team:
         team = await self.get_by_id(team_id, [Team.tags, Team.users])
@@ -175,46 +175,50 @@ class TeamService(BaseService[Team]):
         It is not necessary to use `team.tags = await team.awaitable_attrs.tags`,
         as `await team.awaitable_attrs.tags` populates team.tags automatically.
 
-        The outcome of this solution is that after: `await self.session.refresh(team)`,
+        The outcome of this solution is that after: `await self.session.refresh(team, ["tags", "users"])`,
         team.tags and team.users will be purged, and if the route response model
         requests tags and users fields, we will get Pydantic validation error.
         We must call `team.awaitable_attrs` again to fix the error.
 
         But if we use `team = await self.get_by_id(team_id, [Team.tags, Team.users])`,
-        after: `await self.session.refresh(team)`, team.tags and team.users are still
+        after: `await self.session.refresh(team, ["tags", "users"])`, team.tags and team.users are still
         there, and also updated.
         """
         team_data_dump = new_data.model_dump(exclude_unset=True)
+        # ! query before assigning the relationship: assigning first marks the
+        # previously associated rows as delete-orphan, and the autoflush before
+        # the SELECT would delete them.
         if "users_names" in team_data_dump:
-            team.users = []
+            users_names = set(team_data_dump.pop("users_names") or [])
             users: Sequence[User] = []
-            if users_names := set(team_data_dump.pop("users_names")):
+            if users_names:
                 users = (
-                    await self.session.exec(
-                        select(User).where(col(User.name).in_(users_names)),
+                    await self.session.execute(
+                        select(User).where(User.name.in_(users_names)),
                     )
-                ).all()
+                ).scalars().all()
                 if len(users) != len(users_names):
                     msg = "Some users not found."
                     raise NotFoundError(msg)
-            team.users.extend(users)
+            team.users = list(users)
         if "tags_names" in team_data_dump:
-            team.tags = []
+            tags_names = set(team_data_dump.pop("tags_names") or [])
             tags: Sequence[Tag] = []
-            if tags_names := set(team_data_dump.pop("tags_names")):
+            if tags_names:
                 tags = (
-                    await self.session.exec(
-                        select(Tag).where(col(Tag.name).in_(tags_names)),
+                    await self.session.execute(
+                        select(Tag).where(Tag.name.in_(tags_names)),
                     )
-                ).all()
+                ).scalars().all()
                 if len(tags) != len(tags_names):
                     msg = "Some tags not found."
                     raise NotFoundError(msg)
-            team.tags.extend(tags)
-        team.sqlmodel_update(team_data_dump)
+            team.tags = list(tags)
+        for key, value in team_data_dump.items():
+            setattr(team, key, value)
         self.session.add(team)
         await self.session.commit()
-        await self.session.refresh(team)
+        await self.session.refresh(team, ["tags", "users"])
         # to get updated related tags and user, we don't need below awt_tags, awt_users, as team has already the updated data, even session.refresh is not needed.
         # but if you need to display updated_at in the API result, then session.refresh() is needed.
 

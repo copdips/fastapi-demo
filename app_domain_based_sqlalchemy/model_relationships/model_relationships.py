@@ -1,20 +1,25 @@
-# ! currently, can not put `table=True` in class `BaseSQLModel`, need to debug
-from sqlmodel import Field
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column
 
-from app_domain_based_sqlalchemy.app_common.schemas import BaseModel
+from app_domain_based_sqlalchemy.app_common.models import Base
 
 
-class TagTeamLink(BaseModel, table=True):
-    # ! if need extra fields, for example, name, description, etc, add them here,
-    # need to add Relationship:
-    # https://sqlmodel.tiangolo.com/tutorial/many-to-many/link-with-extra-fields/
-    tag_id: str | None = Field(
-        default=None,
-        foreign_key="tag.id",
+class TagTeamLink(Base):
+    """Association table between Tag and Team.
+
+    ! if extra fields are needed (name, description, ...), add them here and
+    declare the relationship with an association object instead of `secondary`.
+    """
+
+    __tablename__ = "tag_team_link"
+
+    tag_id: Mapped[str] = mapped_column(
+        String(22),
+        ForeignKey("tag.id"),
         primary_key=True,
     )
-    team_id: str | None = Field(
-        default=None,
-        foreign_key="team.id",
+    team_id: Mapped[str] = mapped_column(
+        String(22),
+        ForeignKey("team.id"),
         primary_key=True,
     )

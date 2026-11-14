@@ -2,7 +2,7 @@ import asyncio
 import logging
 from datetime import UTC, datetime
 
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # from app_domain_based_sqlalchemy.services.base import BaseService
 from app_domain_based_sqlalchemy.app_common.services import BaseService
@@ -20,15 +20,16 @@ class EmailService(BaseService[Email]):
         super().__init__(session, Email, logger)
 
     async def create(self, email: EmailCreate) -> Email:
-        db_email = Email.model_validate(email)
-        self.session.add(email)
+        db_email = Email(**email.model_dump())
+        self.session.add(db_email)
         await self.session.commit()
         return db_email
 
     async def update(self, email_id: str, new_data: EmailUpdate) -> Email:
         email = await self.get_by_id(email_id)
         email_data_dump = new_data.model_dump(exclude_unset=True)
-        email.sqlmodel_update(email_data_dump)
+        for key, value in email_data_dump.items():
+            setattr(email, key, value)
         self.session.add(email)
         await self.session.commit()
         await self.session.refresh(email)
@@ -40,7 +41,7 @@ class EmailService(BaseService[Email]):
         await asyncio.sleep(2)
         email_update = EmailUpdate(sent_at=datetime.now(UTC))
         email = await self.update(email_id, email_update)
-        msg = f"Sent email: {email.model_dump()}"
+        msg = f"Sent email: {email.id}"
         self.logger.info(msg)
         return email
 
@@ -53,7 +54,7 @@ class EmailService(BaseService[Email]):
         # ! cannot use UserReadCompositeOutOfAPI.model_validate(user_before_update.model_dump())
         # as relationship data (team here) will be discarded.
         # must use UserReadCompositeOutOfAPI.parse_obj(user_before_update)
-        formatted_user_before_update = UserReadCompositeOutOfAPI.parse_obj(
+        formatted_user_before_update = UserReadCompositeOutOfAPI.model_validate(
             user_before_update,
         )
         email = Email(

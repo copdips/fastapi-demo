@@ -1,10 +1,9 @@
 import re
 from enum import StrEnum
 
+from pydantic import BaseModel as PydanticBaseModel
 from pydantic import ConfigDict, computed_field
-from pydantic.alias_generators import to_camel, to_snake
-from sqlalchemy import orm
-from sqlmodel import SQLModel
+from pydantic.alias_generators import to_camel
 
 from app_domain_based_sqlalchemy.config import settings
 
@@ -16,14 +15,13 @@ class TaskStatus(StrEnum):
     failed = "failed"
 
 
-class BaseModel(SQLModel):
-    @orm.declared_attr
-    @classmethod
-    def __tablename__(cls) -> str:
-        return to_snake(cls.__name__)
+class BaseModel(PydanticBaseModel):
+    # Read models are validated from SQLAlchemy objects.
+    model_config = ConfigDict(from_attributes=True)
 
     if settings.use_camel_case:
-        model_config = ConfigDict(  # type: ignore[assignment]
+        model_config = ConfigDict(
+            from_attributes=True,
             alias_generator=to_camel,
             populate_by_name=True,  # Pydantic v1: allow_population_by_field_name=True
         )
