@@ -1,11 +1,17 @@
+import sqlalchemy as sa
 from sqlmodel import Field
 
-from app_layer_based_sqlmodel.models.base import BaseModel, BaseReadModel, ForbidExtraMixin
+from app_layer_based_sqlmodel.models.base import (
+    BaseModel,
+    BaseReadModel,
+    ForbidExtraMixin,
+)
 
 
 class TeamBase(BaseModel):
-    name: str = Field(unique=True, index=True)
-    headquarters: str
+    # column types mirror app_domain_based_sqlalchemy.app_team.models: one DB, one schema.
+    name: str = Field(unique=True, index=True, sa_type=sa.String(100))
+    headquarters: str = Field(sa_type=sa.String(200))
 
 
 class TeamCreate(TeamBase, ForbidExtraMixin): ...

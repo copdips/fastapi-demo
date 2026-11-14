@@ -1,20 +1,27 @@
 from datetime import datetime
 
+import sqlalchemy as sa
 from email_validator import validate_email
 from pydantic import field_validator
+from sqlmodel import Field
 
-from app_layer_based_sqlmodel.models.base import BaseModel, BaseReadModel, ForbidExtraMixin
+from app_layer_based_sqlmodel.models.base import (
+    BaseModel,
+    BaseReadModel,
+    ForbidExtraMixin,
+)
 
 
 class EmailBase(BaseModel):
-    type: str
-    subject: str
-    body: str | None = None
-    sender: str | None = None
-    to: str | None = None
-    cc: str | None = None
-    bcc: str | None = None
-    tracking_id: str | None = None
+    # column types mirror app_domain_based_sqlalchemy.app_email.models: one DB, one schema.
+    type: str = Field(sa_type=sa.String(50))
+    subject: str = Field(sa_type=sa.String(200))
+    body: str | None = Field(default=None, sa_type=sa.Text())
+    sender: str | None = Field(default=None, sa_type=sa.String(320))
+    to: str | None = Field(default=None, sa_type=sa.Text())
+    cc: str | None = Field(default=None, sa_type=sa.Text())
+    bcc: str | None = Field(default=None, sa_type=sa.Text())
+    tracking_id: str | None = Field(default=None, sa_type=sa.String(100))
 
 
 class EmailCreate(EmailBase, ForbidExtraMixin):

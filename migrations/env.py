@@ -6,35 +6,17 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-"""
-# ! Import your SQLModel models here
-# https://github.com/tiangolo/full-stack-fastapi-template/blob/master/backend/app/alembic/env.py#L21
-
-whether import all the db models explicitly like this:
-
-```python
-    from app_layer_based_sqlmodel.models.db_models import *
-    from sqlmodel import SQLModel
-    target_metadata = SQLModel.metadata
-```
-
-whether import the SQLModel use in the file where the db models are defined,
-which means not `from sqlmodel import SQLModel`, but `from app_layer_based_sqlmodel.models.db_models import SQLModel`:
-
-```python
-    from app_layer_based_sqlmodel.models.db_models import SQLModel
-    target_metadata = SQLModel.metadata
-```
-
-! SQLModel.metadata = MetaData(naming_convention=db_naming_convention) is defined in db_models.py
-alembic will get it, and do the necessary automatically
-or set the naming convention in env.py itself, see:
-https://alembic.sqlalchemy.org/en/latest/naming.html#integration-of-naming-conventions-into-operations-autogenerate
-"""
-from app_layer_based_sqlmodel.models.db import SQLModel
-
-# ! import settings to set sqlalchemy.url
-from app_layer_based_sqlmodel.config import settings
+# ! The domain-based layout is the canonical schema: it is what the Docker image
+# ! deploys, and the two layouts describe the same tables (tests/integration/
+# ! test_schema_parity.py keeps them in sync).
+# ! Importing the model modules registers their tables on Base.metadata.
+import app_domain_based_sqlalchemy.app_email.models  # noqa: F401
+import app_domain_based_sqlalchemy.app_tag.models  # noqa: F401
+import app_domain_based_sqlalchemy.app_task.models  # noqa: F401
+import app_domain_based_sqlalchemy.app_team.models  # noqa: F401
+import app_domain_based_sqlalchemy.app_user.models  # noqa: F401
+from app_domain_based_sqlalchemy.app_common.models import Base
+from app_domain_based_sqlalchemy.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -47,18 +29,8 @@ config.set_main_option("sqlalchemy.url", settings.db_settings.DB_CONN_URL)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-
-# ! Set your SQLModel metadata here
-target_metadata = SQLModel.metadata
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+# ! the naming convention and the table names come from Base (app_common/models.py).
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:

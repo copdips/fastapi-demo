@@ -19,5 +19,11 @@ class User(BaseSQLModel):
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True)
 
     # one-to-many relationship [many side]
-    team_id: Mapped[str | None] = mapped_column(ForeignKey("team.id"), default=None)
-    team: Mapped["Team | None"] = relationship(back_populates="users")
+    # ! sort_order keeps this column last, matching the layer-based model's
+    # ! column order; both layouts must describe the same table.
+    team_id: Mapped[str | None] = mapped_column(
+        ForeignKey("team.id"),
+        default=None,
+        sort_order=100,
+    )
+    team: Mapped[Team | None] = relationship(back_populates="users")

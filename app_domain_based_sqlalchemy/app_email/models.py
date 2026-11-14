@@ -17,7 +17,10 @@ class Email(BaseSQLModel):
     cc: Mapped[str | None] = mapped_column(Text, default=None)
     bcc: Mapped[str | None] = mapped_column(Text, default=None)
     tracking_id: Mapped[str | None] = mapped_column(String(100), default=None)
+    # ! sort_order keeps this column last, matching the layer-based model's
+    # ! column order; both layouts must describe the same table.
     sent_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         default=None,
+        sort_order=100,
     )

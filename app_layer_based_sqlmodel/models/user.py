@@ -1,17 +1,22 @@
+import sqlalchemy as sa
 from email_validator import validate_email
 from pydantic import EmailStr, field_validator
-from sqlmodel import AutoString, Field
+from sqlmodel import Field
 
-from app_layer_based_sqlmodel.models.base import BaseModel, BaseReadModel, ForbidExtraMixin
+from app_layer_based_sqlmodel.models.base import (
+    BaseModel,
+    BaseReadModel,
+    ForbidExtraMixin,
+)
 
 
 class UserBase(BaseModel):
-    name: str = Field(unique=True, index=True)
-    first_name: str
-    last_name: str
-    # EmailStr with sa_type=AutoString: https://github.com/tiangolo/sqlmodel/discussions/730#discussioncomment-7952622
-    # or use: email: EmailStr = Field(sa_column=Column(String, index=True, unique=True))
-    email: EmailStr = Field(unique=True, index=True, sa_type=AutoString)
+    # column types mirror app_domain_based_sqlalchemy.app_user.models: one DB, one schema.
+    name: str = Field(unique=True, index=True, sa_type=sa.String(100))
+    first_name: str = Field(sa_type=sa.String(100))
+    last_name: str = Field(sa_type=sa.String(100))
+    # EmailStr needs an explicit sa_type: https://github.com/tiangolo/sqlmodel/discussions/730#discussioncomment-7952622
+    email: EmailStr = Field(unique=True, index=True, sa_type=sa.String(320))
 
     @field_validator("email")
     @classmethod

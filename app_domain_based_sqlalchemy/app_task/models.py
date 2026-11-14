@@ -22,8 +22,15 @@ class Task(BaseSQLModel):
     # ! nested pydantic models are dumped to dict by the schema before reaching the column
     email_notification: Mapped[dict | None] = mapped_column(JSON, default=None)
     context: Mapped[dict | None] = mapped_column(JSON, default=None)
+    # ! sort_order keeps these columns last, matching the layer-based model's
+    # ! column order; both layouts must describe the same table.
     ended_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         default=None,
+        sort_order=100,
     )
-    task_duration: Mapped[timedelta | None] = mapped_column(Interval, default=None)
+    task_duration: Mapped[timedelta | None] = mapped_column(
+        Interval,
+        default=None,
+        sort_order=100,
+    )

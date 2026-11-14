@@ -38,7 +38,7 @@ class BaseSQLModel(
 ):
     # ! validate_assignment=True to validate during SALModel(table=True) instance creation
     # https://github.com/tiangolo/sqlmodel/issues/52#issuecomment-1998440311
-    model_config = ConfigDict(
+    model_config = ConfigDict(  # ty: ignore[invalid-assignment]
         validate_assignment=True,
     )  # pyright: ignore[reportAssignmentType]
 
@@ -46,12 +46,17 @@ class BaseSQLModel(
     # and add `default=None` in the Field.
     # Here both of uid and id columns are computed at python level, so no need to add `| None`
     # ref: https://sqlmodel.tiangolo.com/tutorial/create-db-and-table/#primary-key-id
-    uid: str = Field(default_factory=lambda: str(ULID()), primary_key=True)
+    uid: str = Field(
+        default_factory=lambda: str(ULID()),
+        primary_key=True,
+        sa_type=sa.String(26),
+    )
     id: str = Field(
         default_factory=shortuuid.uuid,
         index=True,
         nullable=False,
         unique=True,
+        sa_type=sa.String(22),
     )
     created_at: datetime = Field(
         sa_type=sa.DateTime(timezone=True),
@@ -87,11 +92,13 @@ class TagTeamLink(BaseModel, table=True):
         default=None,
         foreign_key="tag.id",
         primary_key=True,
+        sa_type=sa.String(22),
     )
     team_id: str | None = Field(
         default=None,
         foreign_key="team.id",
         primary_key=True,
+        sa_type=sa.String(22),
     )
 
 
@@ -101,7 +108,7 @@ class Team(BaseSQLModel, TeamBase, table=True):
     # But the editor and other tools can see that the string is actually a type annotation inside,
     # and provide all the autocompletion, type checks, etc
     # TODO: try use selectinload: https://github.com/tiangolo/sqlmodel/discussions/613#discussioncomment-6410234
-    users: Mapped[list["User"]] = Relationship(
+    users: Mapped[list[User]] = Relationship(
         back_populates="team",
         # ! if need cascade delete at ORM level, need to declare it at FK level from one-to-many, one side.
         # ! for sql raw level cascade delete, need to declare it at FK level from one-to-many, many side.
@@ -129,7 +136,7 @@ class Team(BaseSQLModel, TeamBase, table=True):
     )
     ```
     """
-    tags: Mapped[list["Tag"]] = Relationship(
+    tags: Mapped[list[Tag]] = Relationship(
         back_populates="teams",
         link_model=TagTeamLink,
     )
@@ -142,6 +149,7 @@ class User(BaseSQLModel, UserBase, table=True):
     team_id: str | None = Field(
         default=None,
         foreign_key="team.id",
+        sa_type=sa.String(22),
         # sa_column_kwargs={
         #     "ondelete": "CASCADE",  # ! this syntax is not working, below is OK. ref: https://github.com/tiangolo/sqlmodel/discussions/863
         # },
@@ -167,7 +175,7 @@ class Tag(BaseSQLModel, TagBase, table=True):
     # cannot use list[User] as by this point the Python interpreter doesn't know of any class User.
     # But the editor and other tools can see that the string is actually a type annotation inside,
     # and provide all the autocompletion, type checks, etc
-    teams: Mapped[list["Team"]] = Relationship(
+    teams: Mapped[list[Team]] = Relationship(
         back_populates="tags",
         link_model=TagTeamLink,
     )
@@ -186,4 +194,6 @@ class Task(BaseSQLModel, TaskBase, table=True):
         return v.model_dump()
 
 
-class Email(BaseSQLModel, EmailBase, table=True): ...
+class Email(BaseSQLModel, EmailBase, table=True):
+    # the send timestamp belongs to the table only, not to the create/read schemas.
+    sent_at: datetime | None = Field(default=None, sa_type=sa.DateTime(timezone=True))
