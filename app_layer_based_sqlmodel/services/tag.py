@@ -1,15 +1,20 @@
-import logging
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
 from sqlmodel import col, select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app_layer_based_sqlmodel.core.exceptions import NotFoundError
 from app_layer_based_sqlmodel.models.db import Tag, Team
-from app_layer_based_sqlmodel.models.tag import TagCreate, TagUpdate
 from app_layer_based_sqlmodel.services.base import BaseService
+
+if TYPE_CHECKING:
+    import logging
+    from collections.abc import Sequence
+
+    from sqlmodel.ext.asyncio.session import AsyncSession
+
+    from app_layer_based_sqlmodel.models.tag import TagCreate, TagUpdate
 
 
 class TagService(BaseService[Tag]):
@@ -63,5 +68,6 @@ class TagService(BaseService[Tag]):
         self.session.add(tag)
         await self.session.commit()
         await self.session.refresh(tag)
-        tag.teams = await tag.awt_teams
+        # awaitable_attrs populates tag.teams in place; no need to assign it back.
+        await tag.awaitable_attrs.teams
         return tag

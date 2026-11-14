@@ -1,9 +1,9 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, Response
-from sqlalchemy.exc import OperationalError
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from app_domain_based_sqlalchemy.app_common.deps import get_db_session
 from app_domain_based_sqlalchemy.app_health.schemas import HealthRead
@@ -26,7 +26,11 @@ async def get_health(
     response.headers["Cache-Control"] = "no-cache"
     meta = {
         "api_version": req.app.state.settings.api_version,
-        "db_engine": db_session.bind.engine.name,
+        "db_engine": (
+            db_session.bind.engine.name
+            if isinstance(db_session.bind, AsyncEngine)
+            else "unknown"
+        ),
     }
     try:
         res = (await db_session.execute(select(1))).scalars()

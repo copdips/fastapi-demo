@@ -14,50 +14,47 @@ from app_layer_based_sqlmodel.services.email import EmailService
 from app_layer_based_sqlmodel.services.task import TaskService
 
 
-async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    # # Using begin() context manager automatically handles commit/rollback/raise
-    # https://docs.sqlalchemy.org/en/20/orm/session_transaction.html#explicit-begin
-
-    # if use async with async_session_factory() as session:  without session.begin(),
-    # you need to manually commit, but rollback on error is always automatically handled
-    async with async_session_factory() as session, session.begin():
+async def get_db_session() -> AsyncGenerator[AsyncSession]:
+    # No session.begin() here: the services commit explicitly, and a transaction
+    # opened by begin() cannot be used again after an explicit commit()
+    # ("Can't operate on closed transaction inside context manager").
+    # Closing the session rolls back any uncommitted work on error.
+    async with async_session_factory() as session:
         yield session
-        # session.commit() is automatically called when exiting the context manager by using begin()
-        # but the services, we can still add session.commit()
 
 
 async def get_user_service(
     session: AsyncSession = Depends(get_db_session),
     logger: logging.Logger = Depends(get_logger),
-) -> AsyncGenerator[UserService, None]:
+) -> AsyncGenerator[UserService]:
     yield UserService(session, logger)
 
 
 async def get_tag_service(
     session: AsyncSession = Depends(get_db_session),
     logger: logging.Logger = Depends(get_logger),
-) -> AsyncGenerator[TagService, None]:
+) -> AsyncGenerator[TagService]:
     yield TagService(session, logger)
 
 
 async def get_team_service(
     session: AsyncSession = Depends(get_db_session),
     logger: logging.Logger = Depends(get_logger),
-) -> AsyncGenerator[TeamService, None]:
+) -> AsyncGenerator[TeamService]:
     yield TeamService(session, logger)
 
 
 async def get_task_service(
     session: AsyncSession = Depends(get_db_session),
     logger: logging.Logger = Depends(get_logger),
-) -> AsyncGenerator[TaskService, None]:
+) -> AsyncGenerator[TaskService]:
     yield TaskService(session, logger)
 
 
 async def get_email_service(
     session: AsyncSession = Depends(get_db_session),
     logger: logging.Logger = Depends(get_logger),
-) -> AsyncGenerator[EmailService, None]:
+) -> AsyncGenerator[EmailService]:
     yield EmailService(session, logger)
 
 

@@ -1,8 +1,11 @@
 import importlib
 import pkgutil
-import types
+from typing import TYPE_CHECKING
 
-from fastapi import FastAPI
+if TYPE_CHECKING:
+    import types
+
+    from fastapi import FastAPI
 
 
 def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleType):
@@ -15,7 +18,7 @@ def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleTyp
     ):
         if sub_mod_name.startswith("app_"):
             for _module_finder, sub_sub_mod_name, _ispkg in pkgutil.iter_modules(
-                [f"{module_finder.path}/{sub_mod_name}"]  # ty: ignore[unresolved-attribute]
+                [f"{module_finder.path}/{sub_mod_name}"]  # ty: ignore[missing-attribute]
             ):
                 if sub_sub_mod_name.startswith("routes_"):
                     route_namespace_name = sub_mod_name.removeprefix("app_")
@@ -23,8 +26,15 @@ def register_domain_based_routers(app: FastAPI, app_root_module: types.ModuleTyp
                     routes_mod = importlib.import_module(
                         f"app_domain_based_sqlalchemy.{sub_mod_name}.{sub_sub_mod_name}"
                     )
+                    # endpoint_name lets a module opt out of the pluralized
+                    # module name, e.g. app_health -> /v1/health, not /v1/healths.
+                    endpoint_name = getattr(
+                        routes_mod,
+                        "endpoint_name",
+                        f"{route_namespace_name}s",
+                    )
                     app.include_router(
-                        routes_mod.router,  # ty: ignore[unresolved-attribute]
-                        prefix=f"/{route_version}/{route_namespace_name}s",
+                        routes_mod.router,
+                        prefix=f"/{route_version}/{endpoint_name}",
                         tags=[route_namespace_name],
                     )

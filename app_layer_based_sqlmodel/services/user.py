@@ -1,15 +1,20 @@
-import logging
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from fastapi import Query
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app_layer_based_sqlmodel.core.exceptions import NotFoundError
 from app_layer_based_sqlmodel.models.db import Team, User
-from app_layer_based_sqlmodel.models.user import UserCreate, UserUpdate
 from app_layer_based_sqlmodel.services.base import BaseService
+
+if TYPE_CHECKING:
+    import logging
+    from collections.abc import Sequence
+
+    from sqlmodel.ext.asyncio.session import AsyncSession
+
+    from app_layer_based_sqlmodel.models.user import UserCreate, UserUpdate
 
 
 class UserService(BaseService[User]):
@@ -77,5 +82,6 @@ class UserService(BaseService[User]):
         # right after session.commit(), user object is no more accessible,
         # so we need to refresh it, and also get update_at field updated.
         await self.session.refresh(user)
-        user.team = await user.awt_team
+        # awaitable_attrs populates user.team in place; no need to assign it back.
+        await user.awaitable_attrs.team
         return user

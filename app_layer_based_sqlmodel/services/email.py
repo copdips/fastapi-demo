@@ -1,16 +1,20 @@
 import asyncio
-import logging
 from datetime import UTC, datetime
-
-from sqlmodel.ext.asyncio.session import AsyncSession
+from typing import TYPE_CHECKING
 
 from app_layer_based_sqlmodel.models.db import Email, User
 from app_layer_based_sqlmodel.models.email import EmailCreate, EmailUpdate
-from app_layer_based_sqlmodel.models.user import UserUpdate
 from app_layer_based_sqlmodel.models.user_composite import (
     UserReadCompositeOutOfAPI,
 )
 from app_layer_based_sqlmodel.services.base import BaseService
+
+if TYPE_CHECKING:
+    import logging
+
+    from sqlmodel.ext.asyncio.session import AsyncSession
+
+    from app_layer_based_sqlmodel.models.user import UserUpdate
 
 
 class EmailService(BaseService[Email]):
@@ -50,8 +54,8 @@ class EmailService(BaseService[Email]):
     ) -> Email:
         # ! cannot use UserReadCompositeOutOfAPI.model_validate(user_before_update.model_dump())
         # as relationship data (team here) will be discarded.
-        # must use UserReadCompositeOutOfAPI.parse_obj(user_before_update)
-        formatted_user_before_update = UserReadCompositeOutOfAPI.parse_obj(
+        # must validate the ORM object directly, not its model_dump().
+        formatted_user_before_update = UserReadCompositeOutOfAPI.model_validate(
             user_before_update,
         )
         email = Email(
