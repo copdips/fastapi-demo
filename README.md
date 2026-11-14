@@ -135,7 +135,7 @@ Add `$profile=1` in query param
 py-spy top -- python -m uvicorn app_layer_based_sqlmodel.main:app
 
 # or
-make run
+make run-app-layer-based
 lsof -i :8000
 py-spy top --pid $python_pid
 

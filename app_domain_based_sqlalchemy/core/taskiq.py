@@ -1,7 +1,7 @@
 """taskiq
 
 worker:
-taskiq worker app_layer_based_sqlmodel.core.taskiq:taskiq_broker
+taskiq worker app_domain_based_sqlalchemy.core.taskiq:taskiq_broker
 """
 
 from taskiq_aio_pika import AioPikaBroker

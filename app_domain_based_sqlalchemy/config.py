@@ -4,7 +4,7 @@ import os
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-import app_layer_based_sqlmodel
+import app_domain_based_sqlalchemy
 
 DEFAULT_ENV_FILE = ".env"
 DEFAULT_API_ENV = "local"
@@ -81,9 +81,11 @@ class Settings(BaseSettings):
     )
     db_settings: DBSettings = Field(default=DBSettings())
     # another way to set default value is to use default_factory
-    logging_settings: LoggingSettings = Field(default_factory=lambda: LoggingSettings())
+    logging_settings: LoggingSettings = Field(default_factory=LoggingSettings)
     api_env: str = os.getenv("API_ENV", DEFAULT_API_ENV)
-    api_version: str = getattr(app_layer_based_sqlmodel, "__VERSION__", DEFAULT_API_VERSION)
+    api_version: str = getattr(
+        app_domain_based_sqlalchemy, "__VERSION__", DEFAULT_API_VERSION
+    )
     api_name: str = "FastAPI demo"
     api_title: str = f"{api_name} - ({api_env})"
     api_title_slug: str = f"{api_name} {api_env}".lower().replace(" ", "-")

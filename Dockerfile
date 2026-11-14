@@ -51,7 +51,8 @@ RUN --mount=type=secret,id=PIP_INDEX_URL \
     UV_DEFAULT_INDEX=$(cat /run/secrets/PIP_INDEX_URL) \
     uv sync --frozen --no-install-project
 
-COPY --chown=appuser:appuser app_layer_based_sqlmodel /code/app_layer_based_sqlmodel
+# The image ships the domain-based layout only: it is the default deployment target.
+COPY --chown=appuser:appuser app_domain_based_sqlalchemy /code/app_domain_based_sqlalchemy
 # for local test with docker build: (but unnecessary for docker compose, as it can load .env file directly )
 # COPY .env /code/.env
 
@@ -70,9 +71,9 @@ ENV PATH="/code/.venv/bin:$PATH"
 USER appuser
 
 ARG app_version
-RUN printf "\n__VERSION__='${app_version}'\n" >> /code/app_layer_based_sqlmodel/__init__.py
+RUN printf "\n__VERSION__='${app_version}'\n" >> /code/app_domain_based_sqlalchemy/__init__.py
 
 # Expose the port that the application listens on.
 EXPOSE 8000
 
-CMD ["uvicorn", "app_layer_based_sqlmodel.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app_domain_based_sqlalchemy.main:app", "--host", "0.0.0.0", "--port", "8000"]

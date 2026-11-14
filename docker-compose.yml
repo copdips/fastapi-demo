@@ -12,6 +12,13 @@ secrets:
   PIP_INDEX_URL:
     file: PIP_INDEX_URL.secret
 
+# ! .env points the DB at localhost so host-side runs (`make run-*`) can reach the
+# ! published postgres port. Containers resolve `postgres` on the compose network
+# ! instead, so every app service gets these two values on top of env_file.
+x-db-env: &db-env
+  DB_HOST: postgres
+  DB_CONN_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/fastapi-demo-local
+
 services:
   # docker run --rm -d \
   #   --name rabbitmq \
@@ -41,6 +48,25 @@ services:
     ports:
       - "6379:6379"
 
+  # local database for both the app containers and host-side runs; no external DB.
+  postgres:
+    container_name: fastapi-demo-postgres
+    image: "postgres:17-alpine"
+    environment:
+      # ! password for test only
+      POSTGRES_DB: fastapi-demo-local
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fastapi-demo-local"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
   api:
     container_name: fastapi-demo-api
     build:
@@ -50,11 +76,16 @@ services:
     image: api-full
     env_file:
       - .env
+    environment: *db-env
     ports:
       - "8000:8000"
     depends_on:
-      - rabbitmq
-      - redis
+      rabbitmq:
+        condition: service_started
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   celery_worker_queue_low:
     container_name: fastapi-demo-celery_worker_queue_low
@@ -64,9 +95,10 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_layer_based_sqlmodel.core.celery worker --hostname=worker_q_lower_1 --loglevel=info -Q low
+    command: celery -A app_domain_based_sqlalchemy.core.celery worker --hostname=worker_q_lower_1 --loglevel=info -Q low
     env_file:
       - .env
+    environment: *db-env
     depends_on:
       - rabbitmq
       - redis
@@ -80,9 +112,10 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_layer_based_sqlmodel.core.celery worker --hostname=worker_q_high_1 --loglevel=info -Q high
+    command: celery -A app_domain_based_sqlalchemy.core.celery worker --hostname=worker_q_high_1 --loglevel=info -Q high
     env_file:
       - .env
+    environment: *db-env
     depends_on:
       - rabbitmq
       - redis
@@ -96,9 +129,10 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_layer_based_sqlmodel.core.celery worker --hostname=worker_q_high_2 --loglevel=info -Q high
+    command: celery -A app_domain_based_sqlalchemy.core.celery worker --hostname=worker_q_high_2 --loglevel=info -Q high
     env_file:
       - .env
+    environment: *db-env
     depends_on:
       - rabbitmq
       - redis
@@ -111,11 +145,12 @@ services:
       args:
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_layer_based_sqlmodel.core.celery flower --loglevel=info
+    command: celery -A app_domain_based_sqlalchemy.core.celery flower --loglevel=info
     ports:
       - "5555:5555"
     env_file:
       - .env
+    environment: *db-env
     depends_on:
       - rabbitmq
       - redis
@@ -128,9 +163,10 @@ services:
       args:
         app_version: "0.0.0"
     image: api-full
-    command: celery -A app_layer_based_sqlmodel.core.celery beat --loglevel=info
+    command: celery -A app_domain_based_sqlalchemy.core.celery beat --loglevel=info
     env_file:
       - .env
+    environment: *db-env
     depends_on:
       - rabbitmq
       - redis
@@ -144,10 +180,15 @@ services:
         # ! must specify the same version as the api container, because we're using the same image
         app_version: "0.0.0"
     image: api-full
-    command: taskiq worker app_layer_based_sqlmodel.core.taskiq:taskiq_broker
+    command: taskiq worker app_domain_based_sqlalchemy.core.taskiq:taskiq_broker
     env_file:
       - .env
+    environment: *db-env
     depends_on:
       - rabbitmq
       - redis
       - api
+
+volumes:
+  # keeps the local database between compose runs
+  postgres_data:

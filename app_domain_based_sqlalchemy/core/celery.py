@@ -1,10 +1,10 @@
 """celery
 
 worker:
-celery -A app_layer_based_sqlmodel.core.celery worker --loglevel=info
+celery -A app_domain_based_sqlalchemy.core.celery worker --loglevel=info
 
 flower:
-celery -A app_layer_based_sqlmodel.core.celery flower --loglevel=info --port=5555
+celery -A app_domain_based_sqlalchemy.core.celery flower --loglevel=info --port=5555
 flower default port is to 5555
 http://localhost:5555/
 """
@@ -18,7 +18,7 @@ celery_app = Celery(
     broker=settings.celery_broker,
     backend=settings.celery_backend,
     broker_connection_retry_on_startup=True,
-    # include=["app_layer_based_sqlmodel.celery_tasks.tasks"],  # include must specify the tasks module path
+    # include=["app_domain_based_sqlalchemy.celery_tasks.tasks"],  # include must specify the tasks module path
 )
 
 # Celery 5.7 deprecates the `queue=` task attribute; route by task name instead.
@@ -28,7 +28,7 @@ celery_app.conf.task_routes = {
     "*.celery_task_q_high": {"queue": "high"},
 }
 
-# app_layer_based_sqlmodel.celery_tasks module must has a file called tasks.py to let celery discover it,
+# app_domain_based_sqlalchemy.celery_tasks module must has a file called tasks.py to let celery discover it,
 # otherwise the task file name should be specified too, if the file name is celery_tasks.py, then:
-# ["app_layer_based_sqlmodel.celery_tasks.celery_tasks"]
-celery_app.autodiscover_tasks(["app_layer_based_sqlmodel.celery_tasks"], force=True)
+# ["app_domain_based_sqlalchemy.celery_tasks.celery_tasks"]
+celery_app.autodiscover_tasks(["app_domain_based_sqlalchemy.celery_tasks"], force=True)

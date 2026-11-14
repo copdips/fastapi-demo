@@ -1,6 +1,5 @@
 .ONESHELL:
 SHELL=/bin/bash
-API_FOLDER=app_layer_based_sqlmodel
 VENV_NAME := $(shell [ -d venv ] && echo venv || echo .venv)
 VENV_DIR=${VENV_NAME}
 PYTHON=$(shell if [ -d $(VENV_DIR) ]; then echo $(VENV_DIR)/bin/python; else echo python; fi)
@@ -42,42 +41,31 @@ ci-install: install-linux-deps venv
 lint:
 	. $(VENV_DIR)/bin/activate
 	@echo "${BOLD}${YELLOW}pre-commit:${NORMAL}"
-	uv run pre-commit run --files $(git ls-files -m -o --exclude-standard)
+	# staged files are included: `git ls-files -m` is empty once everything is staged,
+	# which silently skipped every hook.
+	uv run pre-commit run --files $$( { git diff --cached --name-only --diff-filter=ACMR; git ls-files -m -o --exclude-standard; } | sort -u )
 
 test-integration:
-	@echo "${BOLD}${YELLOW}Running integration tests for app_layer_based_sqlmodel:${NORMAL}"
+	@echo "${BOLD}${YELLOW}Running integration tests for both app layouts:${NORMAL}"
+# ! the client fixture is parametrized over both apps, so every test runs twice.
 # ! --dist=loadfile to let Tests are grouped by their containing file.
 # Groups are distributed to available workers as whole units.
 # This guarantees that all tests in a file run in the same worker.
 # https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	uv run pytest tests/integration -k app_layer_based_sqlmodel -n auto --dist=loadfile -s
+	uv run pytest tests/integration -n auto --dist=loadfile -s
 
-test-integration-domain-based:
-	@echo "${BOLD}${YELLOW}Running integration tests for app_domain_based_sqlalchemy:${NORMAL}"
-# ! --dist=loadfile to let Tests are grouped by their containing file.
-# Groups are distributed to available workers as whole units.
-# This guarantees that all tests in a file run in the same worker.
-# https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	uv run pytest tests/integration -k app_domain_based_sqlalchemy --cov app_domain_based_sqlalchemy --cov-append -n auto --dist=loadfile -s
+test: test-integration
 
-test-unit:
-	@echo "${BOLD}${YELLOW}Running unit tests for app_layer_based_sqlmodel:${NORMAL}"
-	uv run pytest tests/unit
-
-test-unit-domain-based:
-	@echo "${BOLD}${YELLOW}Running unit tests for app_domain_based_sqlalchemy:${NORMAL}"
-	uv run pytest tests/unit --cov app_domain_based_sqlalchemy --cov-append
-
-test: test-integration test-integration-domain-based
-
-run:
-	TESTING=true uvicorn ${API_FOLDER}.main:app --reload
+run-app-layer-based:
+	TESTING=true uvicorn app_layer_based_sqlmodel.main:app --reload
 
 run-app-domain-based:
 	TESTING=true uvicorn app_domain_based_sqlalchemy.main:app --reload
 
+# ! the deployment-mode targets below default to the domain-based layout,
+# ! the same layout the Docker image runs (see the Dockerfile CMD).
 run-with-external-db:
-	uvicorn ${API_FOLDER}.main:app --reload
+	uvicorn app_domain_based_sqlalchemy.main:app --reload
 
 run-with-multi-core:
 # ! gunicorn might not be necessary for single core environments
@@ -85,7 +73,7 @@ run-with-multi-core:
 # https://fastapi.tiangolo.com/deployment/docker/#one-process-per-container
 # if multi core used, then workers = 2 * num_cpus + 1 as best practices
 # https://fastapi.tiangolo.com/deployment/server-workers/#gunicorn-with-uvicorn-workers
-	gunicorn ${API_FOLDER}.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker
+	gunicorn app_domain_based_sqlalchemy.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker
 
 run-docker-compose:
 	docker compose build && docker compose up -d

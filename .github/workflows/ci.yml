@@ -45,18 +45,12 @@ jobs:
         run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret
 
       - name: create .env file
-        # Dependabot PRs cannot read repository secrets, so fall back to the
-        # committed dummy file. Tests run with TESTING=yes and use in-memory
-        # sqlite, so the DB values only need to be present, not valid.
+        # The demo uses the compose `postgres` service only, so the committed
+        # ci.env carries every value. No repository secret is involved, which
+        # also keeps Dependabot PRs (they cannot read secrets) working.
         run: |
-          if [ -n "$CI_ENV" ]; then
-            printf '%s\n' "$CI_ENV" > .env
-          else
-            cp .github/ci.env .env
-          fi
+          cp .github/ci.env .env
           wc -l .env
-        env:
-          CI_ENV: ${{ secrets.CI_ENV }}
 
       - name: Install deps
         run: |
@@ -97,18 +91,12 @@ jobs:
         run: echo "https://pypi.org/simple" > PIP_INDEX_URL.secret
 
       - name: create .env file
-        # Dependabot PRs cannot read repository secrets, so fall back to the
-        # committed dummy file. Tests run with TESTING=yes and use in-memory
-        # sqlite, so the DB values only need to be present, not valid.
+        # The demo uses the compose `postgres` service only, so the committed
+        # ci.env carries every value. No repository secret is involved, which
+        # also keeps Dependabot PRs (they cannot read secrets) working.
         run: |
-          if [ -n "$CI_ENV" ]; then
-            printf '%s\n' "$CI_ENV" > .env
-          else
-            cp .github/ci.env .env
-          fi
+          cp .github/ci.env .env
           wc -l .env
-        env:
-          CI_ENV: ${{ secrets.CI_ENV }}
 
       - name: Check Docker Compose
         # Compose v2 ships with the runner; the v1 `docker-compose` binary
