@@ -98,10 +98,10 @@ jobs:
         env:
           CI_ENV: ${{ secrets.CI_ENV }}
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+      - name: Check Docker Compose
+        # Compose v2 ships with the runner; the v1 `docker-compose` binary
+        # does not exist on the Ubuntu 26.04 image.
+        run: docker compose version
 
       - name: Build and run the Docker images
         run: make run-docker-compose
@@ -133,7 +133,7 @@ jobs:
 
       - name: Stop containers
         if: always()
-        run: docker-compose down
+        run: docker compose down
 
   ci_all_green:
     if: always()
