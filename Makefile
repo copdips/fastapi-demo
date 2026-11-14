@@ -1,6 +1,6 @@
 .ONESHELL:
 SHELL=/bin/bash
-API_FOLDER=app_layer_based
+API_FOLDER=app_layer_based_sqlmodel
 VENV_NAME := $(shell [ -d venv ] && echo venv || echo .venv)
 VENV_DIR=${VENV_NAME}
 PYTHON=$(shell if [ -d $(VENV_DIR) ]; then echo $(VENV_DIR)/bin/python; else echo python; fi)
@@ -44,28 +44,28 @@ lint:
 	uv run pre-commit run --files $(git ls-files -m -o --exclude-standard)
 
 test-integration:
-	@echo "${BOLD}${YELLOW}Running integration tests for app_layer_based:${NORMAL}"
+	@echo "${BOLD}${YELLOW}Running integration tests for app_layer_based_sqlmodel:${NORMAL}"
 # ! --dist=loadfile to let Tests are grouped by their containing file.
 # Groups are distributed to available workers as whole units.
 # This guarantees that all tests in a file run in the same worker.
 # https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	uv run pytest tests_layer_based/integration -n auto --dist=loadfile -s
+	uv run pytest tests_layer_based_sqlmodel/integration -n auto --dist=loadfile -s
 
 test-integration-domain-based:
-	@echo "${BOLD}${YELLOW}Running integration tests for app_domain_based:${NORMAL}"
+	@echo "${BOLD}${YELLOW}Running integration tests for app_domain_based_sqlalchemy:${NORMAL}"
 # ! --dist=loadfile to let Tests are grouped by their containing file.
 # Groups are distributed to available workers as whole units.
 # This guarantees that all tests in a file run in the same worker.
 # https://pytest-xdist.readthedocs.io/en/stable/distribution.html#running-tests-across-multiple-cpus
-	uv run pytest tests_domain_based/integration --cov app_domain_based --cov-append -n auto --dist=loadfile -s
+	uv run pytest tests_domain_based_sqlalchemy/integration --cov app_domain_based_sqlalchemy --cov-append -n auto --dist=loadfile -s
 
 test-unit:
-	@echo "${BOLD}${YELLOW}Running unit tests for app_layer_based:${NORMAL}"
-	uv run pytest tests_layer_based/unit
+	@echo "${BOLD}${YELLOW}Running unit tests for app_layer_based_sqlmodel:${NORMAL}"
+	uv run pytest tests_layer_based_sqlmodel/unit
 
 test-unit-domain-based:
-	@echo "${BOLD}${YELLOW}Running unit tests for app_domain_based:${NORMAL}"
-	uv run pytest tests_domain_based/unit --cov app_domain_based --cov-append
+	@echo "${BOLD}${YELLOW}Running unit tests for app_domain_based_sqlalchemy:${NORMAL}"
+	uv run pytest tests_domain_based_sqlalchemy/unit --cov app_domain_based_sqlalchemy --cov-append
 
 test: test-integration test-integration-domain-based
 
@@ -73,7 +73,7 @@ run:
 	TESTING=true uvicorn ${API_FOLDER}.main:app --reload
 
 run-app-domain-based:
-	TESTING=true uvicorn app_domain_based.main:app --reload
+	TESTING=true uvicorn app_domain_based_sqlalchemy.main:app --reload
 
 run-with-external-db:
 	uvicorn ${API_FOLDER}.main:app --reload

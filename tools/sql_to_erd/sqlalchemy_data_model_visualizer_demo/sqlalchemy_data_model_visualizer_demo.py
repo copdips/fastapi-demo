@@ -7,7 +7,7 @@ from sqlalchemy_data_model_visualizer import (
     generate_data_model_diagram,
 )
 
-from app_layer_based.models.db import Email, Tag, TagTeamLink, Task, Team, User
+from app_layer_based_sqlmodel.models.db import Email, Tag, TagTeamLink, Task, Team, User
 
 models = [Email, Tag, TagTeamLink, Task, Team, User]
 output_file_name = "./tools/sql_to_erd/sqlalchemy_data_model_visualizer_demo/sqlalchemy_data_model_visualizer"

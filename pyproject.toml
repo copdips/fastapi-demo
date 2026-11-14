@@ -95,7 +95,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["app_layer_based", "app_domain_based"]
+packages = ["app_layer_based_sqlmodel", "app_domain_based_sqlalchemy"]
 
 [tool.setuptools.dynamic]
 version = { file = ["VERSION"] }
@@ -145,13 +145,13 @@ classmethod-decorators = ["pydantic.validator"]
 [tool.pyright]
 reportUnnecessaryTypeIgnoreComment = true
 exclude = ["_local_test", "tools", "migrations", ".venv", "archive"]
-# include = ["app_layer_based"]
+# include = ["app_layer_based_sqlmodel"]
 # venvPath = "."
 # venv = ".venv"
 
 [tool.pytest.ini_options]
-# testpaths = ["tests_layer_based/unit"]  # no unit test yet
-testpaths = ["tests_layer_based/integration"]
+# testpaths = ["tests_layer_based_sqlmodel/unit"]  # no unit test yet
+testpaths = ["tests_layer_based_sqlmodel/integration"]
 # https://pytest-asyncio.readthedocs.io/en/latest/concepts.html#auto-mode
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
@@ -159,7 +159,7 @@ addopts = """
     -v -s
     --import-mode=importlib
     --junitxml=junit.xml
-    --cov app_layer_based
+    --cov app_layer_based_sqlmodel
     --cov-report=html
     --cov-report=xml
     --cov-report=term-missing:skip-covered

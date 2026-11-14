@@ -9,10 +9,10 @@ this project serves a demonstration of creating a REST API using FastAPI and SQL
 
 Main directories:
 
-- **app_layer_based**: layered FastAPI app structure (routes, services, models, schemas)
-- **tests_layer_based**: integration tests for **app_layer_based**
-- **app_domain_based**: (preferred) domain-based structure
-- **tests_domain_based**: integration tests for **app_domain_based**
+- **app_layer_based_sqlmodel**: layered FastAPI app structure (routes, services, models, schemas)
+- **tests_layer_based_sqlmodel**: integration tests for **app_layer_based_sqlmodel**
+- **app_domain_based_sqlalchemy**: (preferred) domain-based structure
+- **tests_domain_based_sqlalchemy**: integration tests for **app_domain_based_sqlalchemy**
 - **archive/app_sqlalchemy_v1**: (archived) using SQLAlchemy v1 style with async support
 
 ## Database
@@ -133,7 +133,7 @@ Add `$profile=1` in query param
 <https://github.com/benfred/py-spy>
 
 ```bash
-py-spy top -- python -m uvicorn app_layer_based.main:app
+py-spy top -- python -m uvicorn app_layer_based_sqlmodel.main:app
 
 # or
 make run

@@ -13,16 +13,16 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 whether import all the db models explicitly like this:
 
 ```python
-    from app_layer_based.models.db_models import *
+    from app_layer_based_sqlmodel.models.db_models import *
     from sqlmodel import SQLModel
     target_metadata = SQLModel.metadata
 ```
 
 whether import the SQLModel use in the file where the db models are defined,
-which means not `from sqlmodel import SQLModel`, but `from app_layer_based.models.db_models import SQLModel`:
+which means not `from sqlmodel import SQLModel`, but `from app_layer_based_sqlmodel.models.db_models import SQLModel`:
 
 ```python
-    from app_layer_based.models.db_models import SQLModel
+    from app_layer_based_sqlmodel.models.db_models import SQLModel
     target_metadata = SQLModel.metadata
 ```
 
@@ -31,10 +31,10 @@ alembic will get it, and do the necessary automatically
 or set the naming convention in env.py itself, see:
 https://alembic.sqlalchemy.org/en/latest/naming.html#integration-of-naming-conventions-into-operations-autogenerate
 """
-from app_layer_based.models.db import SQLModel
+from app_layer_based_sqlmodel.models.db import SQLModel
 
 # ! import settings to set sqlalchemy.url
-from app_layer_based.config import settings
+from app_layer_based_sqlmodel.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
