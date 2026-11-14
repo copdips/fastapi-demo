@@ -21,6 +21,13 @@ celery_app = Celery(
     # include=["app_layer_based_sqlmodel.celery_tasks.tasks"],  # include must specify the tasks module path
 )
 
+# Celery 5.7 deprecates the `queue=` task attribute; route by task name instead.
+celery_app.conf.task_routes = {
+    "*.celery_task_q_low_in_schedule": {"queue": "low"},
+    "*.celery_task_q_low": {"queue": "low"},
+    "*.celery_task_q_high": {"queue": "high"},
+}
+
 # app_layer_based_sqlmodel.celery_tasks module must has a file called tasks.py to let celery discover it,
 # otherwise the task file name should be specified too, if the file name is celery_tasks.py, then:
 # ["app_layer_based_sqlmodel.celery_tasks.celery_tasks"]

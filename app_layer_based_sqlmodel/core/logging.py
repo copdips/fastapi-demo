@@ -1,4 +1,4 @@
-import asyncio
+import inspect
 import logging
 import os
 from functools import wraps
@@ -83,10 +83,6 @@ def configure_logger(fastapi_app: FastAPI):
         # Set traces_sample_rate to 1.0 to capture 100%
         # of transactions for performance monitoring.
         traces_sample_rate=1.0,
-        # Set profiles_sample_rate to 1.0 to profile 100%
-        # of sampled transactions.
-        # We recommend adjusting this value in production.
-        profiles_sample_rate=1.0,
     )
     # correlation_id.set(""), set default context var value to avoid opentelemetry span error:
     # Invalid type NoneType for attribute 'correlation_id' value.
@@ -145,7 +141,7 @@ def configure_logger(fastapi_app: FastAPI):
 )
 def trace_function(func):
     tracer = trace.get_tracer(settings.api_title_slug)
-    if asyncio.iscoroutinefunction(func):
+    if inspect.iscoroutinefunction(func):
 
         @wraps(func)
         async def wrapper_async(*args, **kwargs):

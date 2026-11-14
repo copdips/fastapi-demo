@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
 from fastapi.routing import APIRoute
 from fastapi_mcp import FastApiMCP
 
@@ -32,9 +31,6 @@ def create_app() -> FastAPI:
         # `useUnsafeMarkdown` to add style to description
         swagger_ui_parameters={"useUnsafeMarkdown": True},
         generate_unique_id_function=custom_generate_unique_id,
-        # https://fastapi.tiangolo.com/advanced/custom-response/#use-orjsonresponse
-        # https://fastapi.tiangolo.com/advanced/custom-response/#default-response-class
-        default_response_class=ORJSONResponse,
     )
 
     # ! till here, lifespan is just declared but not called yet.
@@ -46,7 +42,7 @@ def create_app() -> FastAPI:
     add_scalar_docs(app)
     init_sqladmin(app, engine)
     mcp = FastApiMCP(app)
-    mcp.mount()
+    mcp.mount_http()
 
     return app
 

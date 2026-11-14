@@ -9,21 +9,21 @@ from app_layer_based_sqlmodel.core.logging import get_logger
 logger = get_logger()
 
 
-@celery_app.task(queue="low")
+@celery_app.task()
 def celery_task_q_low_in_schedule(sleep_seconds: int = 2):
     time.sleep(sleep_seconds)
     logger.info("Finished task: celery_task_q_low_in_schedule")
     return "ok for celery_task_q_low_in_schedule"
 
 
-@celery_app.task(queue="low")
+@celery_app.task()
 def celery_task_q_low(sleep_seconds: int = 2):
     time.sleep(sleep_seconds)
     logger.info("Finished task: celery_task_q_low")
     return "ok for celery_task_q_low"
 
 
-@celery_app.task(queue="high", bind=True, max_retries=3)
+@celery_app.task(bind=True, max_retries=3)
 def celery_task_q_high(self, sleep_seconds: int = 2):
     try:
         time.sleep(sleep_seconds)
